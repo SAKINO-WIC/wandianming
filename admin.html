@@ -373,10 +373,10 @@
         if (currentFilter === 'done' && !isDone) return;
         if (currentFilter === 'pending' && isDone) return;
 
-        let statusTag = '';
+      let statusTag = '';
         if (record) {
           const label = getStatusLabel(record.status);
-          const cssClass = record.status === 'huijia' ? 'home' : record.status === 'qingjia' ? 'leave' : record.status === 'waichu' ? 'out' : '';
+          const cssClass = record.status === 'buzhusu' ? 'leave' : '';
           statusTag = `<span class="status-tag ${cssClass}">${label}</span>`;
         }
 
@@ -420,7 +420,7 @@
       // Students by status
       text += `\n✅ 已填写（${allRecords.length}人）：\n`;
       allRecords.forEach(r => {
-        const label = getStatusLabel(r.status).replace(/[🏠🚗📋🌙]/g, '').trim();
+        const label = getStatusLabel(r.status).replace(/[🏠🚶]/g, '').trim();
         const note = r.note ? `（${r.note}）` : '';
         text += `  ${r.name}（${r.room}）→ ${label}${note}\n`;
       });
