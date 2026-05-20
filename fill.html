@@ -150,21 +150,34 @@
   const wd=['日','一','二','三','四','五','六']; const D=new Date();
   document.getElementById('td').textContent = D.getFullYear()+'年'+(D.getMonth()+1)+'月'+D.getDate()+'日 星期'+wd[D.getDay()];
 
-  // ===== 时间窗口 =====
+  // ===== 时间窗口（从Supabase读取）=====
+  let fillStart = '19:00', fillEnd = '23:30';
+  async function loadSettings(){
+    try{
+      const r=await fetch(SUPABASE_URL+'/rest/v1/settings?select=*',{headers:H});
+      if(r.ok){
+        const data=await r.json();
+        data.forEach(s=>{
+          if(s.key==='fill_start') fillStart=s.value;
+          if(s.key==='fill_end') fillEnd=s.value;
+        });
+      }
+    }catch(e){}
+    checkTimeWindow();
+  }
   function inTimeWindow(){
     const n=new Date();
-    const [sh,sm]=FILL_START.split(':').map(Number);
-    const [eh,em]=FILL_END.split(':').map(Number);
+    const [sh,sm]=fillStart.split(':').map(Number);
+    const [eh,em]=fillEnd.split(':').map(Number);
     const now=n.getHours()*60+n.getMinutes();
     const s=sh*60+sm, e=eh*60+em;
     return now>=s && now<=e;
   }
   function checkTimeWindow(){
-    if(inTimeWindow()) return true;
+    if(inTimeWindow()) return;
     document.getElementById('closedMsg').style.display='block';
     document.getElementById('formCard').style.display='none';
-    document.getElementById('timeHint').textContent = '⏰ 填写时间：' + FILL_START + ' ~ ' + FILL_END;
-    return false;
+    document.getElementById('timeHint').textContent = '⏰ 填写时间：' + fillStart + ' ~ ' + fillEnd;
   }
 
   // ===== 宿舍 =====
@@ -180,7 +193,7 @@
   function refP(){const d=document.getElementById('ds').value;renderP(getList(ni.value,d))}
   function openP(){clearTimeout(window._pt);refP();np.classList.add('on');document.getElementById('nb').classList.add('on')}
   function closeP(){np.classList.remove('on');document.getElementById('nb').classList.remove('on')}
-  function toggleP(){np.classList.contains('on')?closeP():(openP(),ni.focus())}
+  function toggleP(){np.classList.contains('on')?closeP():openP()}
   function pick(n){ni.value=n;localStorage.setItem('wdm_name',n);closeP();ck()}
   function onType(){const v=ni.value.trim();if(v)localStorage.setItem('wdm_name',v);if(np.classList.contains('on'))refP();ck()}
   function filterNames(){if(np.classList.contains('on'))refP();ck()}
@@ -299,10 +312,7 @@
 
   // ===== 初始化 =====
   refP();
-
-  if(!checkTimeWindow()){
-    // 不在时间窗口内也尝试查记录
-  }
+  loadSettings();
 
   if(sn){
     ni.value=sn;
