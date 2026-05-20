@@ -1,0 +1,5 @@
+# 晚点名系统 .gitignore
+read_xlsx.py
+temp_list.xlsx
+.DS_Store
+Thumbs.db
