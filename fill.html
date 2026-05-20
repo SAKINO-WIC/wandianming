@@ -6,461 +6,310 @@
   <title>晚点名 · 填写</title>
   <script src="js/config.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
-      background: #f8fafc;
-      min-height: 100vh;
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
+    .header{background:linear-gradient(135deg,#1e293b,#334155);padding:28px 20px 20px;text-align:center;color:#fff;position:relative}
+    .header .moon{font-size:36px;display:block;margin-bottom:4px}
+    .header h1{font-size:22px;font-weight:600;letter-spacing:2px}
+    .header .date{font-size:13px;opacity:.7;margin-top:4px}
+    .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
+    .container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
+    .card{background:#fff;border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.06);padding:20px;margin-bottom:12px}
+    .field{margin-bottom:16px}
+    .field-label{font-size:13px;font-weight:500;color:#64748b;margin-bottom:6px}
+    select,input,textarea{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;color:#1e293b;background:#f8fafc;transition:all .15s}
+    select:focus,input:focus,textarea:focus{outline:none;border-color:#3b82f6;background:#fff}
+    textarea{resize:none}
+    .name-row{display:flex;gap:8px}
+    .name-row input{flex:1}
+    .name-row .btn{
+      width:48px;flex-shrink:0;border:1.5px solid #e2e8f0;border-radius:10px;
+      background:#f1f5f9;font-size:20px;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;user-select:none;
+      -webkit-tap-highlight-color:transparent;transition:all .15s
     }
-
-    .header {
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      padding: 28px 20px 20px;
-      text-align: center;
-      color: white;
-      position: relative;
-    }
-    .header .moon { font-size: 36px; display: block; margin-bottom: 4px; }
-    .header h1 { font-size: 22px; font-weight: 600; letter-spacing: 2px; }
-    .header .date { font-size: 13px; opacity: 0.7; margin-top: 4px; }
-    .header .deco {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 16px;
-      background: #f8fafc; border-radius: 16px 16px 0 0;
-    }
-
-    .container { max-width: 420px; margin: 0 auto; padding: 0 16px 20px; margin-top: -8px; position: relative; z-index: 1; }
-    .card { background: white; border-radius: 16px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); padding: 20px; margin-bottom: 12px; }
-
-    .field { margin-bottom: 16px; }
-    .field:last-child { margin-bottom: 0; }
-    .field-label {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 13px; font-weight: 500; color: #64748b; margin-bottom: 6px;
-    }
-
-    /* ===== 宿舍下拉 ===== */
-    select {
-      width: 100%; padding: 12px 14px;
-      border: 1.5px solid #e2e8f0; border-radius: 10px;
-      font-size: 16px; color: #1e293b; background: #f8fafc;
-      transition: all 0.15s;
-    }
-    select:focus { outline: none; border-color: #3b82f6; background: white; }
-
-    /* ===== 姓名输入（自定义） ===== */
-    .name-wrapper {
-      position: relative;
-      display: flex;
-      gap: 8px;
-    }
-    .name-wrapper input {
-      flex: 1;
-      padding: 13px 14px;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      font-size: 16px;
-      color: #1e293b;
-      background: #f8fafc;
-      transition: all 0.15s;
-    }
-    .name-wrapper input:focus {
-      outline: none;
-      border-color: #3b82f6;
-      background: white;
-    }
-
-    .name-btn {
-      width: 48px;
-      flex-shrink: 0;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      background: #f1f5f9;
-      font-size: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.15s;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .name-btn:active { background: #e2e8f0; transform: scale(0.95); }
-    .name-btn.open { background: #3b82f6; color: white; border-color: #3b82f6; }
-
-    /* ===== 姓名下拉面板 ===== */
-    .name-panel {
-      display: none;
-      position: absolute;
-      top: calc(100% + 4px);
-      left: 0;
-      right: 52px;
-      background: white;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 10px;
-      max-height: 220px;
-      overflow-y: auto;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-      z-index: 50;
-    }
-    .name-panel.open { display: block; }
-    .name-panel .item {
-      padding: 11px 14px;
-      font-size: 15px;
-      color: #1e293b;
-      cursor: pointer;
-      border-bottom: 1px solid #f1f5f9;
-      transition: background 0.1s;
-    }
-    .name-panel .item:last-child { border-bottom: none; }
-    .name-panel .item:active { background: #eff6ff; }
-    .name-panel .item .room-tag {
-      font-size: 12px; color: #94a3b8; margin-left: 8px;
-    }
-    .name-panel .empty {
-      padding: 20px; text-align: center; color: #94a3b8; font-size: 14px;
-    }
-
-    /* ===== 状态按钮 ===== */
-    .status-row { display: flex; gap: 10px; }
-    .status-btn {
-      flex: 1; padding: 16px 12px;
-      border: 1.5px solid #e2e8f0; border-radius: 12px;
-      text-align: center; cursor: pointer; transition: all 0.15s;
-      background: #f8fafc; user-select: none;
-    }
-    .status-btn:active { transform: scale(0.97); }
-    .status-btn .icon { font-size: 22px; display: block; margin-bottom: 4px; }
-    .status-btn .label { font-size: 15px; font-weight: 500; color: #64748b; }
-    .status-btn.active-home { border-color: #22c55e; background: #f0fdf4; }
-    .status-btn.active-home .label { color: #16a34a; }
-    .status-btn.active-away { border-color: #ef4444; background: #fef2f2; }
-    .status-btn.active-away .label { color: #dc2626; }
-
-    /* ===== 理由 ===== */
-    #reasonWrap { overflow: hidden; max-height: 0; opacity: 0; transition: all 0.25s ease; }
-    #reasonWrap.open { max-height: 140px; opacity: 1; }
-    textarea {
-      width: 100%; padding: 12px 14px;
-      border: 1.5px solid #e2e8f0; border-radius: 10px;
-      font-size: 15px; color: #1e293b; background: #f8fafc;
-      resize: none;
-    }
-    textarea:focus { outline: none; border-color: #ef4444; background: white; }
-
-    /* ===== 提交 ===== */
-    .btn {
-      width: 100%; padding: 14px; border: none; border-radius: 12px;
-      font-size: 17px; font-weight: 600; cursor: pointer; transition: all 0.15s;
-    }
-    .btn-primary { background: #1e293b; color: white; }
-    .btn-primary:active { background: #334155; }
-    .btn-primary:disabled { background: #cbd5e1; cursor: not-allowed; }
-
-    /* ===== 消息 ===== */
-    .msg {
-      padding: 12px 14px; border-radius: 10px; font-size: 14px; margin-bottom: 12px; display: none;
-    }
-    .msg.show { display: flex; align-items: center; gap: 8px; }
-    .msg.success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
-    .msg.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
-    .msg.loading { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
-
-    /* ===== 已提交 ===== */
-    .done-box { text-align: center; padding: 30px 20px; }
-    .done-box .big-icon { font-size: 52px; }
-    .done-box h2 { font-size: 20px; margin: 12px 0 4px; color: #1e293b; }
-    .done-box .sub { color: #94a3b8; font-size: 14px; }
-
-    .admin-link { text-align: center; margin-top: 12px; }
-    .admin-link a { color: #94a3b8; font-size: 12px; text-decoration: none; }
-    .footer { text-align: center; color: #cbd5e1; font-size: 11px; margin-top: 16px; }
+    .name-row .btn:active{background:#e2e8f0;transform:scale(.95)}
+    .name-row .btn.on{background:#3b82f6;color:#fff;border-color:#3b82f6}
+    .panel{display:none;position:absolute;top:calc(100%+4px);left:0;right:56px;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50}
+    .panel.on{display:block}
+    .panel .it{padding:11px 14px;font-size:15px;color:#1e293b;cursor:pointer;border-bottom:1px solid #f1f5f9}
+    .panel .it:last-child{border-bottom:none}
+    .panel .it:active{background:#eff6ff}
+    .panel .it .rt{font-size:12px;color:#94a3b8;margin-left:8px}
+    .panel .empty{padding:20px;text-align:center;color:#94a3b8;font-size:14px}
+    .name-wrap{position:relative}
+    .srow{display:flex;gap:10px}
+    .sbtn{flex:1;padding:16px 12px;border:1.5px solid #e2e8f0;border-radius:12px;text-align:center;cursor:pointer;transition:all .15s;background:#f8fafc;user-select:none}
+    .sbtn:active{transform:scale(.97)}
+    .sbtn .ic{font-size:22px;display:block;margin-bottom:4px}
+    .sbtn .lb{font-size:15px;font-weight:500;color:#64748b}
+    .sbtn.hm{border-color:#22c55e;background:#f0fdf4}
+    .sbtn.hm .lb{color:#16a34a}
+    .sbtn.aw{border-color:#ef4444;background:#fef2f2}
+    .sbtn.aw .lb{color:#dc2626}
+    #rw{overflow:hidden;max-height:0;opacity:0;transition:all .25s}
+    #rw.on{max-height:140px;opacity:1}
+    .btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;transition:all .15s}
+    .btn-pri{background:#1e293b;color:#fff}
+    .btn-pri:active{background:#334155}
+    .btn-pri:disabled{background:#cbd5e1;cursor:not-allowed}
+    .btn-out{background:transparent;color:#3b82f6;border:1.5px solid #3b82f6}
+    .msg{padding:12px 14px;border-radius:10px;font-size:14px;margin-bottom:12px;display:none}
+    .msg.on{display:flex;align-items:center;gap:8px}
+    .msg.ok{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+    .msg.err{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+    .msg.load{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+    .msg.warn{background:#fefce8;color:#a16207;border:1px solid #fef08a}
+    .done{padding:20px;text-align:center}
+    .done .bi{font-size:48px}
+    .done h2{font-size:18px;margin:8px 0 4px;color:#1e293b}
+    .done .st{color:#64748b;font-size:14px;margin-bottom:12px}
+    .al{text-align:center;margin-top:12px}
+    .al a{color:#94a3b8;font-size:12px;text-decoration:none}
+    .ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:16px}
   </style>
 </head>
 <body>
-  <div class="header">
-    <span class="moon">🌙</span>
-    <h1>晚点名</h1>
-    <div class="date" id="todayDate"></div>
-    <div class="deco"></div>
+<div class="header">
+  <span class="moon">🌙</span>
+  <h1>晚点名</h1>
+  <div class="date" id="td"></div>
+  <div class="deco"></div>
+</div>
+
+<div class="container">
+  <div id="msg" class="msg"></div>
+
+  <!-- 时间窗口提示 -->
+  <div id="closedMsg" class="card" style="display:none;">
+    <div class="done">
+      <div class="bi">⏰</div>
+      <h2>当前不在填写时间</h2>
+      <div class="st" id="timeHint"></div>
+    </div>
   </div>
 
-  <div class="container">
-    <div id="msg" class="msg"></div>
+  <!-- 已提交 -->
+  <div id="doneBox" class="card" style="display:none;">
+    <div class="done">
+      <div class="bi">✅</div>
+      <h2>今日已填写</h2>
+      <div class="st" id="doneInfo"></div>
+      <button class="btn btn-out" id="modifyBtn" onclick="startModify()">✏️ 修改</button>
+    </div>
+  </div>
 
-    <div id="doneBox" class="card" style="display:none;">
-      <div class="done-box">
-        <div class="big-icon">✅</div>
-        <h2>今日已填写</h2>
-        <div class="sub" id="doneStatus"></div>
+  <!-- 表单 -->
+  <div id="formCard" class="card">
+    <div class="field">
+      <div class="field-label">🏠 宿舍</div>
+      <select id="ds" onchange="filterNames()"><option value="">全部宿舍</option></select>
+    </div>
+
+    <div class="field">
+      <div class="field-label">👤 姓名</div>
+      <div class="name-wrap">
+        <div class="name-row">
+          <input type="text" id="ni" placeholder="输入或点 ▼ 选" autocomplete="off" oninput="onType()" onfocus="openP()" onblur="setTimeout(closeP,200)">
+          <div class="btn" id="nb" onclick="toggleP()">▼</div>
+        </div>
+        <div class="panel" id="np"></div>
       </div>
     </div>
 
-    <div id="formCard" class="card">
-      <!-- 宿舍 -->
-      <div class="field">
-        <div class="field-label">🏠 宿舍</div>
-        <select id="dormSelect" onchange="onDormChange()">
-          <option value="">全部宿舍</option>
-        </select>
+    <div class="field">
+      <div class="field-label">🏡 今晚状态</div>
+      <div class="srow" id="statusRow">
+        <div class="sbtn hm" onclick="setSt('zaisushe')"><span class="ic">🏠</span><span class="lb">住校</span></div>
+        <div class="sbtn" onclick="setSt('buzhusu')"><span class="ic">🚶</span><span class="lb">不住校</span></div>
       </div>
-
-      <!-- 姓名（输入框 + 大按钮 + 下拉面板） -->
-      <div class="field">
-        <div class="field-label">👤 姓名</div>
-        <div class="name-wrapper">
-          <input type="text" id="nameInput" placeholder="输入姓名搜索" autocomplete="off"
-                 oninput="onNameType()" onfocus="openPanel()" onblur="delayClosePanel()">
-          <button class="name-btn" id="nameDropdownBtn" onclick="togglePanel()" type="button">▼</button>
-          <!-- 下拉面板 -->
-          <div class="name-panel" id="namePanel"></div>
-        </div>
-      </div>
-
-      <!-- 住校情况 -->
-      <div class="field">
-        <div class="field-label">🏡 今晚状态</div>
-        <div class="status-row">
-          <div class="status-btn active-home" onclick="setStatus(this,'zaisushe')">
-            <span class="icon">🏠</span>
-            <span class="label">住校</span>
-          </div>
-          <div class="status-btn" onclick="setStatus(this,'buzhusu')">
-            <span class="icon">🚶</span>
-            <span class="label">不住校</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 不住校理由 -->
-      <div id="reasonWrap">
-        <div class="field">
-          <div class="field-label" style="color:#dc2626;">
-            📝 不住校事由 <span style="color:#ef4444;">*必填</span>
-          </div>
-          <textarea id="reasonInput" rows="2" placeholder="请填写理由…" oninput="checkForm()"></textarea>
-        </div>
-      </div>
-
-      <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">提交</button>
     </div>
 
-    <div class="admin-link"><a href="admin.html">📊 管理看板</a></div>
-    <div class="footer">信管2307 · 晚点名系统</div>
+    <div id="rw">
+      <div class="field">
+        <div class="field-label" style="color:#dc2626;">📝 不住校事由 <span style="color:#ef4444;">*必填</span></div>
+        <textarea id="ri" rows="2" placeholder="请填写理由…" oninput="ck()"></textarea>
+      </div>
+    </div>
+
+    <button class="btn btn-pri" id="sb" onclick="sub()">提交</button>
   </div>
 
-  <script>
-    // ===== 配置 =====
-    const API = SUPABASE_URL + '/rest/v1/checkins';
-    const HEADERS = {
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-      'Content-Type': 'application/json',
-    };
+  <div class="al"><a href="admin.html">📊 管理看板</a></div>
+  <div class="ft">信管2307 · 晚点名系统</div>
+</div>
 
-    let selectedStatus = 'zaisushe';
-    const todayStr = new Date().toISOString().slice(0,10);
-    const savedName = localStorage.getItem('wdm_name') || '';
-    let panelTimer = null;
+<script>
+  const API = SUPABASE_URL + '/rest/v1/checkins';
+  const H = {'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json'};
+  let st = 'zaisushe', rec = null, modifyMode = false;
+  const td = new Date().toISOString().slice(0,10);
+  const sn = localStorage.getItem('wdm_name')||'';
 
-    // ===== 日期 =====
-    const wd = ['日','一','二','三','四','五','六'];
-    const d = new Date();
-    document.getElementById('todayDate').textContent =
-      `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 星期${wd[d.getDay()]}`;
+  // ===== 日期 =====
+  const wd=['日','一','二','三','四','五','六']; const D=new Date();
+  document.getElementById('td').textContent = D.getFullYear()+'年'+(D.getMonth()+1)+'月'+D.getDate()+'日 星期'+wd[D.getDay()];
 
-    // ===== 宿舍选项 =====
-    const dorms = [...new Set(STUDENTS.map(s => s.room))].sort();
-    const dormSel = document.getElementById('dormSelect');
-    dorms.forEach(r => {
-      const opt = document.createElement('option');
-      opt.value = r; opt.textContent = r;
-      dormSel.appendChild(opt);
-    });
+  // ===== 时间窗口 =====
+  function inTimeWindow(){
+    const n=new Date();
+    const [sh,sm]=FILL_START.split(':').map(Number);
+    const [eh,em]=FILL_END.split(':').map(Number);
+    const now=n.getHours()*60+n.getMinutes();
+    const s=sh*60+sm, e=eh*60+em;
+    return now>=s && now<=e;
+  }
+  function checkTimeWindow(){
+    if(inTimeWindow()) return true;
+    document.getElementById('closedMsg').style.display='block';
+    document.getElementById('formCard').style.display='none';
+    document.getElementById('timeHint').textContent = '⏰ 填写时间：' + FILL_START + ' ~ ' + FILL_END;
+    return false;
+  }
 
-    // ===== 姓名面板 =====
-    const nameInput = document.getElementById('nameInput');
-    const namePanel = document.getElementById('namePanel');
+  // ===== 宿舍 =====
+  const dorms=[...new Set(STUDENTS.map(s=>s.room))].sort();
+  const ds=document.getElementById('ds');
+  dorms.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;ds.appendChild(o)});
 
-    function getFilteredStudents(filterText, filterDorm) {
-      let list = STUDENTS;
-      if (filterDorm) list = list.filter(s => s.room === filterDorm);
-      if (filterText) {
-        const kw = filterText.trim().toLowerCase();
-        list = list.filter(s => s.name.includes(kw) || s.room.includes(kw));
-      }
-      return list;
+  // ===== 姓名面板 =====
+  const ni=document.getElementById('ni'), np=document.getElementById('np');
+  function getList(t,d){let l=STUDENTS;if(d)l=l.filter(s=>s.room===d);if(t){const kw=t.trim().toLowerCase();l=l.filter(s=>s.name.includes(kw)||s.room.includes(kw))}return l}
+  function renderP(l){if(!l||!l.length){np.innerHTML='<div class="empty">无匹配</div>';return}
+    np.innerHTML=l.map(s=>'<div class="it" onmousedown="pick(\''+s.name+'\')" ontouchstart="pick(\''+s.name+'\')">'+s.name+'<span class="rt">'+s.room+'</span></div>').join('')}
+  function refP(){const d=document.getElementById('ds').value;renderP(getList(ni.value,d))}
+  function openP(){clearTimeout(window._pt);refP();np.classList.add('on');document.getElementById('nb').classList.add('on')}
+  function closeP(){np.classList.remove('on');document.getElementById('nb').classList.remove('on')}
+  function toggleP(){np.classList.contains('on')?closeP():(openP(),ni.focus())}
+  function pick(n){ni.value=n;localStorage.setItem('wdm_name',n);closeP();ck()}
+  function onType(){const v=ni.value.trim();if(v)localStorage.setItem('wdm_name',v);if(np.classList.contains('on'))refP();ck()}
+  function filterNames(){if(np.classList.contains('on'))refP();ck()}
+
+  // ===== 状态 =====
+  function setSt(v){
+    st=v;
+    document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('hm','aw'));
+    const btns=document.querySelectorAll('.sbtn');
+    if(v==='zaisushe') btns[0].classList.add('hm'); else btns[1].classList.add('aw');
+    document.getElementById('rw').classList.toggle('on',v==='buzhusu');
+    ck();
+  }
+  setSt('zaisushe');
+
+  function getNm(){return ni.value.trim()}
+  function ck(){
+    const n=getNm();
+    const r=document.getElementById('ri').value.trim();
+    document.getElementById('sb').disabled=!(n&&(st==='zaisushe'||r));
+  }
+
+  // ===== 读取已有记录（修改时用）=====
+  async function fetchMyRecord(name){
+    try{
+      const r=await fetch(API+'?date=eq.'+td+'&name=eq.'+encodeURIComponent(name)+'&select=*',{headers:H});
+      if(!r.ok) return null;
+      const d=await r.json();
+      return d&&d.length?d[0]:null;
+    }catch(e){return null}
+  }
+
+  // ===== 检查已提交 =====
+  async function checkDone(){
+    rec = await fetchMyRecord(sn);
+    if(!rec) return;
+    document.getElementById('doneBox').style.display='block';
+    document.getElementById('formCard').style.display='none';
+    const lbl=rec.status==='zaisushe'?'🏠 住校':'🚶 不住校';
+    document.getElementById('doneInfo').textContent = lbl+(rec.note?' · '+rec.note:'');
+  }
+
+  // ===== 修改 =====
+  function startModify(){
+    modifyMode=true;
+    document.getElementById('doneBox').style.display='none';
+    document.getElementById('formCard').style.display='block';
+    if(rec){
+      ni.value=rec.name;
+      setSt(rec.status);
+      if(rec.status==='buzhusu'&&rec.note) document.getElementById('ri').value=rec.note;
     }
+    document.getElementById('sb').textContent='✏️ 修改提交';
+    ck();
+  }
 
-    function renderPanel(list) {
-      if (!list || list.length === 0) {
-        namePanel.innerHTML = '<div class="empty">没有匹配的同学</div>';
-        return;
-      }
-      namePanel.innerHTML = list.map(s =>
-        `<div class="item" onmousedown="pickName('${s.name}')" ontouchstart="pickName('${s.name}')">
-          ${s.name}<span class="room-tag">${s.room}</span>
-        </div>`
-      ).join('');
-    }
+  // ===== 提交（Upsert）=====
+  async function sub(){
+    const name=getNm();
+    if(!name) return msg('请填写姓名','err');
+    const dorm=document.getElementById('ds').value;
+    const student=STUDENTS.find(s=>s.name===name);
+    const room=student?student.room:(dorm||'');
+    const reason=st==='buzhusu'?document.getElementById('ri').value.trim():'';
+    if(st==='buzhusu'&&!reason) return msg('不住校请填写事由','err');
 
-    function refreshPanel() {
-      const dorm = document.getElementById('dormSelect').value;
-      const text = nameInput.value;
-      const list = getFilteredStudents(text, dorm);
-      renderPanel(list);
-    }
+    const btn=document.getElementById('sb');
+    btn.disabled=true; btn.textContent='提交中…';
+    msg('提交中…','load');
 
-    function openPanel() {
-      clearTimeout(panelTimer);
-      refreshPanel();
-      namePanel.classList.add('open');
-      document.getElementById('nameDropdownBtn').classList.add('open');
-    }
-
-    function closePanel() {
-      namePanel.classList.remove('open');
-      document.getElementById('nameDropdownBtn').classList.remove('open');
-    }
-
-    function delayClosePanel() {
-      panelTimer = setTimeout(closePanel, 200);
-    }
-
-    function togglePanel() {
-      if (namePanel.classList.contains('open')) {
-        closePanel();
-        nameInput.focus();
-      } else {
-        openPanel();
-        nameInput.focus();
-      }
-    }
-
-    function pickName(name) {
-      nameInput.value = name;
-      localStorage.setItem('wdm_name', name);
-      closePanel();
-      checkForm();
-    }
-
-    function onNameType() {
-      if (nameInput.value.trim()) {
-        localStorage.setItem('wdm_name', nameInput.value.trim());
-      }
-      if (namePanel.classList.contains('open')) {
-        refreshPanel();
-      }
-      checkForm();
-    }
-
-    function onDormChange() {
-      if (namePanel.classList.contains('open')) refreshPanel();
-      checkForm();
-    }
-
-    // ===== 状态 =====
-    function setStatus(el, val) {
-      selectedStatus = val;
-      document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active-home', 'active-away'));
-      el.classList.add(val === 'zaisushe' ? 'active-home' : 'active-away');
-      document.getElementById('reasonWrap').classList.toggle('open', val === 'buzhusu');
-      checkForm();
-    }
-
-    function checkForm() {
-      const name = nameInput.value.trim();
-      const reason = document.getElementById('reasonInput').value.trim();
-      document.getElementById('submitBtn').disabled = !(name && (selectedStatus === 'zaisushe' || reason));
-    }
-
-    // ===== 检查已提交 =====
-    async function checkAlready() {
-      if (!savedName) return;
-      try {
-        const r = await fetch(API + '?date=eq.' + todayStr + '&name=eq.' + encodeURIComponent(savedName) + '&select=*', {
-          headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+    try{
+      // 先查是否存在
+      const existing=modifyMode?rec:await fetchMyRecord(name);
+      
+      let r;
+      if(existing){
+        // UPDATE
+        r=await fetch(API+'?date=eq.'+td+'&name=eq.'+encodeURIComponent(name),{
+          method:'PATCH',headers:H,
+          body:JSON.stringify({status:st,note:reason,room})
         });
-        if (!r.ok) return;
-        const data = await r.json();
-        if (data && data.length > 0) {
-          const rec = data[0];
-          document.getElementById('doneBox').style.display = 'block';
-          document.getElementById('formCard').style.display = 'none';
-          document.getElementById('doneStatus').textContent =
-            rec.status === 'zaisushe' ? '🏠 住校' : '🚶 不住校' + (rec.note ? ' · ' + rec.note : '');
-        }
-      } catch(e) {}
-    }
-
-    // ===== 提交 =====
-    async function submitForm() {
-      const name = nameInput.value.trim();
-      if (!name) return showMsg('请填写姓名', 'error');
-
-      const dorm = document.getElementById('dormSelect').value;
-      const student = STUDENTS.find(s => s.name === name);
-      const room = student ? student.room : (dorm || '');
-
-      const status = selectedStatus;
-      const reason = status === 'buzhusu' ? document.getElementById('reasonInput').value.trim() : '';
-      if (status === 'buzhusu' && !reason) return showMsg('不住校请填写事由', 'error');
-
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.textContent = '提交中…';
-      showMsg('提交中…', 'loading');
-
-      try {
-        const r = await fetch(API, {
-          method: 'POST',
-          headers: HEADERS,
-          body: JSON.stringify({ date: todayStr, name, room, status, note: reason })
+      }else{
+        // INSERT
+        r=await fetch(API,{
+          method:'POST',headers:H,
+          body:JSON.stringify({date:td,name,room,status:st,note:reason})
         });
-
-        if (r.status === 201 || r.status === 200) {
-          showMsg('✅ 提交成功！', 'success');
-          btn.textContent = '✅ 已提交';
-          document.getElementById('doneBox').style.display = 'block';
-          document.getElementById('formCard').style.display = 'none';
-          document.getElementById('doneStatus').textContent =
-            status === 'zaisushe' ? '🏠 住校' : '🚶 不住校' + (reason ? ' · ' + reason : '');
-          localStorage.setItem('wdm_name', name);
-        } else {
-          const err = await r.json().catch(() => ({}));
-          showMsg('提交失败：' + (err.message || '请稍后再试'), 'error');
-          btn.disabled = false;
-          btn.textContent = '提交';
-        }
-      } catch(e) {
-        showMsg('网络异常，请稍后重试', 'error');
-        btn.disabled = false;
-        btn.textContent = '提交';
       }
-    }
 
-    function showMsg(text, type) {
-      const m = document.getElementById('msg');
-      m.textContent = text;
-      m.className = 'msg show ' + type;
-      if (type === 'success') setTimeout(() => m.classList.remove('show'), 3000);
-    }
-
-    // ===== 初始化 =====
-    // 加载面板
-    refreshPanel();
-
-    // 恢复上次名字
-    if (savedName) {
-      nameInput.value = savedName;
-      const student = STUDENTS.find(s => s.name === savedName);
-      if (student) {
-        document.getElementById('dormSelect').value = student.room;
+      if(r.ok || r.status===201 || r.status===204 || r.status===200){
+        msg((modifyMode?'✅ 修改成功！':'✅ 提交成功！'),'ok');
+        btn.textContent='✅ 已提交';
+        document.getElementById('doneBox').style.display='block';
+        document.getElementById('formCard').style.display='none';
+        const lbl=st==='zaisushe'?'🏠 住校':'🚶 不住校';
+        document.getElementById('doneInfo').textContent=lbl+(reason?' · '+reason:'');
+        localStorage.setItem('wdm_name',name);
+        modifyMode=false;
+        btn.textContent='提交';
+      }else{
+        const err=await r.json().catch(()=>({}));
+        msg('提交失败：'+(err.message||'请稍后再试'),'err');
+        btn.disabled=false; btn.textContent='提交';
       }
-      checkAlready();
+    }catch(e){
+      msg('网络异常，请稍后重试','err');
+      btn.disabled=false; btn.textContent='提交';
     }
+  }
 
-    // 默认选中住校
-    document.querySelector('.status-btn').classList.add('active-home');
-  </script>
+  function msg(t,type){
+    const m=document.getElementById('msg');
+    m.textContent=t; m.className='msg on '+type;
+    if(type==='ok') setTimeout(()=>m.classList.remove('on'),3000);
+  }
+
+  // ===== 初始化 =====
+  refP();
+
+  if(!checkTimeWindow()){
+    // 不在时间窗口内也尝试查记录
+  }
+
+  if(sn){
+    ni.value=sn;
+    const student=STUDENTS.find(s=>s.name===sn);
+    if(student){document.getElementById('ds').value=student.room}
+    checkDone();
+  }
+</script>
 </body>
 </html>
