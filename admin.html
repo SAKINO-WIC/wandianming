@@ -6,119 +6,78 @@
   <title>晚点名 · 看板</title>
   <script src="js/config.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
-      background: #f8fafc;
-      min-height: 100vh;
-      padding: 0 0 20px;
-    }
-    .header {
-      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-      color: white;
-      padding: 24px 20px 16px;
-      text-align: center;
-    }
-    .header h1 { font-size: 20px; font-weight: 600; letter-spacing: 1px; }
-    .header .date { font-size: 13px; opacity: 0.6; margin-top: 4px; }
-
-    .container { max-width: 480px; margin: 0 auto; padding: 0 12px; }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh;padding:0 0 20px}
+    .header{background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:24px 20px 16px;text-align:center}
+    .header h1{font-size:20px;font-weight:600;letter-spacing:1px}
+    .header .date{font-size:13px;opacity:.6;margin-top:4px}
+    .container{max-width:480px;margin:0 auto;padding:0 12px}
+    .hidden{display:none!important}
+    .card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.04);padding:16px;margin-bottom:12px}
 
     /* Login */
-    #loginScreen {
-      display: flex; align-items: center; justify-content: center;
-      min-height: 80vh; padding: 20px;
-    }
-    .login-card {
-      background: white; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-      padding: 24px; width: 100%; max-width: 360px; text-align: center;
-    }
-    .login-card input {
-      width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0;
-      border-radius: 10px; font-size: 16px; margin-bottom: 12px;
-    }
-    .login-card input:focus { outline: none; border-color: #3b82f6; }
-    .login-card button {
-      width: 100%; padding: 12px; background: #1e293b; color: white;
-      border: none; border-radius: 10px; font-size: 16px; cursor: pointer;
-    }
+    #loginScreen{display:flex;align-items:center;justify-content:center;min-height:80vh;padding:20px}
+    .login-card{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:24px;width:100%;max-width:360px;text-align:center}
+    .login-card input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;margin-bottom:12px}
+    .login-card input:focus{outline:none;border-color:#3b82f6}
+    .login-card button{width:100%;padding:12px;background:#1e293b;color:#fff;border:none;border-radius:10px;font-size:16px;cursor:pointer}
 
-    .hidden { display: none !important; }
+    /* Tab nav */
+    .tab-nav{display:flex;gap:0;margin:12px 0;background:#e2e8f0;border-radius:10px;overflow:hidden}
+    .tab-nav button{flex:1;padding:10px;border:none;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:#64748b;transition:all .15s}
+    .tab-nav button.active{background:#1e293b;color:#fff;border-radius:10px}
 
-    /* Stats bar */
-    .stats {
-      display: flex; gap: 8px; margin: 12px 0;
-    }
-    .stat-box {
-      flex: 1; background: white; border-radius: 12px;
-      padding: 14px 8px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    }
-    .stat-box .num { font-size: 26px; font-weight: 700; }
-    .stat-box .lbl { font-size: 12px; color: #94a3b8; margin-top: 2px; }
-    .stat-box.done .num { color: #22c55e; }
-    .stat-box.pending .num { color: #ef4444; }
-    .stat-box.total .num { color: #3b82f6; }
+    /* Stats */
+    .stats{display:flex;gap:8px;margin-bottom:12px}
+    .stat-box{flex:1;background:#fff;border-radius:12px;padding:14px 8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+    .stat-box .num{font-size:26px;font-weight:700}
+    .stat-box .lbl{font-size:12px;color:#94a3b8;margin-top:2px}
+    .stat-box.done .num{color:#22c55e}
+    .stat-box.pending .num{color:#ef4444}
+    .stat-box.total .num{color:#3b82f6}
 
     /* Dorm tabs */
-    .dorm-tabs {
-      display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;
-    }
-    .dorm-tab {
-      padding: 6px 14px; border: 1.5px solid #e2e8f0; border-radius: 16px;
-      font-size: 13px; cursor: pointer; background: white; color: #475569;
-      transition: all 0.15s;
-    }
-    .dorm-tab:active { transform: scale(0.96); }
-    .dorm-tab.active {
-      background: #1e293b; color: white; border-color: #1e293b;
-    }
-    .dorm-tab .count {
-      font-size: 11px; opacity: 0.6; margin-left: 4px;
-    }
+    .dorm-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .dorm-tab{padding:6px 14px;border:1.5px solid #e2e8f0;border-radius:16px;font-size:13px;cursor:pointer;background:#fff;color:#475569;transition:all .15s}
+    .dorm-tab:active{transform:scale(.96)}
+    .dorm-tab.active{background:#1e293b;color:#fff;border-color:#1e293b}
+    .dorm-tab .count{font-size:11px;opacity:.6;margin-left:4px}
 
-    /* Student list */
-    .student-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 14px; background: white; border-radius: 10px; margin-bottom: 6px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-    }
-    .student-row .info { display: flex; align-items: center; gap: 10px; }
-    .dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-    }
-    .dot.done { background: #22c55e; }
-    .dot.pending { background: #e2e8f0; }
-    .student-row .name { font-size: 15px; font-weight: 500; color: #1e293b; }
-    .student-row .room { font-size: 12px; color: #94a3b8; }
-    .tag {
-      font-size: 12px; padding: 2px 10px; border-radius: 10px;
-    }
-    .tag-ok { background: #f0fdf4; color: #16a34a; }
-    .tag-away { background: #fef2f2; color: #dc2626; }
-    .tag-miss { background: #f1f5f9; color: #94a3b8; }
+    /* Student row */
+    .student-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-radius:10px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,.03)}
+    .student-row .info{display:flex;align-items:center;gap:10px}
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .dot.done{background:#22c55e}
+    .dot.pending{background:#e2e8f0}
+    .student-row .name{font-size:15px;font-weight:500;color:#1e293b}
+    .student-row .room{font-size:12px;color:#94a3b8}
+    .tag{font-size:12px;padding:2px 10px;border-radius:10px}
+    .tag-ok{background:#f0fdf4;color:#16a34a}
+    .tag-away{background:#fef2f2;color:#dc2626}
+    .tag-miss{background:#f1f5f9;color:#94a3b8}
 
     /* Actions */
-    .actions {
-      display: flex; gap: 8px; margin: 12px 0;
-    }
-    .actions button {
-      flex: 1; padding: 10px; border: none; border-radius: 10px;
-      font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s;
-    }
-    .actions button:active { transform: scale(0.97); }
-    .btn-copy { background: #1e293b; color: white; }
-    .btn-copy-dorm { background: #475569; color: white; }
+    .actions{display:flex;gap:8px;margin-bottom:12px}
+    .actions button{flex:1;padding:10px;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s}
+    .actions button:active{transform:scale(.97)}
+    .btn-copy{background:#1e293b;color:#fff}
+    .btn-copy-dorm{background:#475569;color:#fff}
 
-    .toast {
-      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-      background: #1e293b; color: white; padding: 10px 24px; border-radius: 24px;
-      font-size: 14px; opacity: 0; transition: opacity 0.3s; z-index: 100;
-    }
-    .toast.show { opacity: 1; }
+    /* Settings */
+    .setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f1f5f9}
+    .setting-row:last-child{border-bottom:none}
+    .setting-label{font-size:14px;color:#475569}
+    .setting-desc{font-size:12px;color:#94a3b8;margin-top:2px}
+    .setting-row input{width:120px;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;text-align:center}
+    .setting-row input:focus{outline:none;border-color:#3b82f6}
+    .btn-save{width:100%;padding:12px;background:#1e293b;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px}
+    .btn-save:active{background:#334155}
 
-    .back-link { text-align: center; margin: 12px 0 0; }
-    .back-link a { color: #94a3b8; font-size: 12px; text-decoration: none; }
-    .footer { text-align: center; color: #cbd5e1; font-size: 11px; margin-top: 16px; }
+    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 24px;border-radius:24px;font-size:14px;opacity:0;transition:opacity .3s;z-index:100}
+    .toast.show{opacity:1}
+    .bl{text-align:center;margin:12px 0 0}
+    .bl a{color:#94a3b8;font-size:12px;text-decoration:none}
+    .ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:16px}
   </style>
 </head>
 <body>
@@ -142,27 +101,51 @@
     </div>
 
     <div class="container">
-      <!-- Stats -->
-      <div class="stats">
-        <div class="stat-box done"><div class="num" id="sDone">0</div><div class="lbl">✅ 已填</div></div>
-        <div class="stat-box pending"><div class="num" id="sPending">0</div><div class="lbl">⏳ 未填</div></div>
-        <div class="stat-box total"><div class="num" id="sTotal">0</div><div class="lbl">👥 总人数</div></div>
+      <!-- Tab Nav -->
+      <div class="tab-nav">
+        <button class="active" onclick="switchTab('checkin',this)">📋 晚点名</button>
+        <button onclick="switchTab('settings',this)">⚙️ 系统设置</button>
       </div>
 
-      <!-- Actions -->
-      <div class="actions">
-        <button class="btn-copy" onclick="copyAll()">📋 复制全部汇总</button>
-        <button class="btn-copy-dorm" onclick="copyDorm()" id="copyDormBtn">🏠 复制本宿舍</button>
+      <!-- 晚点名 Tab -->
+      <div id="tabCheckin">
+        <div class="stats">
+          <div class="stat-box done"><div class="num" id="sDone">0</div><div class="lbl">✅ 已填</div></div>
+          <div class="stat-box pending"><div class="num" id="sPending">0</div><div class="lbl">⏳ 未填</div></div>
+          <div class="stat-box total"><div class="num" id="sTotal">0</div><div class="lbl">👥 总人数</div></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-copy" onclick="copyAll()">📋 复制全部汇总</button>
+          <button class="btn-copy-dorm" onclick="copyDorm()" id="copyDormBtn">🏠 复制本宿舍</button>
+        </div>
+
+        <div class="dorm-tabs" id="dormTabs"></div>
+        <div id="studentList"></div>
       </div>
 
-      <!-- Dorm tabs -->
-      <div class="dorm-tabs" id="dormTabs"></div>
+      <!-- 设置 Tab -->
+      <div id="tabSettings" class="hidden">
+        <div class="card">
+          <div class="setting-row">
+            <div><div class="setting-label">⏰ 填写开始时间</div><div class="setting-desc">到这个时间才能填写</div></div>
+            <input type="time" id="sFillStart" value="19:00">
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">⏰ 填写截止时间</div><div class="setting-desc">到这个时间停止填写</div></div>
+            <input type="time" id="sFillEnd" value="23:30">
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">🔑 管理员密码</div><div class="setting-desc">看板登录密码</div></div>
+            <input type="text" id="sPassword" value="" style="width:140px;">
+          </div>
+          <button class="btn-save" onclick="saveSettings()">💾 保存设置</button>
+          <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:6px;">保存后立即生效，所有同学将看到更新后的时间</p>
+        </div>
+      </div>
 
-      <!-- Student list -->
-      <div id="studentList"></div>
-
-      <div class="back-link"><a href="fill.html">← 返回填写页</a></div>
-      <div class="footer">信管2307 · 晚点名系统</div>
+      <div class="bl"><a href="fill.html">← 返回填写页</a></div>
+      <div class="ft">信管2307 · 晚点名系统</div>
     </div>
   </div>
 
@@ -170,46 +153,58 @@
 
   <script>
     const API = SUPABASE_URL + '/rest/v1/checkins';
-    const HEADERS = {
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-    };
+    const SET_API = SUPABASE_URL + '/rest/v1/settings';
+    const H = {'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY};
 
-    let records = [];
-    let activeDorm = 'all';
+    let records = [], activeDorm = 'all', settings = {};
     const todayStr = new Date().toISOString().slice(0,10);
 
+    // ===== Tab switch =====
+    function switchTab(tab, btn){
+      document.querySelectorAll('.tab-nav button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tabCheckin').classList.toggle('hidden', tab!=='checkin');
+      document.getElementById('tabSettings').classList.toggle('hidden', tab!=='settings');
+      if(tab==='settings') loadSettings();
+    }
+
     // ===== Login =====
-    function login() {
-      if (document.getElementById('pwdInput').value === ADMIN_PASSWORD) {
+    async function login() {
+      const pwd = document.getElementById('pwdInput').value;
+      // 先从服务器验证密码
+      try{
+        const r=await fetch(SET_API+'?select=*',{headers:H});
+        if(r.ok){
+          const data=await r.json();
+          data.forEach(s=>{settings[s.key]=s.value});
+        }
+      }catch(e){}
+      const adminPwd = settings['admin_password'] || ADMIN_PASSWORD;
+      if (pwd === adminPwd) {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('dashboard').classList.remove('hidden');
         const d = new Date();
         const wd = ['日','一','二','三','四','五','六'];
-        document.getElementById('dashDate').textContent =
-          `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 星期${wd[d.getDay()]}`;
+        document.getElementById('dashDate').textContent = d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+wd[d.getDay()];
         loadData();
       } else {
         showToast('密码错误');
       }
     }
 
-    // ===== Load =====
+    // ===== Load checkins =====
     async function loadData() {
       try {
-        const r = await fetch(API + '?date=eq.' + todayStr + '&select=*', { headers: HEADERS });
+        const r = await fetch(API + '?date=eq.' + todayStr + '&select=*', { headers: H });
         records = r.ok ? await r.json() : [];
       } catch(e) { records = []; }
       render();
     }
 
-    // ===== 获取宿舍列表 =====
+    // ===== Dorms =====
     function getDorms() {
       const map = {};
-      STUDENTS.forEach(s => {
-        if (!map[s.room]) map[s.room] = [];
-        map[s.room].push(s);
-      });
+      STUDENTS.forEach(s => { if (!map[s.room]) map[s.room] = []; map[s.room].push(s); });
       return map;
     }
 
@@ -217,163 +212,141 @@
     function render() {
       const dorms = getDorms();
       const completedNames = new Set(records.map(r => r.name));
-      const total = STUDENTS.length;
-      const done = records.length;
-      const pending = total - done;
-
+      const total = STUDENTS.length, done = records.length, pending = total - done;
       document.getElementById('sDone').textContent = done;
       document.getElementById('sPending').textContent = pending;
       document.getElementById('sTotal').textContent = total;
 
-      // Dorm tabs
-      const tabContainer = document.getElementById('dormTabs');
-      let tabHtml = `<div class="dorm-tab ${activeDorm === 'all' ? 'active' : ''}" onclick="setDorm('all')">全部 <span class="count">${total}</span></div>`;
+      // Tabs
+      const tc = document.getElementById('dormTabs');
+      let th = `<div class="dorm-tab ${activeDorm==='all'?'active':''}" onclick="setDorm('all')">全部 <span class="count">${total}</span></div>`;
       Object.keys(dorms).sort().forEach(room => {
-        const roomStudents = dorms[room];
-        const roomDone = roomStudents.filter(s => completedNames.has(s.name)).length;
-        const isActive = activeDorm === room;
-        tabHtml += `<div class="dorm-tab ${isActive ? 'active' : ''}" onclick="setDorm('${room}')">${room} <span class="count">${roomDone}/${roomStudents.length}</span></div>`;
+        const rs = dorms[room], rd = rs.filter(s => completedNames.has(s.name)).length;
+        th += `<div class="dorm-tab ${activeDorm===room?'active':''}" onclick="setDorm('${room}')">${room} <span class="count">${rd}/${rs.length}</span></div>`;
       });
-      tabContainer.innerHTML = tabHtml;
+      tc.innerHTML = th;
+      document.getElementById('copyDormBtn').textContent = activeDorm==='all'?'📋 复制全部汇总':'🏠 复制 '+activeDorm+' 汇总';
 
-      // Update copy-dorm button text
-      document.getElementById('copyDormBtn').textContent =
-        activeDorm === 'all' ? '📋 复制全部汇总' : '🏠 复制 ' + activeDorm + ' 汇总';
-
-      // Student list
+      // List
       const list = document.getElementById('studentList');
       let filtered = STUDENTS;
-      if (activeDorm !== 'all') {
-        filtered = STUDENTS.filter(s => s.room === activeDorm);
-      }
-
+      if(activeDorm!=='all') filtered = STUDENTS.filter(s => s.room === activeDorm);
       let html = '';
       filtered.forEach(s => {
-        const rec = records.find(r => r.name === s.name);
-        const isDone = !!rec;
+        const rec = records.find(r => r.name === s.name), isDone = !!rec;
         let tag = '';
-        if (isDone) {
-          const lbl = rec.status === 'zaisushe' ? '住校' : '不住校';
-          const css = rec.status === 'zaisushe' ? 'tag-ok' : 'tag-away';
+        if(isDone){
+          const lbl = rec.status==='zaisushe'?'住校':'不住校';
+          const css = rec.status==='zaisushe'?'tag-ok':'tag-away';
           tag = `<span class="tag ${css}">${lbl}</span>`;
-        } else {
-          tag = `<span class="tag tag-miss">未填写</span>`;
-        }
-        html += `
-          <div class="student-row">
-            <div class="info">
-              <div class="dot ${isDone ? 'done' : 'pending'}"></div>
-              <div>
-                <div class="name">${s.name}</div>
-                <div class="room">${s.room}</div>
-              </div>
-            </div>
-            ${tag}
-          </div>`;
+        } else { tag = `<span class="tag tag-miss">未填写</span>`; }
+        html += `<div class="student-row"><div class="info"><div class="dot ${isDone?'done':'pending'}"></div><div><div class="name">${s.name}</div><div class="room">${s.room}</div></div></div>${tag}</div>`;
       });
       list.innerHTML = html || '<p style="text-align:center;color:#94a3b8;padding:20px;">该宿舍暂无学生</p>';
     }
 
-    function setDorm(dorm) {
-      activeDorm = dorm;
-      render();
-    }
+    function setDorm(dorm) { activeDorm = dorm; render(); }
 
-    // ===== Copy all =====
+    // ===== Copy =====
     function copyAll() {
       const completedNames = new Set(records.map(r => r.name));
       const d = new Date();
-      let text = `【晚点名 · ${d.getMonth()+1}月${d.getDate()}日】\n`;
-      text += `已填：${records.length}/${STUDENTS.length}人\n━━━━━━━━━━━━\n\n`;
-
+      let text = `【晚点名 · ${d.getMonth()+1}月${d.getDate()}日】\n已填：${records.length}/${STUDENTS.length}人\n━━━━━━━━━━━━\n\n`;
       const dorms = getDorms();
       Object.keys(dorms).sort().forEach(room => {
         const students = dorms[room];
         text += `【${room}】\n`;
         students.forEach(s => {
           const rec = records.find(r => r.name === s.name);
-          if (rec) {
-            const lbl = rec.status === 'zaisushe' ? '住校' : '不住校';
-            const note = rec.note ? '(' + rec.note + ')' : '';
-            text += `  ✅ ${s.name} → ${lbl}${note}\n`;
-          } else {
-            text += `  ⏳ ${s.name} → 未填写\n`;
-          }
+          if(rec){const lbl=rec.status==='zaisushe'?'住校':'不住校';text+=`  ✅ ${s.name} → ${lbl}${rec.note?'('+rec.note+')':''}\n`;}
+          else{text+=`  ⏳ ${s.name} → 未填写\n`;}
         });
-        text += '\n';
+        text+='\n';
       });
-
-      text += '━━━━━━━━━━━━\n⚠️ 未填写人员：\n';
-      STUDENTS.forEach(s => {
-        if (!completedNames.has(s.name)) {
-          text += `  ${s.room} ${s.name}\n`;
-        }
-      });
-
-      copyText(text);
-      showToast('✅ 已复制到剪贴板');
+      text+='━━━━━━━━━━━━\n⚠️ 未填写人员：\n';
+      STUDENTS.forEach(s => {if(!completedNames.has(s.name)) text+=`  ${s.room} ${s.name}\n`});
+      copyText(text); showToast('✅ 已复制到剪贴板');
     }
 
-    // ===== Copy by dorm =====
     function copyDorm() {
-      const dorms = getDorms();
-      const completedNames = new Set(records.map(r => r.name));
-
-      let text = '';
-      const d = new Date();
-
-      if (activeDorm === 'all') {
+      const dorms = getDorms(), completedNames = new Set(records.map(r => r.name));
+      let text = ''; const d = new Date();
+      if(activeDorm==='all'){
         text = `【晚点名 · ${d.getMonth()+1}月${d.getDate()}日】\n`;
         Object.keys(dorms).sort().forEach(room => {
-          const students = dorms[room];
-          const roomPending = students.filter(s => !completedNames.has(s.name));
-          if (roomPending.length > 0) {
-            text += `\n⚠️ 【${room}】未填写：`;
-            roomPending.forEach(s => { text += s.name + ' '; });
-            text += '\n';
-          }
+          const rs = dorms[room], rp = rs.filter(s => !completedNames.has(s.name));
+          if(rp.length>0){text+=`\n⚠️ 【${room}】未填写：`;rp.forEach(s=>{text+=s.name+' '});text+='\n';}
         });
-        text += '\n请以上同学尽快填写晚点名 🌙';
+        text+='\n请以上同学尽快填写晚点名 🌙';
       } else {
         const students = dorms[activeDorm];
         text = `【${activeDorm} · 晚点名提醒】\n`;
         students.forEach(s => {
           const rec = records.find(r => r.name === s.name);
-          if (rec) {
-            text += `✅ ${s.name} 已填\n`;
-          } else {
-            text += `⏳ ${s.name} 未填写\n`;
-          }
+          text += rec ? `✅ ${s.name} 已填\n` : `⏳ ${s.name} 未填写\n`;
         });
-        // 宿舍长催人专用
         const pending = students.filter(s => !completedNames.has(s.name));
-        if (pending.length > 0) {
-          text += `\n📢 以下同学请尽快填写：`;
-          pending.forEach(s => { text += s.name + ' '; });
-          text += '\n';
-        }
-        text += `\n👉 https://wandianming.vercel.app/fill`;
+        if(pending.length>0){text+='\n📢 以下同学请尽快填写：';pending.forEach(s=>{text+=s.name+' '});text+='\n';}
+        text+='\n👉 https://wandianming.pages.dev/fill';
       }
-
-      copyText(text);
-      showToast('✅ 已复制到剪贴板');
+      copyText(text); showToast('✅ 已复制到剪贴板');
     }
 
     function copyText(text) {
       navigator.clipboard.writeText(text).catch(() => {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
+        const ta = document.createElement('textarea'); ta.value = text;
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
       });
+    }
+
+    // ===== Settings =====
+    async function loadSettings() {
+      try {
+        const r = await fetch(SET_API+'?select=*',{headers:H});
+        if(r.ok){
+          const data = await r.json();
+          data.forEach(s=>{settings[s.key]=s.value});
+          document.getElementById('sFillStart').value = settings['fill_start'] || '19:00';
+          document.getElementById('sFillEnd').value = settings['fill_end'] || '23:30';
+          document.getElementById('sPassword').value = settings['admin_password'] || '';
+        }
+      } catch(e) {}
+    }
+
+    async function saveSettings() {
+      const start = document.getElementById('sFillStart').value;
+      const end = document.getElementById('sFillEnd').value;
+      const pwd = document.getElementById('sPassword').value.trim();
+      if(!pwd) return showToast('密码不能为空');
+
+      const updates = [
+        {key:'fill_start', value:start},
+        {key:'fill_end', value:end},
+        {key:'admin_password', value:pwd},
+      ];
+
+      try {
+        for(const u of updates){
+          // Upsert: try update first, then insert
+          const r = await fetch(SET_API+'?key=eq.'+u.key, {
+            method:'PATCH', headers:{...H,'Content-Type':'application/json'},
+            body:JSON.stringify({value:u.value})
+          });
+          if(r.status === 204 || r.status === 200) continue;
+          // If no row to update, insert
+          await fetch(SET_API, {
+            method:'POST', headers:{...H,'Content-Type':'application/json'},
+            body:JSON.stringify(u)
+          }).catch(()=>{});
+        }
+        showToast('✅ 设置已保存，所有同学将看到更新');
+        settings = {};
+      } catch(e) { showToast('保存失败，请重试'); }
     }
 
     function showToast(msg) {
       const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
+      t.textContent = msg; t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 2000);
     }
   </script>
