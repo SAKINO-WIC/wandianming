@@ -247,17 +247,11 @@
         </select>
       </div>
 
-      <!-- 姓名 -->
+      <!-- 姓名（下拉+输入二合一） -->
       <div class="field">
         <div class="field-label">👤 姓名</div>
-        <div id="nameInputArea">
-          <select id="nameSelect" onchange="onNameSelect()">
-            <option value="">请选择姓名</option>
-          </select>
-        </div>
-        <div style="text-align:right;margin-top:4px;">
-          <span id="toggleNameMode" style="color:#3b82f6;font-size:13px;cursor:pointer;">✏️ 手动输入</span>
-        </div>
+        <input type="text" id="nameInput" list="nameList" placeholder="输入或从列表选择姓名" autocomplete="off" oninput="onNameInput()">
+        <datalist id="nameList"></datalist>
       </div>
 
       <!-- 住校情况 -->
@@ -302,8 +296,8 @@
     };
 
     let selectedStatus = 'zaisushe';
-    let isManual = false;
     const todayStr = new Date().toISOString().slice(0,10);
+    const savedName = localStorage.getItem('wdm_name') || '';
 
     // ===== 日期 =====
     const weekdays = ['日','一','二','三','四','五','六'];
@@ -321,64 +315,32 @@
       dormSel.appendChild(opt);
     });
 
-    // ===== 加载姓名 =====
+    // ===== 加载姓名到 datalist =====
     function loadNames(filterDorm) {
-      const sel = document.getElementById('nameSelect');
-      const currentVal = sel.value;
-      sel.innerHTML = '<option value="">请选择姓名</option>';
+      const list = document.getElementById('nameList');
+      list.innerHTML = '';
 
-      let list = STUDENTS;
+      let students = STUDENTS;
       if (filterDorm) {
-        list = STUDENTS.filter(s => s.room === filterDorm);
+        students = STUDENTS.filter(s => s.room === filterDorm);
       }
-      list.forEach(s => {
+      students.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.name;
-        opt.textContent = s.name;
-        sel.appendChild(opt);
+        list.appendChild(opt);
       });
-
-      // 恢复上次选中
-      if (currentVal && list.some(s => s.name === currentVal)) {
-        sel.value = currentVal;
-      }
     }
 
-    // ===== 宿舍变化 =====
+    // ===== 宿舍变化 → 更新姓名列表 =====
     function onDormChange() {
       const dorm = document.getElementById('dormSelect').value;
       loadNames(dorm);
       checkForm();
     }
 
-    // ===== 切换选名模式 =====
-    const savedName = localStorage.getItem('wdm_name') || '';
-    document.getElementById('toggleNameMode').addEventListener('click', function() {
-      isManual = !isManual;
-      const area = document.getElementById('nameInputArea');
-      if (isManual) {
-        area.innerHTML = '<input type="text" id="manualName" placeholder="直接输入姓名" maxlength="10" oninput="checkForm()">';
-        if (savedName && !STUDENTS.some(s => s.name === savedName)) {
-          document.getElementById('manualName').value = savedName;
-        }
-        this.textContent = '📋 从列表选择';
-      } else {
-        area.innerHTML =
-          `<select id="nameSelect" onchange="onNameSelect()"><option value="">请选择姓名</option></select>`;
-        loadNames(document.getElementById('dormSelect').value);
-        if (savedName) {
-          const sel = document.getElementById('nameSelect');
-          if ([...sel.options].some(o => o.value === savedName)) {
-            sel.value = savedName;
-          }
-        }
-        this.textContent = '✏️ 手动输入';
-      }
-      checkForm();
-    });
-
-    function onNameSelect() {
-      const name = document.getElementById('nameSelect').value;
+    // ===== 姓名输入 =====
+    function onNameInput() {
+      const name = document.getElementById('nameInput').value.trim();
       if (name) {
         localStorage.setItem('wdm_name', name);
       }
@@ -406,10 +368,7 @@
 
     // ===== 检查 =====
     function getName() {
-      if (isManual) {
-        return (document.getElementById('manualName')?.value || '').trim();
-      }
-      return document.getElementById('nameSelect')?.value || '';
+      return document.getElementById('nameInput')?.value.trim() || '';
     }
 
     function checkForm() {
@@ -508,17 +467,13 @@
     // ===== 初始化 =====
     loadNames('');
 
-    // 恢复上次选择的宿舍和姓名
+    // 恢复上次的名字
     if (savedName) {
+      document.getElementById('nameInput').value = savedName;
       const student = STUDENTS.find(s => s.name === savedName);
       if (student) {
         document.getElementById('dormSelect').value = student.room;
         loadNames(student.room);
-        document.getElementById('nameSelect').value = savedName;
-      } else {
-        // 不在名单里 → 切手动
-        document.getElementById('toggleNameMode').click();
-        document.getElementById('manualName').value = savedName;
       }
       checkAlready();
     }
