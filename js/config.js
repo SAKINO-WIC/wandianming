@@ -70,8 +70,8 @@ const STATUS_OPTIONS = [
 ];
 
 // 系统名称
-const APP_NAME = '晚点名系统';
+const APP_NAME = 'TNU晚点名系统-信管2307SVIP专属定制版';
 
 // 填写时间窗口（24小时制）
-const FILL_START = '19:00';  // 晚上7点开始
-const FILL_END   = '23:30';  // 晚上11点半截止
+const FILL_START = '7:00';  // 早上7点开始
+const FILL_END   = '21:00';  // 晚上21点截止
