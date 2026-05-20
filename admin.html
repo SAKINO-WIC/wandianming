@@ -327,13 +327,11 @@
 
       try {
         for(const u of updates){
-          // Upsert: try update first, then insert
           const r = await fetch(SET_API+'?key=eq.'+u.key, {
-            method:'PATCH', headers:{...H,'Content-Type':'application/json'},
+            method:'PATCH', headers:{...H,'Content-Type':'application/json','Prefer':'return=minimal'},
             body:JSON.stringify({value:u.value})
           });
-          if(r.status === 204 || r.status === 200) continue;
-          // If no row to update, insert
+          if(r.ok) continue;
           await fetch(SET_API, {
             method:'POST', headers:{...H,'Content-Type':'application/json'},
             body:JSON.stringify(u)
