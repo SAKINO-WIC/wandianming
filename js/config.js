@@ -3,12 +3,11 @@
 // 数据来源：2307名单.xlsx（隐私数据，仅本地存储）
 
 // Supabase 项目信息（在 Supabase Dashboard → Settings → API 中获取）
-const SUPABASE_URL = 'https://jgiyahtmpvfqtgdfxxgi.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnaXlhaHRtcHZmcXRnZGZ4eGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTEwNTIsImV4cCI6MjA5NDg2NzA1Mn0.K2XGYGccLv6rfPyuAYVYufhIy1mEpABMHf77Sz1IqZE';
-
+const SUPABASE_URL = 'https://你的项目.supabase.co';
+const SUPABASE_ANON_KEY = '你的anon-public-key';
 
 // 管理员密码（改掉！）
-const ADMIN_PASSWORD = 'sakino666';
+const ADMIN_PASSWORD = 'wan123456';
 
 // ===== 信管2307班学生名单 =====
 // 已排除：王浩嘉(转专业)、涂永盛(转专业)、孙英博(退宿)、宋静宜(退宿)
@@ -76,10 +75,8 @@ const STUDENTS = [
 
 // 晚点名状态选项
 const STATUS_OPTIONS = [
-  { value: 'zaisushe', label: '🏠 在宿舍' },
-  { value: 'huijia',   label: '🚗 回家' },
-  { value: 'qingjia',  label: '📋 请假' },
-  { value: 'waichu',   label: '🌙 外出（晚归）' },
+  { value: 'zaisushe', label: '🏠 住校' },
+  { value: 'buzhusu',  label: '🚶 不住校' },
 ];
 
 // 系统名称
