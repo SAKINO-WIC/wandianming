@@ -238,6 +238,9 @@
 
   // ===== 修改 =====
   function startModify(){
+    if(!inTimeWindow()){
+      return msg('⏰ 当前不在填写时间范围内，无法修改','err');
+    }
     modifyMode=true;
     document.getElementById('doneBox').style.display='none';
     document.getElementById('formCard').style.display='block';
