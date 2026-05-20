@@ -71,3 +71,7 @@ const STATUS_OPTIONS = [
 
 // 系统名称
 const APP_NAME = '晚点名系统';
+
+// 填写时间窗口（24小时制）
+const FILL_START = '19:00';  // 晚上7点开始
+const FILL_END   = '23:30';  // 晚上11点半截止
