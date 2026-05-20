@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>晚点名系统</title>
+  <script src="js/config.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 400px;
+      width: 100%;
+    }
+    .hero {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .hero-icon { font-size: 60px; margin-bottom: 10px; }
+    .hero h1 {
+      color: white;
+      font-size: 32px;
+      font-weight: 700;
+    }
+    .hero p {
+      color: rgba(255,255,255,0.8);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    .card-btn {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      border: none;
+      background: white;
+      width: 100%;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .card-btn:hover { background: #f7fafc; }
+    .card-btn:active { background: #edf2f7; }
+    .card-btn:first-child { border-bottom: 1px solid #f0f4f8; }
+    .card-btn .icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    .card-btn .text h3 {
+      font-size: 17px;
+      color: #2d3748;
+      margin-bottom: 2px;
+    }
+    .card-btn .text p {
+      font-size: 13px;
+      color: #718096;
+    }
+    .footer {
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 12px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <div class="hero-icon">🌙</div>
+      <h1>晚点名</h1>
+      <p>班级晚点名系统 · 一键填写</p>
+    </div>
+
+    <div class="card">
+      <button class="card-btn" onclick="location.href='fill.html'">
+        <div class="icon">✍️</div>
+        <div class="text">
+          <h3>今晚填表</h3>
+          <p>选择姓名和状态，完成今晚的晚点名</p>
+        </div>
+        <div style="margin-left:auto;color:#a0aec0;">→</div>
+      </button>
+      <button class="card-btn" onclick="location.href='admin.html'">
+        <div class="icon">📊</div>
+        <div class="text">
+          <h3>管理看板</h3>
+          <p>查看填写情况，复制汇总名单</p>
+        </div>
+        <div style="margin-left:auto;color:#a0aec0;">→</div>
+      </button>
+    </div>
+
+    <div class="footer">
+      Made with ❤️ by Hermes
+    </div>
+  </div>
+</body>
+</html>

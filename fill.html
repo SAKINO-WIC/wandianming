@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>晚点名系统</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 420px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 24px;
+      color: #1a202c;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .date-badge {
+      background: #ebf8ff;
+      color: #2b6cb0;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 6px;
+    }
+    select, input, textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 16px;
+      color: #2d3748;
+      background: white;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #4299e1;
+    }
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .status-option {
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 8px;
+      text-align: center;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .status-option.selected {
+      border-color: #4299e1;
+      background: #ebf8ff;
+      color: #2b6cb0;
+    }
+    .status-option:active {
+      transform: scale(0.96);
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #4299e1;
+      color: white;
+    }
+    .btn-primary:active {
+      transform: scale(0.98);
+      background: #3182ce;
+    }
+    .btn-primary:disabled {
+      background: #a0c4e8;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: #edf2f7;
+      color: #4a5568;
+    }
+    .btn-secondary:active {
+      background: #e2e8f0;
+    }
+    .message {
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      display: none;
+    }
+    .message.success {
+      display: block;
+      background: #f0fff4;
+      color: #276749;
+      border: 1px solid #c6f6d5;
+    }
+    .message.error {
+      display: block;
+      background: #fff5f5;
+      color: #9b2c2c;
+      border: 1px solid #fed7d7;
+    }
+    .message.info {
+      display: block;
+      background: #ebf8ff;
+      color: #2b6cb0;
+      border: 1px solid #bee3f8;
+    }
+    .hidden { display: none; }
+    .footer {
+      text-align: center;
+      color: #a0aec0;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .nav-links a {
+      color: #4299e1;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .already-checked {
+      background: #f0fff4;
+      border: 1px solid #c6f6d5;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .already-checked .status-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: #276749;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
+      <div style="font-size: 40px;">🌙</div>
+      <h1>晚点名</h1>
+      <div class="date-badge" id="todayDate"></div>
+    </div>
+
+    <!-- Message -->
+    <div id="message" class="message"></div>
+
+    <!-- Already checked in -->
+    <div id="alreadyChecked" class="card hidden">
+      <div class="already-checked">
+        <div style="font-size: 32px;">✅</div>
+        <div class="status-text">今日已填写</div>
+        <div style="color: #718096; font-size: 14px; margin-top: 8px;" id="alreadyStatus"></div>
+        <div style="color: #a0aec0; font-size: 12px; margin-top: 4px;" id="alreadyTime"></div>
+      </div>
+      <p style="text-align: center; color: #718096; font-size: 14px;">明天见～</p>
+    </div>
+
+    <!-- Form -->
+    <div id="formCard" class="card">
+      <!-- Name -->
+      <div class="form-group">
+        <label>你的名字</label>
+        <select id="studentName">
+          <option value="">请选择姓名</option>
+        </select>
+      </div>
+
+      <!-- Room (auto-filled) -->
+      <div class="form-group" id="roomGroup" style="display:none;">
+        <label>寝室号</label>
+        <input type="text" id="roomNumber" readonly style="background:#f7fafc; color:#718096;">
+      </div>
+
+      <!-- Status -->
+      <div class="form-group">
+        <label>今晚状态</label>
+        <div class="status-grid" id="statusGrid"></div>
+      </div>
+
+      <!-- Note -->
+      <div class="form-group">
+        <label>备注（选填）</label>
+        <textarea id="note" rows="2" placeholder="比如：去XXX自习晚归、明天几点回来……"></textarea>
+      </div>
+
+      <!-- Submit -->
+      <button class="btn btn-primary" id="submitBtn" onclick="submitCheckin()" disabled>提交</button>
+    </div>
+
+    <!-- Bottom links -->
+    <div class="nav-links">
+      <a href="admin.html">📊 管理员看板</a>
+    </div>
+
+    <div class="footer">
+      Made with ❤️ by Hermes
+    </div>
+  </div>
+
+  <script>
+    const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let selectedStatus = null;
+    let todayStr = new Date().toISOString().split('T')[0];
+
+    // 显示今天日期
+    const d = new Date();
+    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+    document.getElementById('todayDate').textContent = 
+      `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 星期${weekdays[d.getDay()]}`;
+
+    // 加载学生名单
+    const nameSelect = document.getElementById('studentName');
+    STUDENTS.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.name;
+      opt.textContent = `${s.name}（${s.room}）`;
+      nameSelect.appendChild(opt);
+    });
+
+    // 加载状态选项
+    const statusGrid = document.getElementById('statusGrid');
+    STATUS_OPTIONS.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'status-option';
+      div.textContent = s.label;
+      div.dataset.value = s.value;
+      div.onclick = () => selectStatus(s.value);
+      statusGrid.appendChild(div);
+    });
+
+    // 选择姓名 → 自动填寝室号 + 检查是否已填
+    nameSelect.addEventListener('change', async function() {
+      const name = this.value;
+      const roomGroup = document.getElementById('roomGroup');
+      const roomInput = document.getElementById('roomNumber');
+      
+      if (name) {
+        const student = STUDENTS.find(s => s.name === name);
+        if (student) {
+          roomGroup.style.display = 'block';
+          roomInput.value = student.room;
+        }
+        await checkTodayStatus(name);
+      } else {
+        roomGroup.style.display = 'none';
+        roomInput.value = '';
+      }
+      updateSubmitBtn();
+    });
+
+    // 检查今天是否已提交
+    async function checkTodayStatus(name) {
+      const { data, error } = await supabase
+        .from('checkins')
+        .select('status, note, created_at')
+        .eq('date', todayStr)
+        .eq('name', name)
+        .maybeSingle();
+
+      if (data) {
+        // 已提交 → 隐藏表单，显示完成信息
+        document.getElementById('formCard').classList.add('hidden');
+        document.getElementById('alreadyChecked').classList.remove('hidden');
+        const statusLabel = STATUS_OPTIONS.find(s => s.value === data.status)?.label || data.status;
+        document.getElementById('alreadyStatus').textContent = statusLabel;
+        document.getElementById('alreadyTime').textContent = `提交时间：${new Date(data.created_at).toLocaleTimeString('zh-CN')}`;
+      } else {
+        document.getElementById('formCard').classList.remove('hidden');
+        document.getElementById('alreadyChecked').classList.add('hidden');
+      }
+    }
+
+    // 选择状态
+    function selectStatus(value) {
+      selectedStatus = value;
+      document.querySelectorAll('.status-option').forEach(el => {
+        el.classList.toggle('selected', el.dataset.value === value);
+      });
+      updateSubmitBtn();
+    }
+
+    function updateSubmitBtn() {
+      const name = document.getElementById('studentName').value;
+      document.getElementById('submitBtn').disabled = !name || !selectedStatus;
+    }
+
+    // 提交
+    async function submitCheckin() {
+      const name = document.getElementById('studentName').value;
+      const room = document.getElementById('roomNumber').value;
+      const note = document.getElementById('note').value.trim();
+      const btn = document.getElementById('submitBtn');
+      
+      if (!name || !selectedStatus) return;
+
+      btn.disabled = true;
+      btn.textContent = '提交中…';
+      showMessage('', '');
+
+      const { data, error } = await supabase
+        .from('checkins')
+        .insert({
+          date: todayStr,
+          name: name,
+          room: room,
+          status: selectedStatus,
+          note: note,
+        })
+        .select();
+
+      if (error) {
+        if (error.code === '23505') {
+          showMessage('你今天已经提交过了！', 'info');
+        } else {
+          showMessage('提交失败：' + error.message, 'error');
+          btn.disabled = false;
+          btn.textContent = '提交';
+        }
+        return;
+      }
+
+      showMessage('✅ 提交成功！今晚好好休息～', 'success');
+      btn.textContent = '✅ 已提交';
+      
+      // 刷新状态
+      await checkTodayStatus(name);
+    }
+
+    function showMessage(text, type) {
+      const msg = document.getElementById('message');
+      msg.textContent = text;
+      msg.className = 'message ' + type;
+    }
+  </script>
+</body>
+</html>

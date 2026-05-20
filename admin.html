@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>晚点名 · 管理看板</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 480px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 22px; color: #1a202c; text-align: center; }
+    .subtitle { text-align: center; color: #718096; font-size: 14px; margin-bottom: 16px; }
+    .date-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .date-nav button {
+      border: 1px solid #e2e8f0;
+      background: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .date-nav .date-label {
+      font-weight: 600;
+      font-size: 16px;
+      color: #2d3748;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .stat-box {
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+    }
+    .stat-box .num {
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .stat-box .label {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 2px;
+    }
+    .stat-box.completed .num { color: #38a169; }
+    .stat-box.pending .num { color: #e53e3e; }
+    .stat-box.total .num { color: #4299e1; }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .list-header h3 { font-size: 16px; color: #2d3748; }
+    .badge {
+      background: #edf2f7;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      color: #4a5568;
+    }
+    .student-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f4f8;
+    }
+    .student-item:last-child { border-bottom: none; }
+    .student-info { display: flex; align-items: center; gap: 10px; }
+    .student-name { font-weight: 500; color: #2d3748; }
+    .student-room { font-size: 12px; color: #a0aec0; }
+    .status-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-dot.done { background: #38a169; }
+    .status-dot.pending { background: #e2e8f0; }
+    .status-tag {
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: #ebf8ff;
+      color: #2b6cb0;
+    }
+    .status-tag.home { background: #fefcbf; color: #975a16; }
+    .status-tag.leave { background: #fed7d7; color: #9b2c2c; }
+    .status-tag.out { background: #e9d8fd; color: #6b46c1; }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-copy {
+      background: #4299e1;
+      color: white;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .btn-copy:active { background: #3182ce; }
+
+    /* Login screen */
+    #loginScreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+    }
+    #loginScreen .card { width: 100%; }
+    .password-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .password-input:focus { outline: none; border-color: #4299e1; }
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: #4299e1;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .hidden { display: none !important; }
+    .loading { text-align: center; color: #718096; padding: 40px 0; }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .filter-tab {
+      padding: 6px 14px;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      font-size: 13px;
+      cursor: pointer;
+      background: white;
+      color: #4a5568;
+      transition: all 0.2s;
+    }
+    .filter-tab.active {
+      background: #4299e1;
+      color: white;
+      border-color: #4299e1;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2d3748;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 24px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; }
+
+    .footer {
+      text-align: center;
+      color: #a0aec0;
+      font-size: 12px;
+      margin-top: 20px;
+    }
+    .back-link {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .back-link a {
+      color: #4299e1;
+      text-decoration: none;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="loginScreen">
+    <div class="container">
+      <div style="text-align: center; font-size: 36px; margin-bottom: 16px;">🔐</div>
+      <div class="card">
+        <h1>管理看板</h1>
+        <p class="subtitle">请输入管理员密码</p>
+        <input type="password" id="passwordInput" class="password-input" placeholder="密码" onkeydown="if(event.key==='Enter')login()">
+        <button class="btn-login" onclick="login()">进入看板</button>
+        <p style="text-align:center; margin-top:12px;">
+          <a href="fill.html" style="color:#4299e1; font-size:13px; text-decoration:none;">← 返回填写页</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden">
+    <div class="container">
+      <div class="back-link">
+        <a href="fill.html">← 返回填写页</a>
+      </div>
+
+      <h1>📊 管理看板</h1>
+      <p class="subtitle">晚点名情况一览</p>
+
+      <!-- Date Navigation -->
+      <div class="card">
+        <div class="date-nav">
+          <button onclick="changeDate(-1)">←</button>
+          <span class="date-label" id="currentDateLabel"></span>
+          <button onclick="changeDate(1)">→</button>
+        </div>
+        <div class="stats" id="statsContainer">
+          <div class="stat-box completed"><div class="num" id="statCompleted">0</div><div class="label">✅ 已填</div></div>
+          <div class="stat-box pending"><div class="num" id="statPending">0</div><div class="label">⏳ 未填</div></div>
+          <div class="stat-box total"><div class="num" id="statTotal">0</div><div class="label">👥 总人数</div></div>
+        </div>
+      </div>
+
+      <!-- Student List -->
+      <div class="card">
+        <div class="list-header">
+          <h3>📋 详情</h3>
+          <span class="badge" id="listBadge">0/0</span>
+        </div>
+
+        <div class="filter-tabs" id="filterTabs">
+          <button class="filter-tab active" data-filter="all" onclick="setFilter('all')">全部</button>
+          <button class="filter-tab" data-filter="pending" onclick="setFilter('pending')">未填</button>
+          <button class="filter-tab" data-filter="done" onclick="setFilter('done')">已填</button>
+        </div>
+
+        <div id="studentList"></div>
+
+        <!-- Copy button -->
+        <button class="btn btn-copy" onclick="copySummary()">📋 复制今日汇总</button>
+      </div>
+
+      <div class="footer">
+        Made with ❤️ by Hermes
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentDate = new Date();
+    let allRecords = [];
+    let currentFilter = 'all';
+    let isLoggedIn = false;
+
+    // Login
+    function login() {
+      const pwd = document.getElementById('passwordInput').value;
+      if (pwd === ADMIN_PASSWORD) {
+        isLoggedIn = true;
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        loadData();
+      } else {
+        showToast('密码错误');
+      }
+    }
+
+    // Load data
+    async function loadData() {
+      const dateStr = formatDate(currentDate);
+      document.getElementById('currentDateLabel').textContent = dateStr;
+
+      const { data, error } = await supabase
+        .from('checkins')
+        .select('*')
+        .eq('date', dateStr);
+
+      if (error) {
+        console.error('加载失败:', error);
+        showToast('加载数据失败');
+        return;
+      }
+
+      allRecords = data || [];
+      renderDashboard();
+    }
+
+    function formatDate(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function formatDateCN(d) {
+      const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+      return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 星期${weekdays[d.getDay()]}`;
+    }
+
+    function changeDate(delta) {
+      currentDate.setDate(currentDate.getDate() + delta);
+      document.getElementById('currentDateLabel').textContent = formatDateCN(currentDate);
+      loadData();
+    }
+
+    function getStatusLabel(value) {
+      const opt = STATUS_OPTIONS.find(s => s.value === value);
+      return opt ? opt.label : value;
+    }
+
+    function renderDashboard() {
+      const total = STUDENTS.length;
+      const completed = allRecords.length;
+      const pending = total - completed;
+      const completedNames = new Set(allRecords.map(r => r.name));
+
+      document.getElementById('statCompleted').textContent = completed;
+      document.getElementById('statPending').textContent = pending;
+      document.getElementById('statTotal').textContent = total;
+      document.getElementById('listBadge').textContent = `${completed}/${total}`;
+
+      // Build student list
+      const list = document.getElementById('studentList');
+      let html = '';
+
+      STUDENTS.forEach(s => {
+        const record = allRecords.find(r => r.name === s.name);
+        const isDone = !!record;
+        
+        if (currentFilter === 'done' && !isDone) return;
+        if (currentFilter === 'pending' && isDone) return;
+
+        let statusTag = '';
+        if (record) {
+          const label = getStatusLabel(record.status);
+          const cssClass = record.status === 'huijia' ? 'home' : record.status === 'qingjia' ? 'leave' : record.status === 'waichu' ? 'out' : '';
+          statusTag = `<span class="status-tag ${cssClass}">${label}</span>`;
+        }
+
+        html += `
+          <div class="student-item">
+            <div class="student-info">
+              <div class="status-dot ${isDone ? 'done' : 'pending'}"></div>
+              <div>
+                <div class="student-name">${s.name}</div>
+                <div class="student-room">${s.room}</div>
+              </div>
+            </div>
+            ${isDone ? statusTag : '<span style="color:#a0aec0;font-size:13px;">未填写</span>'}
+          </div>
+        `;
+      });
+
+      if (!html) {
+        html = '<p style="text-align:center;color:#a0aec0;padding:20px;">没有符合条件的学生</p>';
+      }
+      list.innerHTML = html;
+    }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.filter === filter);
+      });
+      renderDashboard();
+    }
+
+    // Copy summary
+    function copySummary() {
+      const dateStr = formatDate(currentDate);
+      const completedNames = new Set(allRecords.map(r => r.name));
+      
+      let text = `【晚点名 · ${formatDateCN(currentDate)}】\n`;
+      text += `已填：${allRecords.length}人 | 未填：${STUDENTS.length - allRecords.length}人\n`;
+      text += `━━━━━━━━━━━━━━━━\n`;
+
+      // Students by status
+      text += `\n✅ 已填写（${allRecords.length}人）：\n`;
+      allRecords.forEach(r => {
+        const label = getStatusLabel(r.status).replace(/[🏠🚗📋🌙]/g, '').trim();
+        const note = r.note ? `（${r.note}）` : '';
+        text += `  ${r.name}（${r.room}）→ ${label}${note}\n`;
+      });
+
+      const pendingStudents = STUDENTS.filter(s => !completedNames.has(s.name));
+      if (pendingStudents.length > 0) {
+        text += `\n⏳ 未填写（${pendingStudents.length}人）：\n`;
+        pendingStudents.forEach(s => {
+          text += `  ${s.name}（${s.room}）\n`;
+        });
+      }
+
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('✅ 已复制到剪贴板');
+      }).catch(() => {
+        // Fallback
+        textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast('✅ 已复制到剪贴板');
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+  </script>
+</body>
+</html>

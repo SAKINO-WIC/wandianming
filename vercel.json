@@ -1,0 +1,10 @@
+{
+  "buildCommand": false,
+  "outputDirectory": ".",
+  "framework": null,
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/fill", "destination": "/fill.html" },
+    { "source": "/admin", "destination": "/admin.html" }
+  ]
+}
