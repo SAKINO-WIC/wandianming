@@ -213,6 +213,7 @@ document.getElementById('bb').onclick=function(){
   document.getElementById('unm').textContent=stu[0];
   document.getElementById('urm').textContent='学号: '+stu[1]+' · '+stu[2];
   document.getElementById('sb').disabled=true;
+  document.getElementById('sb').textContent='提交';
   // 查记录
   var x=new XMLHttpRequest();
   x.open('GET',SUPABASE_URL+'/rest/v1/checkins?date=eq.'+new Date().toISOString().slice(0,10)+'&name=eq.'+encodeURIComponent(stu[0])+'&select=*');
