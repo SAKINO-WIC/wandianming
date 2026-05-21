@@ -382,8 +382,10 @@
           const maint = settings['maintenance'] === '1';
           document.getElementById('sMaintenance').checked = maint;
           updateToggle(document.getElementById('sMaintenance'));
+        } else {
+          showToast('加载设置失败: '+r.status);
         }
-      } catch(e) {}
+      } catch(e) { showToast('加载设置异常: '+e.message); }
     }
 
     async function saveSettings() {
@@ -400,17 +402,19 @@
         {key:'maintenance', value:maint},
       ];
 
-      try {
-        for(const u of updates){
-          await fetch(SET_API+'?on_conflict=key', {
-            method:'POST',
-            headers:{...H,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
-            body:JSON.stringify(u)
-          }).catch(()=>{});
-        }
+      let allOk = true;
+      for(const u of updates){
+        const resp = await fetch(SET_API+'?on_conflict=key', {
+          method:'POST',
+          headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+          body:JSON.stringify(u)
+        });
+        if(!resp.ok){ allOk=false; showToast(u.key+' 保存失败: '+resp.status); break; }
+      }
+      if(allOk){
         showToast('✅ 设置已保存，所有同学将看到更新');
         settings = {};
-      } catch(e) { showToast('保存失败，请重试'); }
+      }
     }
 
     function showToast(msg) {
