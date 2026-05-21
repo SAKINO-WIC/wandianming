@@ -98,7 +98,7 @@ textarea{resize:none}
 </div></div>
 <div class="field"><div class="field-label">🔢 学号</div>
 <input type="text" id="bs" inputmode="numeric" placeholder="输入10位学号" maxlength="10"></div>
-<button class="btn btn-pri" id="bb" disabled>绑定并进入</button>
+<button class="btn btn-pri" id="bb">绑定并进入</button>
 </div>
 
 <!-- 已提交 -->
@@ -179,8 +179,14 @@ function ck(){var n=document.getElementById('bn').value.trim();var s=document.ge
 function onBind(){
   var n=document.getElementById('bn').value.trim();
   var s=document.getElementById('bs').value.trim();
+  if(!n){document.getElementById('msg').textContent='⚠️ 请填写姓名';document.getElementById('msg').className='msg on err';return;}
+  if(s.length!==10){document.getElementById('msg').textContent='⚠️ 请输入完整的10位学号';document.getElementById('msg').className='msg on err';return;}
   var si=null;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){si=i;break;}}
-  if(si===null){document.getElementById('msg').textContent='⚠️ 姓名与学号不匹配';document.getElementById('msg').className='msg on err';return;}
+  if(si===null){
+    // 试试只看学号
+    for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][1]===s){document.getElementById('msg').textContent='⚠️ 姓名「'+n+'」与学号不匹配，你是否是「'+STUDENTS[i][0]+'」？';document.getElementById('msg').className='msg on err';return;}}
+    document.getElementById('msg').textContent='⚠️ 未找到该学生，请核对姓名和学号';document.getElementById('msg').className='msg on err';return;
+  }
   localStorage.setItem('wdm_name',n);
   localStorage.setItem('wdm_sid',s);
   showFill(STUDENTS[si]);
