@@ -181,7 +181,19 @@
 
   // ===== 维护模式 =====
   async function checkMaint(){
-    if(localStorage.getItem('debug_mode')==='1')return;
+    if(localStorage.getItem('debug_mode')==='1'){
+      // 显示调试标签
+      let badge = document.getElementById('debugBadge');
+      if(!badge){
+        badge = document.createElement('div');
+        badge.id='debugBadge';
+        badge.style.cssText='position:fixed;top:10px;right:10px;background:#22c55e;color:#fff;padding:4px 12px;border-radius:12px;font-size:11px;z-index:10000;cursor:pointer';
+        badge.textContent='🔧 调试模式 · 点击退出';
+        badge.onclick=function(){localStorage.removeItem('debug_mode');this.remove();location.reload();};
+        document.body.appendChild(badge);
+      }
+      return;
+    }
     try{
       const r=await fetch(SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.maintenance',{headers:H});
       if(r.ok){const d=await r.json();if(d.length&&d[0].value==='1'){document.getElementById('maintOverlay').classList.add('on');return true;}}
