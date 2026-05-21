@@ -139,6 +139,14 @@
             <div><div class="setting-label">🔑 管理员密码</div><div class="setting-desc">看板登录密码</div></div>
             <input type="text" id="sPassword" value="" style="width:140px;">
           </div>
+          <div class="setting-row">
+            <div><div class="setting-label">🔧 维护模式</div><div class="setting-desc">开启后同学看到"系统维护中"</div></div>
+            <label style="position:relative;display:inline-block;width:48px;height:26px;cursor:pointer;">
+              <input type="checkbox" id="sMaintenance" style="opacity:0;width:0;height:0;" onchange="updateToggle(this)">
+              <span id="toggleTrack" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:13px;transition:.3s;"></span>
+              <span id="toggleKnob" style="position:absolute;top:2px;left:2px;width:22px;height:22px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.2);"></span>
+            </label>
+          </div>
           <button class="btn-save" onclick="saveSettings()">💾 保存设置</button>
           <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:6px;">保存后立即生效，所有同学将看到更新后的时间</p>
         </div>
@@ -300,6 +308,12 @@
     }
 
     // ===== Settings =====
+    function updateToggle(cb){
+      const t=document.getElementById('toggleTrack');
+      const k=document.getElementById('toggleKnob');
+      if(cb.checked){t.style.background='#ef4444';k.style.transform='translateX(22px)';}
+      else{t.style.background='#cbd5e1';k.style.transform='translateX(0)';}
+    }
     async function loadSettings() {
       try {
         const r = await fetch(SET_API+'?select=*',{headers:H});
@@ -309,6 +323,9 @@
           document.getElementById('sFillStart').value = settings['fill_start'] || '19:00';
           document.getElementById('sFillEnd').value = settings['fill_end'] || '23:30';
           document.getElementById('sPassword').value = settings['admin_password'] || '';
+          const maint = settings['maintenance'] === '1';
+          document.getElementById('sMaintenance').checked = maint;
+          updateToggle(document.getElementById('sMaintenance'));
         }
       } catch(e) {}
     }
@@ -317,12 +334,14 @@
       const start = document.getElementById('sFillStart').value;
       const end = document.getElementById('sFillEnd').value;
       const pwd = document.getElementById('sPassword').value.trim();
+      const maint = document.getElementById('sMaintenance').checked ? '1' : '0';
       if(!pwd) return showToast('密码不能为空');
 
       const updates = [
         {key:'fill_start', value:start},
         {key:'fill_end', value:end},
         {key:'admin_password', value:pwd},
+        {key:'maintenance', value:maint},
       ];
 
       try {
