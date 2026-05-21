@@ -106,7 +106,7 @@ textarea{resize:none}
 <div class="field"><div class="field-label">🏡 今晚状态</div>
 <div class="srow"><div class="sbtn hm" onclick="ss('zaisushe')"><span class="ic">🏠</span><span class="lb">住校</span></div><div class="sbtn" onclick="ss('buzhusu')"><span class="ic">🚶</span><span class="lb">不住校</span></div></div></div>
 <div id="rw"><div class="field"><div class="field-label" style="color:#dc2626;">📝 不住校事由 <span style="color:#ef4444;">*必填</span></div><textarea id="ri" rows="2" placeholder="请填写理由…" oninput="cf()"></textarea></div></div>
-<button class="btn btn-pri" id="sb" onclick="sb()" disabled>请先绑定身份</button>
+<button class="btn btn-pri" id="sb" onclick="doSub()" disabled>请先绑定身份</button>
 </div>
 
 <div id="ae"><a href="admin.html">📊 管理看板</a></div>
@@ -252,7 +252,7 @@ function sm2(){
   window.mod=true;cf();
 }
 
-function sb(){
+function doSub(){
   // 从 localStorage 获取绑定信息
   var sn=localStorage.getItem('wdm_name'),ss=localStorage.getItem('wdm_sid');
   if(!sn||!ss){goBind();return;}
