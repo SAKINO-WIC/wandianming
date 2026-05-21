@@ -290,9 +290,9 @@ function sm2(){
 
 function doSub(){
   // 从 localStorage 获取绑定信息
-  var sn=localStorage.getItem('wdm_name'),ss=localStorage.getItem('wdm_sid');
-  if(!sn||!ss){goBind();return;}
-  var si=null;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn&&STUDENTS[i][1]===ss){si=i;break;}}
+  var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
+  if(!storedName||!storedSid){goBind();return;}
+  var si=null;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===storedName&&STUDENTS[i][1]===storedSid){si=i;break;}}
   if(si===null){goBind();return;}
   window.bs=STUDENTS[si];
   var name=window.bs[0],room=window.bs[2],sid=window.bs[1];
@@ -300,21 +300,22 @@ function doSub(){
   if(cst==='buzhusu'&&!reason)return;
   var btn=document.getElementById('sb');btn.disabled=true;btn.textContent='提交中…';
   var td=new Date().toISOString().slice(0,10);
+  // 统一用 POST + upsert（by date+name 唯一约束）
+  // 首次提交 → INSERT；修改 → 自动覆盖（upsert）
   var x=new XMLHttpRequest();
-  var method=(window.mod||window.rec)?'PATCH':'POST';
-  var url=method==='PATCH'?SUPABASE_URL+'/rest/v1/checkins?date=eq.'+td+'&name=eq.'+encodeURIComponent(name):SUPABASE_URL+'/rest/v1/checkins';
-  x.open(method,url);
+  x.open('POST',SUPABASE_URL+'/rest/v1/checkins?on_conflict=date,name');
   x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
   x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
   x.setRequestHeader('Content-Type','application/json');
+  x.setRequestHeader('Prefer','resolution=merge-duplicates');
   x.onload=function(){
-    if(x.status>=200&&x.status<300){
+    if(x.status===201){
       btn.textContent='✅ 已提交';
       document.getElementById('dbx').style.display='block';document.getElementById('fp').style.display='none';
       document.getElementById('dt').textContent='今日已填写 - '+name;
       document.getElementById('di').textContent=(cst==='zaisushe'?'🏠 住校':'🚶 不住校')+(reason?' · '+reason:'');
       window.mod=false;btn.textContent='提交';
-    }else{sm('提交失败','err');btn.disabled=false;btn.textContent='提交';}
+    }else{sm('提交失败('+x.status+')','err');btn.disabled=false;btn.textContent='提交';}
   };
   x.onerror=function(){sm('网络异常','err');btn.disabled=false;btn.textContent='提交';};
   x.send(JSON.stringify({date:td,name:name,room:room,status:cst,note:reason,student_id:sid}));
