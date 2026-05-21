@@ -164,16 +164,18 @@
   function renderPanel(list){
     const p=document.getElementById('namePanel');
     if(!list||!list.length){p.innerHTML='<div class="empty">无匹配</div>';return;}
-    p.innerHTML=list.map(s=>'<div class="it" onmousedown="pickName(\''+s.name+'\')" ontouchstart="pickName(\''+s.name+'\')">'+s.name+'<span class="rt">'+s.room+'</span></div>').join('');
+    p.innerHTML=list.map(s=>'<div class="it" onclick="pickName(\''+s.name+'\')">'+s.name+'<span class="rt">'+s.room+'</span></div>').join('');
   }
 
   let pTimer=null;
-  function openPanel(){
+  function openPanel(filtered){
     clearTimeout(pTimer);
     const dorm=bd.value;
     let list=STUDENTS;if(dorm)list=list.filter(s=>s.room===dorm);
-    const txt=document.getElementById('bindName').value.trim();
-    if(txt)list=list.filter(s=>s.name.includes(txt)||s.room.includes(txt));
+    if(filtered){
+      const txt=document.getElementById('bindName').value.trim();
+      if(txt)list=list.filter(s=>s.name.includes(txt)||s.room.includes(txt));
+    }
     renderPanel(list);
     document.getElementById('namePanel').classList.add('on');
     document.getElementById('nameDropBtn').classList.add('on');
@@ -184,7 +186,7 @@
   }
   function togglePanel(){
     if(document.getElementById('namePanel').classList.contains('on')){closePanel();}
-    else{openPanel();}
+    else{openPanel(false);} // 点按钮显示全部
   }
   function pickName(name){
     document.getElementById('bindName').value=name;
@@ -195,8 +197,7 @@
   }
   function onNameInput(){
     const p=document.getElementById('namePanel');
-    if(p.classList.contains('on')){openPanel();}
-    // 如果输入的名字匹配某人，自动填学号
+    if(p.classList.contains('on')){openPanel(true);} // 打字时筛选
     const val=document.getElementById('bindName').value.trim();
     const s=STUDENTS.find(x=>x.name===val);
     if(s)document.getElementById('bindSid').value=s.sid;
