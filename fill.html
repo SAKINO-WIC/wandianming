@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>信管2307班晚点名系统-SVIP专属定制版</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -214,6 +217,7 @@ document.getElementById('bb').onclick=function(){
   document.getElementById('urm').textContent='学号: '+stu[1]+' · '+stu[2];
   document.getElementById('sb').disabled=true;
   document.getElementById('sb').textContent='提交';
+  cf(); // 根据默认"住校"状态启用提交按钮
   // 查记录
   var x=new XMLHttpRequest();
   x.open('GET',SUPABASE_URL+'/rest/v1/checkins?date=eq.'+new Date().toISOString().slice(0,10)+'&name=eq.'+encodeURIComponent(stu[0])+'&select=*');
