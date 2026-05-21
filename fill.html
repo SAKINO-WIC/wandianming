@@ -77,6 +77,8 @@ var STUDENTS = [
     .user-bar .info{flex:1}
     .user-bar .nm{font-size:16px;font-weight:600;color:#16a34a}
     .user-bar .rm{font-size:11px;color:#94a3b8}
+    .user-bar .unbind{font-size:11px;color:#94a3b8;cursor:pointer;text-decoration:underline;flex-shrink:0}
+    .user-bar .unbind:active{color:#ef4444}
 
     .srow{display:flex;gap:10px}
     .sbtn{flex:1;padding:18px 12px;border:1.5px solid #e2e8f0;border-radius:12px;text-align:center;cursor:pointer;transition:all .15s;background:#f8fafc;user-select:none}
@@ -133,6 +135,7 @@ var STUDENTS = [
         <div class="nm" id="unm"></div>
         <div class="rm" id="urm"></div>
       </div>
+      <div class="unbind" onclick="unbind()">解绑</div>
     </div>
 
     <div class="field">
@@ -163,6 +166,14 @@ var STUDENTS = [
 
   let st='zaisushe',rec=null,boundStudent=null,modMode=false;
   const td=new Date().toISOString().slice(0,10);
+
+  // ===== 解绑 =====
+  function unbind(){
+    if(!confirm('解除绑定后需要重新绑定才能填写，确定吗？')) return;
+    localStorage.removeItem('wdm_name');
+    localStorage.removeItem('wdm_sid');
+    location.href='index.html';
+  }
 
   // ===== 检查绑定 =====
   const sn=localStorage.getItem('wdm_name'),ss=localStorage.getItem('wdm_sid');
