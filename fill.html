@@ -17,27 +17,29 @@
     .card{background:#fff;border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.06);padding:20px;margin-bottom:12px}
     .field{margin-bottom:16px}
     .field-label{font-size:13px;font-weight:500;color:#64748b;margin-bottom:6px}
-    select,input,textarea{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;color:#1e293b;background:#f8fafc;transition:all .15s}
-    select:focus,input:focus,textarea:focus{outline:none;border-color:#3b82f6;background:#fff}
-    textarea{resize:none}
-    .name-row{display:flex;gap:8px}
-    .name-row input{flex:1}
-    .name-row .btn{
-      width:48px;flex-shrink:0;border:1.5px solid #e2e8f0;border-radius:10px;
-      background:#f1f5f9;font-size:20px;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;user-select:none;
-      -webkit-tap-highlight-color:transparent;transition:all .15s
+
+    .sid-row{display:flex;gap:8px;align-items:stretch}
+    .sid-row input{flex:1;padding:13px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:18px;color:#1e293b;background:#f8fafc;text-align:center;letter-spacing:2px;transition:all .15s}
+    .sid-row input:focus{outline:none;border-color:#3b82f6;background:#fff}
+    .sid-row .check-btn{
+      width:52px;flex-shrink:0;border:1.5px solid #e2e8f0;border-radius:10px;
+      background:#f1f5f9;font-size:14px;font-weight:600;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;user-select:none;color:#475569
     }
-    .name-row .btn:active{background:#e2e8f0;transform:scale(.95)}
-    .name-row .btn.on{background:#3b82f6;color:#fff;border-color:#3b82f6}
-    .panel{display:none;position:absolute;top:calc(100%+4px);left:0;right:56px;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50}
-    .panel.on{display:block}
-    .panel .it{padding:11px 14px;font-size:15px;color:#1e293b;cursor:pointer;border-bottom:1px solid #f1f5f9}
-    .panel .it:last-child{border-bottom:none}
-    .panel .it:active{background:#eff6ff}
-    .panel .it .rt{font-size:12px;color:#94a3b8;margin-left:8px}
-    .panel .empty{padding:20px;text-align:center;color:#94a3b8;font-size:14px}
-    .name-wrap{position:relative}
+    .sid-row .check-btn:active{background:#e2e8f0;transform:scale(.95)}
+    .sid-row .check-btn.ok{background:#22c55e;color:#fff;border-color:#22c55e}
+
+    .name-confirm{
+      display:none;padding:10px 14px;background:#f0fdf4;border:1px solid #bbf7d0;
+      border-radius:10px;margin-top:6px;text-align:center
+    }
+    .name-confirm.on{display:block}
+    .name-confirm .nm{font-size:17px;font-weight:600;color:#16a34a}
+    .name-confirm .rm{font-size:12px;color:#94a3b8;margin-top:2px}
+
+    select{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;color:#1e293b;background:#f8fafc}
+    select:focus{outline:none;border-color:#3b82f6;background:#fff}
+
     .srow{display:flex;gap:10px}
     .sbtn{flex:1;padding:16px 12px;border:1.5px solid #e2e8f0;border-radius:12px;text-align:center;cursor:pointer;transition:all .15s;background:#f8fafc;user-select:none}
     .sbtn:active{transform:scale(.97)}
@@ -47,23 +49,33 @@
     .sbtn.hm .lb{color:#16a34a}
     .sbtn.aw{border-color:#ef4444;background:#fef2f2}
     .sbtn.aw .lb{color:#dc2626}
+
     #rw{overflow:hidden;max-height:0;opacity:0;transition:all .25s}
     #rw.on{max-height:140px;opacity:1}
+    textarea{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:15px;color:#1e293b;background:#f8fafc;resize:none}
+    textarea:focus{outline:none;border-color:#ef4444;background:#fff}
+
     .btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;transition:all .15s}
     .btn-pri{background:#1e293b;color:#fff}
     .btn-pri:active{background:#334155}
     .btn-pri:disabled{background:#cbd5e1;cursor:not-allowed}
     .btn-out{background:transparent;color:#3b82f6;border:1.5px solid #3b82f6}
+
     .msg{padding:12px 14px;border-radius:10px;font-size:14px;margin-bottom:12px;display:none}
     .msg.on{display:flex;align-items:center;gap:8px}
     .msg.ok{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
     .msg.err{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
     .msg.load{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
     .msg.warn{background:#fefce8;color:#a16207;border:1px solid #fef08a}
+
     .done{padding:20px;text-align:center}
     .done .bi{font-size:48px}
     .done h2{font-size:18px;margin:8px 0 4px;color:#1e293b}
     .done .st{color:#64748b;font-size:14px;margin-bottom:12px}
+
+    .toggle-mode{text-align:right;margin-top:4px}
+    .toggle-mode span{color:#3b82f6;font-size:13px;cursor:pointer}
+
     .al{text-align:center;margin-top:12px}
     .al a{color:#94a3b8;font-size:12px;text-decoration:none}
     .ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:16px}
@@ -79,8 +91,6 @@
 
 <div class="container">
   <div id="msg" class="msg"></div>
-
-  <!-- 时间窗口提示 -->
   <div id="closedMsg" class="card" style="display:none;">
     <div class="done">
       <div class="bi">⏰</div>
@@ -89,34 +99,39 @@
     </div>
   </div>
 
-  <!-- 已提交 -->
   <div id="doneBox" class="card" style="display:none;">
     <div class="done">
       <div class="bi">✅</div>
-      <h2>今日已填写</h2>
+      <h2 id="doneTitle">今日已填写</h2>
       <div class="st" id="doneInfo"></div>
       <button class="btn btn-out" id="modifyBtn" onclick="startModify()">✏️ 修改</button>
     </div>
   </div>
 
-  <!-- 表单 -->
   <div id="formCard" class="card">
-    <div class="field">
+    <!-- 学号（主要方式） -->
+    <div class="field" id="sidField">
+      <div class="field-label">🔢 学号</div>
+      <div class="sid-row">
+        <input type="text" id="sidInput" inputmode="numeric" pattern="[0-9]*"
+               placeholder="输入学号" maxlength="10" autocomplete="off"
+               oninput="onSidInput()" onkeydown="if(event.key==='Enter')verifySid()">
+        <div class="check-btn" id="sidCheckBtn" onclick="verifySid()">确认</div>
+      </div>
+      <div class="name-confirm" id="nameConfirm">
+        <div class="nm" id="confirmedName"></div>
+        <div class="rm" id="confirmedRoom"></div>
+      </div>
+      <div class="toggle-mode"><span id="toggleMode">📋 从列表选择</span></div>
+    </div>
+
+    <!-- 选宿舍（备选方式） -->
+    <div class="field" id="dormField" style="display:none;">
       <div class="field-label">🏠 宿舍</div>
       <select id="ds" onchange="filterNames()"><option value="">全部宿舍</option></select>
     </div>
 
-    <div class="field">
-      <div class="field-label">👤 姓名</div>
-      <div class="name-wrap">
-        <div class="name-row">
-          <input type="text" id="ni" placeholder="输入或点 ▼ 选" autocomplete="off" oninput="onType()" onfocus="openP()" onblur="setTimeout(closeP,200)">
-          <div class="btn" id="nb" onclick="toggleP()">▼</div>
-        </div>
-        <div class="panel" id="np"></div>
-      </div>
-    </div>
-
+    <!-- 住校情况 -->
     <div class="field">
       <div class="field-label">🏡 今晚状态</div>
       <div class="srow" id="statusRow">
@@ -142,16 +157,147 @@
 <script>
   const API = SUPABASE_URL + '/rest/v1/checkins';
   const H = {'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json'};
-  let st = 'zaisushe', rec = null, modifyMode = false;
+
+  let st = 'zaisushe', rec = null, modifyMode = false, verifiedStudent = null, chooseMode = false;
   const td = new Date().toISOString().slice(0,10);
-  const sn = localStorage.getItem('wdm_name')||'';
+  let fillStart = '19:00', fillEnd = '23:30';
 
   // ===== 日期 =====
   const wd=['日','一','二','三','四','五','六']; const D=new Date();
-  document.getElementById('td').textContent = D.getFullYear()+'年'+(D.getMonth()+1)+'月'+D.getDate()+'日 星期'+wd[D.getDay()];
+  document.getElementById('td').textContent=D.getFullYear()+'年'+(D.getMonth()+1)+'月'+D.getDate()+'日 星期'+wd[D.getDay()];
 
-  // ===== 时间窗口（从Supabase读取）=====
-  let fillStart = '19:00', fillEnd = '23:30';
+  // ===== 填写学号 =====
+  function onSidInput(){
+    document.getElementById('nameConfirm').classList.remove('on');
+    document.getElementById('sidCheckBtn').classList.remove('ok');
+    verifiedStudent = null;
+    ck();
+    // 输入满10位自动验证
+    if(document.getElementById('sidInput').value.length===10) verifySid();
+  }
+
+  function verifySid(){
+    const sid = document.getElementById('sidInput').value.trim();
+    if(sid.length<10) return;
+    const s = STUDENTS.find(x => x.sid === sid);
+    if(s){
+      verifiedStudent = s;
+      document.getElementById('confirmedName').textContent = '👤 ' + s.name;
+      document.getElementById('confirmedRoom').textContent = '🏠 ' + s.room;
+      document.getElementById('nameConfirm').classList.add('on');
+      document.getElementById('sidCheckBtn').classList.add('ok');
+      document.getElementById('sidCheckBtn').textContent = '✓';
+      localStorage.setItem('wdm_sid', sid);
+      localStorage.setItem('wdm_name', s.name);
+      // 自动检查是否已提交
+      fetchMyRecord(s.name).then(d => {
+        if(d){
+          rec = d; showDone(d);
+        }
+      });
+    } else {
+      showMsg('⚠️ 未找到该学号，请核对','err');
+    }
+    ck();
+  }
+
+  // ===== 切换模式 =====
+  document.getElementById('toggleMode').addEventListener('click', function(){
+    chooseMode = !chooseMode;
+    document.getElementById('sidField').style.display = chooseMode ? 'none' : 'block';
+    document.getElementById('dormField').style.display = chooseMode ? 'block' : 'none';
+    this.textContent = chooseMode ? '🔢 输入学号' : '📋 从列表选择';
+    if(chooseMode) loadDorms();
+  });
+
+  // ===== 备选：宿舍+姓名 =====
+  function loadDorms(){
+    const dorms = [...new Set(STUDENTS.map(s=>s.room))].sort();
+    const sel = document.getElementById('ds');
+    sel.innerHTML = '<option value="">全部宿舍</option>';
+    dorms.forEach(r => {const o=document.createElement('option');o.value=r;o.textContent=r;sel.appendChild(o)});
+  }
+
+  function filterNames(){
+    const dorm = document.getElementById('ds').value;
+    let list = STUDENTS;
+    if(dorm) list = list.filter(s => s.room === dorm);
+    // Show as name tags
+    const container = document.getElementById('dormField');
+    let existing = container.querySelector('.name-tags');
+    if(!existing){
+      existing = document.createElement('div'); existing.className = 'name-tags';
+      existing.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-top:8px';
+      container.appendChild(existing);
+    }
+    existing.innerHTML = list.map(s =>
+      `<div style="padding:6px 14px;border:1.5px solid #e2e8f0;border-radius:16px;font-size:14px;cursor:pointer;background:white"
+            onclick="pickFromList('${s.name}','${s.sid}','${s.room}')">${s.name}</div>`
+    ).join('');
+  }
+
+  function pickFromList(name, sid, room){
+    verifiedStudent = {name, sid, room};
+    document.getElementById('sidInput').value = sid;
+    chooseMode = false;
+    document.getElementById('sidField').style.display = 'block';
+    document.getElementById('dormField').style.display = 'none';
+    document.getElementById('toggleMode').textContent = '📋 从列表选择';
+    verifySid();
+  }
+
+  // ===== 从Supabase查记录 =====
+  async function fetchMyRecord(name){
+    try{
+      const r=await fetch(API+'?date=eq.'+td+'&name=eq.'+encodeURIComponent(name)+'&select=*',{headers:H});
+      if(!r.ok) return null;
+      const d=await r.json();
+      return d&&d.length?d[0]:null;
+    }catch(e){return null}
+  }
+
+  // ===== 显示已提交状态 =====
+  function showDone(rec){
+    document.getElementById('doneBox').style.display='block';
+    document.getElementById('formCard').style.display='none';
+    const lbl=rec.status==='zaisushe'?'🏠 住校':'🚶 不住校';
+    document.getElementById('doneTitle').textContent = '今日已填写 - ' + rec.name;
+    document.getElementById('doneInfo').textContent = lbl+(rec.note?' · '+rec.note:'');
+  }
+
+  // ===== 开始修改 =====
+  function startModify(){
+    if(!inTimeWindow()) return showMsg('⏰ 当前不在填写时间，无法修改','err');
+    modifyMode=true;
+    document.getElementById('doneBox').style.display='none';
+    document.getElementById('formCard').style.display='block';
+    if(rec){
+      document.getElementById('sidInput').value = verifiedStudent ? verifiedStudent.sid : '';
+      setSt(rec.status);
+      if(rec.status==='buzhusu'&&rec.note) document.getElementById('ri').value=rec.note;
+    }
+    document.getElementById('sb').textContent='✏️ 修改提交';
+    ck();
+  }
+
+  // ===== 状态 =====
+  function setSt(v){
+    st=v;
+    document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('hm','aw'));
+    const btns=document.querySelectorAll('.sbtn');
+    if(v==='zaisushe') btns[0].classList.add('hm'); else btns[1].classList.add('aw');
+    document.getElementById('rw').classList.toggle('on',v==='buzhusu');
+    ck();
+  }
+  setSt('zaisushe');
+
+  function ck(){
+    const sidOk = verifiedStudent !== null;
+    const reason = document.getElementById('ri').value.trim();
+    document.getElementById('sb').disabled = !(sidOk && (st==='zaisushe'||reason));
+  }
+
+  // ===== 时间窗口 =====
   async function loadSettings(){
     try{
       const r=await fetch(SUPABASE_URL+'/rest/v1/settings?select=*',{headers:H});
@@ -170,158 +316,81 @@
     const [sh,sm]=fillStart.split(':').map(Number);
     const [eh,em]=fillEnd.split(':').map(Number);
     const now=n.getHours()*60+n.getMinutes();
-    const s=sh*60+sm, e=eh*60+em;
-    return now>=s && now<=e;
+    return now>=sh*60+sm && now<=eh*60+em;
   }
   function checkTimeWindow(){
     if(inTimeWindow()) return;
     document.getElementById('closedMsg').style.display='block';
     document.getElementById('formCard').style.display='none';
-    document.getElementById('timeHint').textContent = '⏰ 填写时间：' + fillStart + ' ~ ' + fillEnd;
+    document.getElementById('timeHint').textContent = '⏰ 填写时间：'+fillStart+' ~ '+fillEnd;
   }
 
-  // ===== 宿舍 =====
-  const dorms=[...new Set(STUDENTS.map(s=>s.room))].sort();
-  const ds=document.getElementById('ds');
-  dorms.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;ds.appendChild(o)});
-
-  // ===== 姓名面板 =====
-  const ni=document.getElementById('ni'), np=document.getElementById('np');
-  function getList(t,d){let l=STUDENTS;if(d)l=l.filter(s=>s.room===d);if(t){const kw=t.trim().toLowerCase();l=l.filter(s=>s.name.includes(kw)||s.room.includes(kw))}return l}
-  function renderP(l){if(!l||!l.length){np.innerHTML='<div class="empty">无匹配</div>';return}
-    np.innerHTML=l.map(s=>'<div class="it" onmousedown="pick(\''+s.name+'\')" ontouchstart="pick(\''+s.name+'\')">'+s.name+'<span class="rt">'+s.room+'</span></div>').join('')}
-  function refP(){const d=document.getElementById('ds').value;renderP(getList(ni.value,d))}
-  function openP(){clearTimeout(window._pt);refP();np.classList.add('on');document.getElementById('nb').classList.add('on')}
-  function closeP(){np.classList.remove('on');document.getElementById('nb').classList.remove('on')}
-  function toggleP(){np.classList.contains('on')?closeP():openP()}
-  function pick(n){ni.value=n;localStorage.setItem('wdm_name',n);closeP();ck()}
-  function onType(){const v=ni.value.trim();if(v)localStorage.setItem('wdm_name',v);if(np.classList.contains('on'))refP();ck()}
-  function filterNames(){if(np.classList.contains('on'))refP();ck()}
-
-  // ===== 状态 =====
-  function setSt(v){
-    st=v;
-    document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('hm','aw'));
-    const btns=document.querySelectorAll('.sbtn');
-    if(v==='zaisushe') btns[0].classList.add('hm'); else btns[1].classList.add('aw');
-    document.getElementById('rw').classList.toggle('on',v==='buzhusu');
-    ck();
-  }
-  setSt('zaisushe');
-
-  function getNm(){return ni.value.trim()}
-  function ck(){
-    const n=getNm();
-    const r=document.getElementById('ri').value.trim();
-    document.getElementById('sb').disabled=!(n&&(st==='zaisushe'||r));
-  }
-
-  // ===== 读取已有记录（修改时用）=====
-  async function fetchMyRecord(name){
-    try{
-      const r=await fetch(API+'?date=eq.'+td+'&name=eq.'+encodeURIComponent(name)+'&select=*',{headers:H});
-      if(!r.ok) return null;
-      const d=await r.json();
-      return d&&d.length?d[0]:null;
-    }catch(e){return null}
-  }
-
-  // ===== 检查已提交 =====
-  async function checkDone(){
-    rec = await fetchMyRecord(sn);
-    if(!rec) return;
-    document.getElementById('doneBox').style.display='block';
-    document.getElementById('formCard').style.display='none';
-    const lbl=rec.status==='zaisushe'?'🏠 住校':'🚶 不住校';
-    document.getElementById('doneInfo').textContent = lbl+(rec.note?' · '+rec.note:'');
-  }
-
-  // ===== 修改 =====
-  function startModify(){
-    if(!inTimeWindow()){
-      return msg('⏰ 当前不在填写时间范围内，无法修改','err');
-    }
-    modifyMode=true;
-    document.getElementById('doneBox').style.display='none';
-    document.getElementById('formCard').style.display='block';
-    if(rec){
-      ni.value=rec.name;
-      setSt(rec.status);
-      if(rec.status==='buzhusu'&&rec.note) document.getElementById('ri').value=rec.note;
-    }
-    document.getElementById('sb').textContent='✏️ 修改提交';
-    ck();
-  }
-
-  // ===== 提交（Upsert）=====
+  // ===== 提交 =====
   async function sub(){
-    const name=getNm();
-    if(!name) return msg('请填写姓名','err');
-    const dorm=document.getElementById('ds').value;
-    const student=STUDENTS.find(s=>s.name===name);
-    const room=student?student.room:(dorm||'');
-    const reason=st==='buzhusu'?document.getElementById('ri').value.trim():'';
-    if(st==='buzhusu'&&!reason) return msg('不住校请填写事由','err');
+    if(!verifiedStudent) return showMsg('请先输入学号验证身份','err');
+    const name = verifiedStudent.name;
+    const room = verifiedStudent.room;
+    const sid = verifiedStudent.sid;
+    const reason = st==='buzhusu'?document.getElementById('ri').value.trim():'';
+    if(st==='buzhusu'&&!reason) return showMsg('不住校请填写事由','err');
 
     const btn=document.getElementById('sb');
     btn.disabled=true; btn.textContent='提交中…';
-    msg('提交中…','load');
+    showMsg('提交中…','load');
 
     try{
-      // 先查是否存在
-      const existing=modifyMode?rec:await fetchMyRecord(name);
-      
+      const existing = modifyMode ? rec : await fetchMyRecord(name);
       let r;
       if(existing){
-        // UPDATE
         r=await fetch(API+'?date=eq.'+td+'&name=eq.'+encodeURIComponent(name),{
-          method:'PATCH',headers:H,
-          body:JSON.stringify({status:st,note:reason,room})
+          method:'PATCH', headers:H,
+          body:JSON.stringify({status:st, note:reason, room, student_id:sid})
         });
       }else{
-        // INSERT
         r=await fetch(API,{
-          method:'POST',headers:H,
-          body:JSON.stringify({date:td,name,room,status:st,note:reason})
+          method:'POST', headers:H,
+          body:JSON.stringify({date:td, name, room, status:st, note:reason, student_id:sid})
         });
       }
 
       if(r.ok || r.status===201 || r.status===204 || r.status===200){
-        msg((modifyMode?'✅ 修改成功！':'✅ 提交成功！'),'ok');
+        showMsg((modifyMode?'✅ 修改成功！':'✅ 提交成功！'),'ok');
         btn.textContent='✅ 已提交';
         document.getElementById('doneBox').style.display='block';
         document.getElementById('formCard').style.display='none';
         const lbl=st==='zaisushe'?'🏠 住校':'🚶 不住校';
-        document.getElementById('doneInfo').textContent=lbl+(reason?' · '+reason:'');
-        localStorage.setItem('wdm_name',name);
+        document.getElementById('doneTitle').textContent = '今日已填写 - '+name;
+        document.getElementById('doneInfo').textContent = lbl+(reason?' · '+reason:'');
+        localStorage.setItem('wdm_sid', sid);
+        localStorage.setItem('wdm_name', name);
         modifyMode=false;
         btn.textContent='提交';
       }else{
         const err=await r.json().catch(()=>({}));
-        msg('提交失败：'+(err.message||'请稍后再试'),'err');
+        showMsg('提交失败：'+(err.message||'请稍后再试'),'err');
         btn.disabled=false; btn.textContent='提交';
       }
     }catch(e){
-      msg('网络异常，请稍后重试','err');
+      showMsg('网络异常，请稍后重试','err');
       btn.disabled=false; btn.textContent='提交';
     }
   }
 
-  function msg(t,type){
+  function showMsg(t,type){
     const m=document.getElementById('msg');
     m.textContent=t; m.className='msg on '+type;
     if(type==='ok') setTimeout(()=>m.classList.remove('on'),3000);
   }
 
   // ===== 初始化 =====
-  refP();
   loadSettings();
+  loadDorms();
 
-  if(sn){
-    ni.value=sn;
-    const student=STUDENTS.find(s=>s.name===sn);
-    if(student){document.getElementById('ds').value=student.room}
-    checkDone();
+  // 恢复上次的学号
+  const savedSid = localStorage.getItem('wdm_sid') || '';
+  if(savedSid){
+    document.getElementById('sidInput').value = savedSid;
+    verifySid();
   }
 </script>
 </body>
