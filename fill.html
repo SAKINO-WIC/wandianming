@@ -309,7 +309,7 @@ function doSub(){
   x.setRequestHeader('Content-Type','application/json');
   x.setRequestHeader('Prefer','resolution=merge-duplicates');
   x.onload=function(){
-    if(x.status===201){
+    if(x.status===201||x.status===200){
       btn.textContent='✅ 已提交';
       document.getElementById('dbx').style.display='block';document.getElementById('fp').style.display='none';
       document.getElementById('dt').textContent='今日已填写 - '+name;
