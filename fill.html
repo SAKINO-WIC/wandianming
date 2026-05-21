@@ -294,8 +294,8 @@ function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>
 
 // ===== 初始化绑定状态 =====
 fl();
-var sn=localStorage.getItem('wdm_name'),ss=localStorage.getItem('wdm_sid');
-if(sn&&ss){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn&&STUDENTS[i][1]===ss){document.getElementById('bn').value=sn;document.getElementById('bs').value=ss;document.getElementById('bb').click();break;}}}
+var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
+if(storedName&&storedSid){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===storedName&&STUDENTS[i][1]===storedSid){document.getElementById('bn').value=storedName;document.getElementById('bs').value=storedSid;document.getElementById('bb').click();break;}}}
 
 // ===== 返回按钮检查 =====
 window.addEventListener('pageshow',function(){
