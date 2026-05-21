@@ -209,7 +209,28 @@ function timeCheck(){
   var tc=document.getElementById('tw');
   if(outer){
     tc.style.display='flex';
-    tc.innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:12px">⏰</div><h2 style="font-size:18px;color:#1e293b;margin-bottom:8px">当前不在填写时间</h2><p style="color:#94a3b8;font-size:14px;max-width:300px;margin:0 auto">填写时间：'+start+' ~ '+end+'<br>请在这个时间段内填写</p></div>';
+    tc.innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:12px;cursor:pointer;user-select:none" id="twc">⏰</div><h2 style="font-size:18px;color:#1e293b;margin-bottom:8px">当前不在填写时间</h2><p style="color:#94a3b8;font-size:14px;max-width:300px;margin:0 auto">填写时间：'+start+' ~ '+end+'<br>请在这个时间段内填写</p><p style="margin-top:20px"><a href="admin.html" style="color:#3b82f6;font-size:13px;text-decoration:none">📊 管理看板</a></p></div>';
+    // 隐藏入口：点⏰7次 → 调试模式
+    var wc2=0,wt2=null;
+    document.getElementById('twc').onclick=function(){
+      wc2++;clearTimeout(wt2);
+      wt2=setTimeout(function(){wc2=0;},1500);
+      if(wc2>=7){wc2=0;
+        var pwd=prompt('输入管理员密码');
+        if(!pwd)return;
+        var x3=new XMLHttpRequest();
+        x3.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
+        x3.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+        x3.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+        x3.onload=function(){
+          if(x3.status===200){
+            try{var dd=JSON.parse(x3.responseText);var rp=dd.length>0?dd[0].value:'admin666';
+            if(pwd===rp){localStorage.setItem('debug_mode','1');location.reload();}else alert('密码错误');
+            }catch(e){alert('验证失败');}
+          }else alert('网络错误');
+        };x3.send();
+      }
+    };
   }else{tc.style.display='none';tc.innerHTML='';}
 }
 
