@@ -9,10 +9,10 @@
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
 .header{background:linear-gradient(135deg,#1e293b,#334155);padding:28px 20px 16px;text-align:center;color:#fff;position:relative}
 .header .moon{font-size:36px;display:block;margin-bottom:4px;cursor:pointer;user-select:none}
-.header h1{font-size:20px;font-weight:600}
+.header h1{font-size:20px;font-weight:600;letter-spacing:1px}
 .header .sub{font-size:11px;opacity:.5;margin-top:-2px;margin-bottom:6px}
 .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
-.container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px}
+.container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
 .card{background:#fff;border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.06);padding:24px;margin-bottom:12px}
 .hello{text-align:center;margin-bottom:20px}
 .hello .icon{font-size:48px;margin-bottom:8px}
@@ -21,7 +21,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .field{margin-bottom:14px}
 .field-label{font-size:13px;font-weight:500;color:#64748b;margin-bottom:5px}
 select,input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;color:#1e293b;background:#f8fafc}
-:focus{outline:none;border-color:#3b82f6!important;background:#fff}
+select:focus,input:focus{outline:none;border-color:#3b82f6;background:#fff}
+
+/* 姓名输入+下拉按钮 */
+.nr{display:flex;gap:8px}
+.nr input{flex:1}
+.nr .db{width:48px;flex-shrink:0;border:1.5px solid #e2e8f0;border-radius:10px;background:#f1f5f9;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#475569;user-select:none;-webkit-tap-highlight-color:transparent}
+.nr .db:active{background:#e2e8f0}
+.nw{position:relative}
+.np{display:none;position:absolute;top:calc(100%+4px);left:0;right:56px;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;max-height:210px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50}
+.np.on{display:block}
+.np .it{padding:11px 14px;font-size:15px;color:#1e293b;cursor:pointer;border-bottom:1px solid #f1f5f9}
+.np .it:last-child{border-bottom:none}
+.np .it:active{background:#eff6ff}
+.np .it .rt{font-size:12px;color:#94a3b8;margin-left:6px}
+.np .empty{padding:20px;text-align:center;color:#94a3b8;font-size:14px}
+
 .btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer}
 .btn-pri{background:#1e293b;color:#fff}
 .btn-pri:disabled{background:#cbd5e1;cursor:not-allowed}
@@ -29,10 +44,10 @@ select,input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radi
 .msg.on{display:block}
 .msg.ok{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
 .msg.err{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
-.ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:20px}
 #ae{display:none;text-align:center;margin-top:12px}
 #ae.on{display:block}
-#ae a{color:#3b82f6;font-size:14px;text-decoration:none}
+#ae a{color:#3b82f6;font-size:14px;text-decoration:none;font-weight:500}
+.ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:20px}
 </style>
 </head>
 <body>
@@ -59,29 +74,19 @@ select,input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radi
 </select></div>
 
 <div class="field"><div class="field-label">👤 姓名</div>
-<select id="bn">
-<option value="">请选择姓名</option>
-<option value="蔡名杰">蔡名杰</option><option value="曹家乐">曹家乐</option><option value="曹智宣">曹智宣</option><option value="狄梦豪">狄梦豪</option>
-<option value="高瑞鹏">高瑞鹏</option><option value="郭宇峰">郭宇峰</option><option value="缴少博">缴少博</option><option value="寇翼鹏">寇翼鹏</option>
-<option value="林宽">林宽</option><option value="刘倍源">刘倍源</option><option value="刘春鹏">刘春鹏</option><option value="刘运来">刘运来</option>
-<option value="吕英豪">吕英豪</option><option value="皮杰">皮杰</option><option value="万小转">万小转</option>
-<option value="王哲">王哲</option><option value="吴泓滨">吴泓滨</option><option value="徐昊涵">徐昊涵</option>
-<option value="杨昌秀">杨昌秀</option><option value="杨雨非">杨雨非</option><option value="张骏意">张骏意</option>
-<option value="张天予">张天予</option><option value="张志杰">张志杰</option><option value="赵文宇">赵文宇</option>
-<option value="蔡文清">蔡文清</option><option value="陈蕾">陈蕾</option><option value="陈萌">陈萌</option><option value="程研">程研</option>
-<option value="何欣怡">何欣怡</option><option value="胡亮亮">胡亮亮</option><option value="李雅琪">李雅琪</option>
-<option value="梁博文">梁博文</option><option value="刘瑷烨">刘瑷烨</option><option value="刘政琪">刘政琪</option><option value="马莹莹">马莹莹</option>
-<option value="潘玥彤">潘玥彤</option><option value="王青青">王青青</option><option value="王睿">王睿</option>
-<option value="王雨欣">王雨欣</option><option value="杨羽涵">杨羽涵</option>
-<option value="姚蒙娜蝶舞">姚蒙娜蝶舞</option><option value="尹润甜">尹润甜</option><option value="喻忠香">喻忠香</option>
-<option value="张文静">张文静</option><option value="周凯旋">周凯旋</option><option value="朱思怡">朱思怡</option>
-</select></div>
+<div class="nw">
+<div class="nr">
+<input type="text" id="bn" placeholder="输入姓名或点▼选择" autocomplete="off">
+<div class="db" id="ndb">▼</div>
+</div>
+<div class="np" id="np"></div>
+</div></div>
 
 <div class="field"><div class="field-label">🔢 学号</div>
 <input type="text" id="bs" inputmode="numeric" placeholder="输入10位学号" maxlength="10">
 </div>
 
-<button class="btn btn-pri" id="bb" onclick="db()" disabled>绑定并进入</button>
+<button class="btn btn-pri" id="bb" disabled>绑定并进入</button>
 </div>
 
 <!-- 欢迎页 -->
@@ -96,9 +101,9 @@ select,input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radi
 </div>
 
 <script>
+// ===== 配置 =====
 var SUPABASE_URL='https://jgiyahtmpvfqtgdfxxgi.supabase.co';
 var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnaXlhaHRtcHZmcXRnZGZ4eGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTEwNTIsImV4cCI6MjA5NDg2NzA1Mn0.K2XGYGccLv6rfPyuAYVYufhIy1mEpABMHf77Sz1IqZE';
-
 var STUDENTS=[
 ['蔡名杰','2330130273','26-521'],['曹家乐','2330130274','26-521'],['曹智宣','2330130275','26-521'],['狄梦豪','2330130276','26-521'],['高瑞鹏','2330130277','26-521'],['郭宇峰','2330130278','26-521'],
 ['缴少博','2330130279','26-522'],['寇翼鹏','2330130280','26-522'],['林宽','2330130281','26-522'],['刘倍源','2330130282','26-522'],['刘春鹏','2330130283','26-522'],['刘运来','2330130284','26-522'],
@@ -111,64 +116,126 @@ var STUDENTS=[
 ['姚蒙娜蝶舞','2330130317','28-538'],['尹润甜','2330130318','28-538'],['喻忠香','2330130319','28-538'],['张文静','2330130320','28-538'],['周凯旋','2330130321','28-538'],['朱思怡','2330130322','28-538']
 ];
 
-// 管理员入口：点🌙7次
-var mc=0,mt=null;
-function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>=7){mc=0;var e=document.getElementById('ae');if(e.className.indexOf('on')>=0)e.className='';else e.className='on';}}
+// ===== 姓名面板 =====
+function rp(arr){
+  var p=document.getElementById('np');
+  if(!arr||arr.length===0){p.innerHTML='<div class="empty">无匹配</div>';return;}
+  var h='';
+  for(var i=0;i<arr.length;i++){
+    h+='<div class="it" onclick="pn(\''+arr[i][0]+'\',\''+arr[i][1]+'\')">'+arr[i][0]+'<span class="rt">'+arr[i][2]+'</span></div>';
+  }
+  p.innerHTML=h;
+}
 
-// 获取姓名和学号
-function gn(){return document.getElementById('bn').value;}
-function gs(){return document.getElementById('bs').value.trim();}
+function fl(){
+  var dorm=document.getElementById('bd').value;
+  var list=STUDENTS;
+  if(dorm){list=[];for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][2]===dorm)list.push(STUDENTS[i]);}}
+  rp(list);
+}
 
-// 检查绑定按钮
+function op(){
+  var txt=document.getElementById('bn').value.trim();
+  var dorm=document.getElementById('bd').value;
+  var list=STUDENTS;
+  if(dorm){list=[];for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][2]===dorm)list.push(STUDENTS[i]);}}
+  if(txt){var f=[];for(var i=0;i<list.length;i++){if(list[i][0].indexOf(txt)>=0)f.push(list[i]);}list=f;}
+  rp(list);
+  document.getElementById('np').className='np on';
+}
+
+function cp(){document.getElementById('np').className='np';}
+
+function pn(name,sid){
+  document.getElementById('bn').value=name;
+  document.getElementById('bs').value=sid;
+  cp();
+  ck();
+}
+
+// ===== 事件绑定 =====
+document.getElementById('bd').onchange=function(){fl();ck();};
+document.getElementById('bn').oninput=function(){
+  if(document.getElementById('np').className.indexOf('on')>=0)op();
+  var v=this.value.trim();
+  for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===v){document.getElementById('bs').value=STUDENTS[i][1];break;}}
+  ck();
+};
+document.getElementById('bn').onfocus=function(){op();};
+document.getElementById('bn').onblur=function(){var t=this;setTimeout(function(){cp();},200);};
+document.getElementById('ndb').onclick=function(){
+  if(document.getElementById('np').className.indexOf('on')>=0)cp();
+  else op();
+};
+document.getElementById('bs').oninput=function(){
+  var s=this.value.trim();
+  if(s.length===10){
+    for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][1]===s){document.getElementById('bn').value=STUDENTS[i][0];break;}}
+  }
+  ck();
+};
+
 function ck(){
-  var n=gn(),s=gs();
+  var n=document.getElementById('bn').value.trim();
+  var s=document.getElementById('bs').value.trim();
   var ok=false;
   for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
   document.getElementById('bb').disabled=!ok;
 }
 
-// 选名字时自动填学号
-document.getElementById('bn').onchange=function(){
-  var n=this.value;
-  if(!n){document.getElementById('bs').value='';ck();return;}
-  for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n){document.getElementById('bs').value=STUDENTS[i][1];break;}}
-  ck();
-};
-
-// 输学号时自动选名字
-document.getElementById('bs').oninput=function(){
-  var s=this.value.trim();
-  if(s.length===10){
-    for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][1]===s){var sel=document.getElementById('bn');for(var j=0;j<sel.options.length;j++){if(sel.options[j].value===STUDENTS[i][0]){sel.selectedIndex=j;break;}}break;}}
-  }
-  ck();
-};
-
-// 绑定
 function db(){
-  var n=gn(),s=gs();
+  var n=document.getElementById('bn').value.trim();
+  var s=document.getElementById('bs').value.trim();
   var ok=false;
   for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
-  if(!ok){var m=document.getElementById('msg');m.textContent='⚠️ 姓名与学号不匹配';m.className='msg on err';return;}
+  if(!ok){document.getElementById('msg').textContent='⚠️ 姓名与学号不匹配';document.getElementById('msg').className='msg on err';return;}
   localStorage.setItem('wdm_name',n);
   localStorage.setItem('wdm_sid',s);
-  var m=document.getElementById('msg');m.textContent='✅ 绑定成功，正在跳转…';m.className='msg on ok';
+  document.getElementById('msg').textContent='✅ 绑定成功，正在跳转…';document.getElementById('msg').className='msg on ok';
   setTimeout(function(){location.href='fill.html';},600);
 }
+document.getElementById('bb').onclick=db;
 
-// 已绑定用户显示欢迎页
+// ===== 管理员入口（点🌙7次）=====
+var mc=0,mt=null;
+function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>=7){mc=0;var e=document.getElementById('ae');if(e.className.indexOf('on')>=0)e.className='';else e.className='on';}}
+
+// ===== 维护模式 =====
+(function(){
+  if(localStorage.getItem('debug_mode')==='1')return;
+  var x=new XMLHttpRequest();
+  x.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.maintenance');
+  x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+  x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+  x.onload=function(){
+    if(x.status===200){
+      try{
+        var d=JSON.parse(x.responseText);
+        if(d.length>0&&d[0].value==='1'){
+          document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;padding:40px;text-align:center"><div style="font-size:64px;margin-bottom:16px">🔧</div><h2 style="font-size:22px;color:#1e293b;margin-bottom:8px">系统维护中</h2><p style="color:#94a3b8;max-width:300px">系统正在升级维护，暂不可用，请稍后再来～</p></div>';
+        }
+      }catch(e){}
+    }
+  };
+  x.send();
+})();
+
+// ===== 已绑定用户 =====
 var sn=localStorage.getItem('wdm_name');
 var ss=localStorage.getItem('wdm_sid');
 if(sn&&ss){
-  var found=false;
-  for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn&&STUDENTS[i][1]===ss){found=true;var s=STUDENTS[i];break;}}
+  var found=false,si=null;
+  for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn&&STUDENTS[i][1]===ss){found=true;si=i;break;}}
   if(found){
     document.getElementById('bc').style.display='none';
     document.getElementById('wc').style.display='block';
     document.getElementById('ww').textContent='欢迎回来，'+sn;
-    document.getElementById('wi').textContent='👤 '+sn+' · '+s[2];
+    document.getElementById('wi').textContent='👤 '+sn+' · '+STUDENTS[si][2];
   }
 }
+
+// 初始渲染面板
+fl();
 </script>
 </body>
 </html>
