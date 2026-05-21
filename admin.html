@@ -346,13 +346,10 @@
 
       try {
         for(const u of updates){
-          const r = await fetch(SET_API+'?key=eq.'+u.key, {
-            method:'PATCH', headers:{...H,'Content-Type':'application/json','Prefer':'return=minimal'},
-            body:JSON.stringify({value:u.value})
-          });
-          if(r.ok) continue;
-          await fetch(SET_API, {
-            method:'POST', headers:{...H,'Content-Type':'application/json'},
+          // Upsert: 用 POST + on_conflict + merge-duplicates
+          await fetch(SET_API+'?on_conflict=key', {
+            method:'POST',
+            headers:{...H,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
             body:JSON.stringify(u)
           }).catch(()=>{});
         }
