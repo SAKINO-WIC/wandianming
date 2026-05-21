@@ -3,111 +3,161 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>信管2307晚点名系统-专属定制版</title>
+  <title>晚点名系统</title>
   <script src="js/config.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px
     }
-    .container {
-      max-width: 400px;
-      width: 100%;
+    .container{max-width:400px;width:100%}
+    .hero{text-align:center;margin-bottom:30px}
+    .hero-icon{font-size:60px;margin-bottom:10px}
+    .hero h1{color:#fff;font-size:32px;font-weight:700}
+    .hero p{color:rgba(255,255,255,.8);font-size:14px;margin-top:8px}
+    .card{background:#fff;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.15);overflow:hidden}
+    .card-btn{
+      display:flex;align-items:center;gap:16px;padding:20px 24px;
+      border:none;background:#fff;width:100%;cursor:pointer;transition:all .15s;text-align:left
     }
-    .hero {
-      text-align: center;
-      margin-bottom: 30px;
+    .card-btn:hover{background:#f7fafc}
+    .card-btn:active{background:#edf2f7}
+    .card-btn:first-child{border-bottom:1px solid #f0f4f8}
+    .card-btn .icon{font-size:32px;flex-shrink:0}
+    .card-btn .text h3{font-size:17px;color:#2d3748;margin-bottom:2px}
+    .card-btn .text p{font-size:13px;color:#718096}
+    .footer{text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin-top:30px}
+
+    /* 维护模式全屏遮罩 */
+    #maintOverlay{
+      display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+      background:linear-gradient(135deg,#1e293b,#334155);z-index:9999;
+      flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px
     }
-    .hero-icon { font-size: 60px; margin-bottom: 10px; }
-    .hero h1 {
-      color: white;
-      font-size: 32px;
-      font-weight: 700;
+    #maintOverlay.on{display:flex}
+    #maintOverlay .icon{font-size:64px;margin-bottom:16px;cursor:pointer;user-select:none}
+    #maintOverlay .icon:active{transform:scale(.9)}
+    #maintOverlay h2{font-size:24px;color:#fff;margin-bottom:8px}
+    #maintOverlay p{color:rgba(255,255,255,.6);font-size:14px;max-width:300px;margin-bottom:20px}
+
+    /* 调试模式密码框 */
+    #debugPanel{display:none}
+    #debugPanel.on{display:block}
+    #debugPanel input{
+      padding:10px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;
+      background:rgba(255,255,255,.1);color:#fff;font-size:15px;text-align:center;width:200px
     }
-    .hero p {
-      color: rgba(255,255,255,0.8);
-      font-size: 14px;
-      margin-top: 8px;
+    #debugPanel input::placeholder{color:rgba(255,255,255,.4)}
+    #debugPanel input:focus{outline:none;border-color:rgba(255,255,255,.6)}
+    .debug-btn{
+      margin-top:8px;padding:8px 24px;border:1px solid rgba(255,255,255,.3);
+      border-radius:8px;background:rgba(255,255,255,.1);color:#fff;font-size:14px;cursor:pointer
     }
-    .card {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-      overflow: hidden;
+    .debug-btn:active{background:rgba(255,255,255,.2)}
+    .debug-status{
+      position:fixed;top:10px;right:10px;background:#22c55e;color:#fff;
+      padding:4px 12px;border-radius:12px;font-size:11px;z-index:10000;display:none
     }
-    .card-btn {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 20px 24px;
-      border: none;
-      background: white;
-      width: 100%;
-      cursor: pointer;
-      transition: all 0.2;
-      text-align: left;
-    }
-    .card-btn:hover { background: #f7fafc; }
-    .card-btn:active { background: #edf2f7; }
-    .card-btn:first-child { border-bottom: 1px solid #f0f4f8; }
-    .card-btn .icon {
-      font-size: 32px;
-      flex-shrink: 0;
-    }
-    .card-btn .text h3 {
-      font-size: 17px;
-      color: #2d3748;
-      margin-bottom: 2px;
-    }
-    .card-btn .text p {
-      font-size: 13px;
-      color: #718096;
-    }
-    .footer {
-      text-align: center;
-      color: rgba(255,255,255,0.5);
-      font-size: 12px;
-      margin-top: 30px;
-    }
+    .debug-status.on{display:block}
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="hero">
-      <div class="hero-icon">🌙</div>
-      <h1>晚点名</h1>
-      <p>班级晚点名系统 · 一键填写</p>
-    </div>
+  <!-- 调试状态标签 -->
+  <div class="debug-status" id="debugBadge">🔧 调试模式</div>
 
-    <div class="card">
-      <button class="card-btn" onclick="location.href='fill.html'">
-        <div class="icon">✍️</div>
-        <div class="text">
-          <h3>今晚填表</h3>
-          <p>选择姓名和状态，完成今晚的晚点名</p>
-        </div>
-        <div style="margin-left:auto;color:#a0aec0;">→</div>
-      </button>
-      <button class="card-btn" onclick="location.href='admin.html'">
-        <div class="icon">📊</div>
-        <div class="text">
-          <h3>管理看板</h3>
-          <p>查看填写情况，复制汇总名单</p>
-        </div>
-        <div style="margin-left:auto;color:#a0aec0;">→</div>
-      </button>
-    </div>
-
-    <div class="footer">
-      Made with ❤️ by SAKINO
+  <!-- 维护模式遮罩 -->
+  <div id="maintOverlay">
+    <div class="icon" id="wrenchIcon" ontouchstart="tapWrench()" onclick="tapWrench()">🔧</div>
+    <h2>系统维护中</h2>
+    <p>系统正在升级维护，暂不可用，请稍后再来～</p>
+    <div id="debugPanel">
+      <input type="password" id="debugPwd" placeholder="管理员密码" onkeydown="if(event.key==='Enter')enterDebug()">
+      <div><button class="debug-btn" onclick="enterDebug()">进入调试模式</button></div>
     </div>
   </div>
+
+  <div id="mainContent">
+    <div class="container">
+      <div class="hero">
+        <div class="hero-icon">🌙</div>
+        <h1>晚点名</h1>
+        <p>班级晚点名系统 · 一键填写</p>
+      </div>
+      <div class="card">
+        <button class="card-btn" onclick="location.href='fill.html'">
+          <div class="icon">✍️</div>
+          <div class="text"><h3>今晚填表</h3><p>填写今晚的晚点名情况</p></div>
+          <div style="margin-left:auto;color:#a0aec0;">→</div>
+        </button>
+        <button class="card-btn" onclick="location.href='admin.html'">
+          <div class="icon">📊</div>
+          <div class="text"><h3>管理看板</h3><p>查看填写情况，系统设置</p></div>
+          <div style="margin-left:auto;color:#a0aec0;">→</div>
+        </button>
+      </div>
+      <div class="footer">信管2307 · 晚点名系统</div>
+    </div>
+  </div>
+
+  <script>
+    // ===== 扳手连点 =====
+    let tapCount = 0, tapTimer = null;
+    function tapWrench(){
+      tapCount++;
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(()=>{tapCount=0;}, 1000);
+      if(tapCount >= 5){
+        tapCount = 0;
+        document.getElementById('debugPanel').classList.add('on');
+      }
+    }
+
+    function enterDebug(){
+      const pwd = document.getElementById('debugPwd').value;
+      // 从 Supabase 获取密码
+      fetch(SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password', {
+        headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}
+      }).then(r=>r.json()).then(data=>{
+        const realPwd = (data.length>0 ? data[0].value : ADMIN_PASSWORD);
+        if(pwd === realPwd){
+          localStorage.setItem('debug_mode', '1');
+          document.getElementById('debugBadge').classList.add('on');
+          document.getElementById('maintOverlay').classList.remove('on');
+          document.getElementById('mainContent').style.display='block';
+          document.getElementById('debugPanel').classList.remove('on');
+        } else {
+          alert('密码错误');
+        }
+      }).catch(()=>{
+        if(pwd === ADMIN_PASSWORD){
+          localStorage.setItem('debug_mode', '1');
+          document.getElementById('debugBadge').classList.add('on');
+          document.getElementById('maintOverlay').classList.remove('on');
+          document.getElementById('mainContent').style.display='block';
+          document.getElementById('debugPanel').classList.remove('on');
+        } else { alert('密码错误'); }
+      });
+    }
+
+    // ===== 检查维护模式 =====
+    function checkMaint(){
+      if(localStorage.getItem('debug_mode') === '1'){
+        document.getElementById('debugBadge').classList.add('on');
+        return;
+      }
+      fetch(SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.maintenance', {
+        headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}
+      }).then(r=>r.json()).then(data=>{
+        if(data.length>0 && data[0].value==='1'){
+          document.getElementById('maintOverlay').classList.add('on');
+          document.getElementById('mainContent').style.display='none';
+        }
+      }).catch(()=>{});
+    }
+
+    checkMaint();
+  </script>
 </body>
 </html>
