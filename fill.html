@@ -8,59 +8,35 @@
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
-    .header{background:linear-gradient(135deg,#1e293b,#334155);padding:28px 20px 20px;text-align:center;color:#fff;position:relative}
-    .header .moon{font-size:36px;display:block;margin-bottom:4px}
-    .header h1{font-size:22px;font-weight:600;letter-spacing:2px}
-    .header .date{font-size:13px;opacity:.7;margin-top:4px}
+    .header{background:linear-gradient(135deg,#1e293b,#334155);padding:24px 20px 16px;text-align:center;color:#fff;position:relative}
+    .header .moon{font-size:32px;display:block;margin-bottom:2px}
+    .header h1{font-size:20px;font-weight:600}
     .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
     .container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
     .card{background:#fff;border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.06);padding:20px;margin-bottom:12px}
     .field{margin-bottom:16px}
     .field-label{font-size:13px;font-weight:500;color:#64748b;margin-bottom:6px}
-    select,input,textarea{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;color:#1e293b;background:#f8fafc;transition:all .15s}
-    select:focus,input:focus,textarea:focus{outline:none;border-color:#3b82f6;background:#fff}
-    textarea{resize:none}
 
-    /* 维护模式全屏 */
-    #maintOverlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f8fafc;z-index:9999;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
-    #maintOverlay.on{display:flex}
-    #maintOverlay .icon{font-size:64px;margin-bottom:16px}
-    #maintOverlay h2{font-size:22px;color:#1e293b;margin-bottom:8px}
-    #maintOverlay p{color:#94a3b8}
-
-    /* 绑定页标题 */
-    .bind-icon{font-size:56px;text-align:center;margin-bottom:8px}
-    .bind-title{text-align:center;margin-bottom:16px}
-    .bind-title h2{font-size:20px;color:#1e293b}
-    .bind-title p{font-size:13px;color:#94a3b8;margin-top:4px}
-
-    .name-row{display:flex;gap:8px}
-    .name-row select{flex:1}
-    .name-row input{width:150px;flex-shrink:0;text-align:center;font-size:18px;letter-spacing:2px}
-    .bind-btn{width:100%;padding:14px;border:none;border-radius:12px;background:#1e293b;color:#fff;font-size:17px;font-weight:600;cursor:pointer;transition:all .15s;margin-top:8px}
-    .bind-btn:active{background:#334155}
-    .bind-btn:disabled{background:#cbd5e1;cursor:not-allowed}
-
-    /* 用户信息栏 */
-    .user-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;margin-bottom:12px}
-    .user-bar .left{display:flex;align-items:center;gap:10px}
-    .user-bar .av{width:36px;height:36px;border-radius:50%;background:#22c55e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600}
-    .user-bar .nm{font-size:15px;font-weight:500;color:#16a34a}
+    .user-bar{display:flex;align-items:center;gap:10px;padding:14px 16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;margin-bottom:16px}
+    .user-bar .av{width:38px;height:38px;border-radius:50%;background:#22c55e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:600}
+    .user-bar .info{flex:1}
+    .user-bar .nm{font-size:16px;font-weight:600;color:#16a34a}
     .user-bar .rm{font-size:11px;color:#94a3b8}
-    .user-bar .unbind{font-size:11px;color:#94a3b8;cursor:pointer;text-decoration:underline}
-    .user-bar .unbind:active{color:#ef4444}
 
     .srow{display:flex;gap:10px}
-    .sbtn{flex:1;padding:16px 12px;border:1.5px solid #e2e8f0;border-radius:12px;text-align:center;cursor:pointer;transition:all .15s;background:#f8fafc;user-select:none}
+    .sbtn{flex:1;padding:18px 12px;border:1.5px solid #e2e8f0;border-radius:12px;text-align:center;cursor:pointer;transition:all .15s;background:#f8fafc;user-select:none}
     .sbtn:active{transform:scale(.97)}
-    .sbtn .ic{font-size:22px;display:block;margin-bottom:4px}
-    .sbtn .lb{font-size:15px;font-weight:500;color:#64748b}
+    .sbtn .ic{font-size:24px;display:block;margin-bottom:6px}
+    .sbtn .lb{font-size:16px;font-weight:500;color:#64748b}
     .sbtn.hm{border-color:#22c55e;background:#f0fdf4}
     .sbtn.hm .lb{color:#16a34a}
     .sbtn.aw{border-color:#ef4444;background:#fef2f2}
     .sbtn.aw .lb{color:#dc2626}
+
     #rw{overflow:hidden;max-height:0;opacity:0;transition:all .25s}
     #rw.on{max-height:140px;opacity:1}
+    textarea{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:15px;color:#1e293b;background:#f8fafc;resize:none}
+    textarea:focus{outline:none;border-color:#ef4444;background:#fff}
 
     .btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;transition:all .15s}
     .btn-pri{background:#1e293b;color:#fff}
@@ -68,82 +44,40 @@
     .btn-pri:disabled{background:#cbd5e1;cursor:not-allowed}
     .btn-out{background:transparent;color:#3b82f6;border:1.5px solid #3b82f6}
 
-    .msg{padding:12px 14px;border-radius:10px;font-size:14px;margin-bottom:12px;display:none}
-    .msg.on{display:flex;align-items:center;gap:8px}
-    .msg.ok{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
-    .msg.err{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
-    .msg.load{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
-
     .done{padding:20px;text-align:center}
     .done .bi{font-size:48px}
     .done h2{font-size:18px;margin:8px 0 4px;color:#1e293b}
     .done .st{color:#64748b;font-size:14px;margin-bottom:12px}
 
-    .al{text-align:center;margin-top:12px}
-    .al a{color:#94a3b8;font-size:12px;text-decoration:none}
+    .bl{text-align:center;margin-top:12px}
+    .bl a{color:#94a3b8;font-size:12px;text-decoration:none}
     .ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:16px}
   </style>
 </head>
 <body>
-<!-- 维护模式遮罩 -->
-<div id="maintOverlay"><div class="icon">🔧</div><h2>系统维护中</h2><p>系统正在升级维护，请稍后再来～</p></div>
-
 <div class="header">
   <span class="moon">🌙</span>
   <h1>晚点名</h1>
-  <div class="date" id="td"></div>
   <div class="deco"></div>
 </div>
 
 <div class="container">
-  <div id="msg" class="msg"></div>
-
-  <!-- 绑定页（首次） -->
-  <div id="bindCard" class="card">
-    <div class="bind-icon">🔗</div>
-    <div class="bind-title">
-      <h2>首次使用 · 身份绑定</h2>
-      <p>绑定后下次自动识别，无需重复操作</p>
-    </div>
-    <div class="field">
-      <div class="field-label">🏠 宿舍</div>
-      <select id="bindDorm" onchange="filterBindNames()"><option value="">全部宿舍</option></select>
-    </div>
-    <div class="field">
-      <div class="field-label">👤 姓名</div>
-      <div class="name-row">
-        <select id="bindName" onchange="autoFillSid()"><option value="">请选择</option></select>
-        <input type="text" id="bindSid" inputmode="numeric" placeholder="学号" maxlength="10"
-               oninput="onBindSid()" onkeydown="if(event.key==='Enter')doBind()">
-      </div>
-    </div>
-    <button class="bind-btn" id="bindBtn" onclick="doBind()" disabled>绑定</button>
-  </div>
-
-  <!-- 时间提示 -->
-  <div id="closedMsg" class="card" style="display:none;">
-    <div class="done"><div class="bi">⏰</div><h2>当前不在填写时间</h2><div class="st" id="timeHint"></div></div>
-  </div>
-
-  <!-- 已提交 -->
   <div id="doneBox" class="card" style="display:none;">
     <div class="done">
       <div class="bi">✅</div>
-      <h2 id="doneTitle">今日已填写</h2>
-      <div class="st" id="doneInfo"></div>
-      <button class="btn btn-out" id="modBtn" onclick="startMod()">✏️ 修改</button>
+      <h2 id="dt">今日已填写</h2>
+      <div class="st" id="di"></div>
+      <button class="btn btn-out" onclick="startMod()">✏️ 修改</button>
     </div>
   </div>
 
-  <!-- 填写页（已绑定） -->
   <div id="formCard" class="card">
-    <!-- 身份栏 -->
-    <div class="user-bar" id="userBar">
-      <div class="left">
-        <div class="av" id="uAv"></div>
-        <div><div class="nm" id="uNm"></div><div class="rm" id="uRm"></div></div>
+    <div class="user-bar" id="ub">
+      <div class="av" id="uav"></div>
+      <div class="info">
+        <div class="nm" id="unm"></div>
+        <div class="rm" id="urm"></div>
       </div>
-      <div class="unbind" id="unbindLink" onclick="unbind()">解绑</div>
     </div>
 
     <div class="field">
@@ -161,10 +95,10 @@
       </div>
     </div>
 
-    <button class="btn btn-pri" id="sb" onclick="sub()">提交</button>
+    <button class="btn btn-pri" id="sb" onclick="sub()" disabled>请先绑定身份</button>
   </div>
 
-  <div class="al"><a href="admin.html">📊 管理看板</a></div>
+  <div class="bl"><a href="index.html">🏠 返回首页</a></div>
   <div class="ft">信管2307 · 晚点名系统</div>
 </div>
 
@@ -172,130 +106,34 @@
   const API = SUPABASE_URL + '/rest/v1/checkins';
   const H = {'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json'};
 
-  let st = 'zaisushe', rec = null, boundStudent = null, modMode = false;
-  const td = new Date().toISOString().slice(0,10);
-  let fillStart='19:00',fillEnd='23:30';
+  let st='zaisushe',rec=null,boundStudent=null,modMode=false;
+  const td=new Date().toISOString().slice(0,10);
 
-  const wd=['日','一','二','三','四','五','六'];const D=new Date();
-  document.getElementById('td').textContent=D.getFullYear()+'年'+(D.getMonth()+1)+'月'+D.getDate()+'日 星期'+wd[D.getDay()];
-
-  // ===== 维护模式 =====
-  async function checkMaint(){
-    if(localStorage.getItem('debug_mode')==='1'){
-      // 显示调试标签
-      let badge = document.getElementById('debugBadge');
-      if(!badge){
-        badge = document.createElement('div');
-        badge.id='debugBadge';
-        badge.style.cssText='position:fixed;top:10px;right:10px;background:#22c55e;color:#fff;padding:4px 12px;border-radius:12px;font-size:11px;z-index:10000;cursor:pointer';
-        badge.textContent='🔧 调试模式 · 点击退出';
-        badge.onclick=function(){localStorage.removeItem('debug_mode');this.remove();location.reload();};
-        document.body.appendChild(badge);
-      }
-      return;
-    }
-    try{
-      const r=await fetch(SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.maintenance',{headers:H});
-      if(r.ok){const d=await r.json();if(d.length&&d[0].value==='1'){document.getElementById('maintOverlay').classList.add('on');return true;}}
-    }catch(e){}
-    return false;
-  }
-
-  // ===== 设置 =====
-  async function loadSettings(){
-    try{
-      const r=await fetch(SUPABASE_URL+'/rest/v1/settings?select=*',{headers:H});
-      if(r.ok){const d=await r.json();d.forEach(s=>{if(s.key==='fill_start')fillStart=s.value;if(s.key==='fill_end')fillEnd=s.value;});}
-    }catch(e){}
-    if(!inTW()){document.getElementById('closedMsg').style.display='block';document.getElementById('formCard').style.display='none';document.getElementById('timeHint').textContent='⏰ 填写时间：'+fillStart+' ~ '+fillEnd;}
-  }
-  function inTW(){const n=new Date(),[sh,sm]=fillStart.split(':').map(Number),[eh,em]=fillEnd.split(':').map(Number);return n.getHours()*60+n.getMinutes()>=sh*60+sm&&n.getHours()*60+n.getMinutes()<=eh*60+em;}
-
-  // ===== 绑定流程 =====
-  // 宿舍列表
-  const dorms=[...new Set(STUDENTS.map(s=>s.room))].sort();
-  const bd=document.getElementById('bindDorm');
-  dorms.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;bd.appendChild(o)});
-
-  function filterBindNames(){
-    const dorm=bd.value;
-    const sel=document.getElementById('bindName');
-    sel.innerHTML='<option value="">请选择</option>';
-    let list=STUDENTS;if(dorm)list=list.filter(s=>s.room===dorm);
-    list.forEach(s=>{const o=document.createElement('option');o.value=s.name;o.textContent=s.name;sel.appendChild(o)});
-    ckBind();
-  }
-
-  function autoFillSid(){
-    const name=document.getElementById('bindName').value;
-    if(name){const s=STUDENTS.find(x=>x.name===name);if(s)document.getElementById('bindSid').value=s.sid;}
-    ckBind();
-  }
-
-  function onBindSid(){
-    if(document.getElementById('bindSid').value.length===10){
-      const name=document.getElementById('bindName').value;
-      const sid=document.getElementById('bindSid').value;
-      const s=STUDENTS.find(x=>x.sid===sid);
-      if(s&&!name) {document.getElementById('bindName').value=s.name;}
-    }
-    ckBind();
-  }
-
-  function ckBind(){
-    const name=document.getElementById('bindName').value;
-    const sid=document.getElementById('bindSid').value.trim();
-    const s=STUDENTS.find(x=>x.name===name&&x.sid===sid);
-    document.getElementById('bindBtn').disabled=!s;
-  }
-
-  function doBind(){
-    const name=document.getElementById('bindName').value;
-    const sid=document.getElementById('bindSid').value.trim();
-    const s=STUDENTS.find(x=>x.name===name&&x.sid===sid);
-    if(!s) return showMsg('⚠️ 姓名与学号不匹配','err');
-    boundStudent=s;
-    localStorage.setItem('wdm_name',s.name);
-    localStorage.setItem('wdm_sid',s.sid);
-    // 切换到填表模式
-    document.getElementById('bindCard').style.display='none';
-    document.getElementById('formCard').style.display='block';
-    document.getElementById('uAv').textContent=s.name[0];
-    document.getElementById('uNm').textContent=s.name;
-    document.getElementById('uRm').textContent='学号: '+s.sid+' · '+s.room;
-    showMsg('✅ 绑定成功！请填写今晚情况','ok');
-    // 查是否已提交
-    fetchMyRecord(s.name).then(d=>{if(d){rec=d;showDone(d);}});
-    ck();
-  }
-
-  // ===== 解绑 =====
-  function unbind(){
-    if(!confirm('确定解除绑定？解除后需要重新绑定才能填写。')) return;
-    localStorage.removeItem('wdm_name');
-    localStorage.removeItem('wdm_sid');
-    boundStudent=null;
-    document.getElementById('formCard').style.display='none';
-    document.getElementById('bindCard').style.display='block';
-    document.getElementById('bindName').value='';
-    document.getElementById('bindSid').value='';
-    document.getElementById('bindDorm').value='';
-    filterBindNames();
-    showMsg('已解除绑定','ok');
+  // ===== 检查绑定 =====
+  const sn=localStorage.getItem('wdm_name'),ss=localStorage.getItem('wdm_sid');
+  if(!sn||!ss||!STUDENTS.find(x=>x.name===sn&&x.sid===ss)){
+    location.href='index.html'; // 未绑定，回首页
+  } else {
+    boundStudent=STUDENTS.find(x=>x.name===sn&&x.sid===ss);
+    document.getElementById('uav').textContent=boundStudent.name[0];
+    document.getElementById('unm').textContent=boundStudent.name;
+    document.getElementById('urm').textContent='学号: '+boundStudent.sid+' · '+boundStudent.room;
+    document.getElementById('sb').textContent='提交';
   }
 
   // ===== 查记录 =====
-  async function fetchMyRecord(name){
+  async function fetchRec(name){
     try{const r=await fetch(API+'?date=eq.'+td+'&name=eq.'+encodeURIComponent(name)+'&select=*',{headers:H});if(!r.ok)return null;const d=await r.json();return d&&d.length?d[0]:null;}catch(e){return null}
   }
-  function showDone(rec){
-    document.getElementById('doneBox').style.display='block';document.getElementById('formCard').style.display='none';
-    document.getElementById('doneTitle').textContent='今日已填写 - '+rec.name;
-    document.getElementById('doneInfo').textContent=(rec.status==='zaisushe'?'🏠 住校':'🚶 不住校')+(rec.note?' · '+rec.note:'');
+
+  if(boundStudent){
+    fetchRec(boundStudent.name).then(d=>{if(d){rec=d;document.getElementById('doneBox').style.display='block';document.getElementById('formCard').style.display='none';document.getElementById('dt').textContent='今日已填写 - '+d.name;document.getElementById('di').textContent=(d.status==='zaisushe'?'🏠 住校':'🚶 不住校')+(d.note?' · '+d.note:'');}});
   }
+
   function startMod(){
-    if(!inTW())return showMsg('⏰ 当前不在填写时间','err');
-    modMode=true;document.getElementById('doneBox').style.display='none';document.getElementById('formCard').style.display='block';
+    if(!boundStudent)return;
+    modMode=true;
+    document.getElementById('doneBox').style.display='none';document.getElementById('formCard').style.display='block';
     if(rec){setSt(rec.status);if(rec.status==='buzhusu'&&rec.note)document.getElementById('ri').value=rec.note;}
     document.getElementById('sb').textContent='✏️ 修改提交';ck();
   }
@@ -307,49 +145,25 @@
 
   // ===== 提交 =====
   async function sub(){
-    if(!boundStudent)return showMsg('请先绑定身份','err');
+    if(!boundStudent)return;
     const name=boundStudent.name,room=boundStudent.room,sid=boundStudent.sid;
     const reason=st==='buzhusu'?document.getElementById('ri').value.trim():'';
-    if(st==='buzhusu'&&!reason)return showMsg('不住校请填写事由','err');
-    const btn=document.getElementById('sb');btn.disabled=true;btn.textContent='提交中…';showMsg('提交中…','load');
+    if(st==='buzhusu'&&!reason)return;
+    const btn=document.getElementById('sb');btn.disabled=true;btn.textContent='提交中…';
     try{
-      const exist=modMode?rec:await fetchMyRecord(name);
+      const exist=modMode?rec:await fetchRec(name);
       let r;
       if(exist)r=await fetch(API+'?date=eq.'+td+'&name=eq.'+encodeURIComponent(name),{method:'PATCH',headers:H,body:JSON.stringify({status:st,note:reason,room,student_id:sid})});
       else r=await fetch(API,{method:'POST',headers:H,body:JSON.stringify({date:td,name,room,status:st,note:reason,student_id:sid})});
       if(r.ok||r.status===201||r.status===204||r.status===200){
-        showMsg((modMode?'✅ 修改成功！':'✅ 提交成功！'),'ok');btn.textContent='✅ 已提交';
+        btn.textContent='✅ 已提交';
         document.getElementById('doneBox').style.display='block';document.getElementById('formCard').style.display='none';
-        document.getElementById('doneTitle').textContent='今日已填写 - '+name;
-        document.getElementById('doneInfo').textContent=(st==='zaisushe'?'🏠 住校':'🚶 不住校')+(reason?' · '+reason:'');
+        document.getElementById('dt').textContent='今日已填写 - '+name;
+        document.getElementById('di').textContent=(st==='zaisushe'?'🏠 住校':'🚶 不住校')+(reason?' · '+reason:'');
         modMode=false;btn.textContent='提交';
-      }else{const e=await r.json().catch(()=>({}));showMsg('提交失败：'+(e.message||'请稍后再试'),'err');btn.disabled=false;btn.textContent='提交';}
-    }catch(e){showMsg('网络异常，请稍后重试','err');btn.disabled=false;btn.textContent='提交';}
+      }else{const e=await r.json().catch(()=>({}));alert('提交失败：'+(e.message||'请稍后再试'));btn.disabled=false;btn.textContent='提交';}
+    }catch(e){alert('网络异常，请重试');btn.disabled=false;btn.textContent='提交';}
   }
-
-  function showMsg(t,type){const m=document.getElementById('msg');m.textContent=t;m.className='msg on '+type;if(type==='ok')setTimeout(()=>m.classList.remove('on'),3000);}
-
-  // ===== 初始化 =====
-  checkMaint().then(m=>{
-    if(m)return;
-    loadSettings();
-    filterBindNames();
-    // 检查是否已绑定
-    const sn=localStorage.getItem('wdm_name'),ss=localStorage.getItem('wdm_sid');
-    if(sn&&ss){
-      const s=STUDENTS.find(x=>x.name===sn&&x.sid===ss);
-      if(s){
-        boundStudent=s;
-        document.getElementById('bindCard').style.display='none';
-        document.getElementById('formCard').style.display='block';
-        document.getElementById('uAv').textContent=s.name[0];
-        document.getElementById('uNm').textContent=s.name;
-        document.getElementById('uRm').textContent='学号: '+s.sid+' · '+s.room;
-        // 如果不在时间窗口，form会被隐藏，但bindCard也隐藏了，所以closedMsg会显示
-        fetchMyRecord(s.name).then(d=>{if(d){rec=d;showDone(d);}});
-      }
-    }
-  });
 </script>
 </body>
 </html>
