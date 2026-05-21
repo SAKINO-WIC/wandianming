@@ -68,66 +68,50 @@ textarea{resize:none}
 .done .bi{font-size:48px}
 .done h2{font-size:18px;margin:8px 0 4px;color:#1e293b}
 .done .st{color:#64748b;font-size:14px;margin-bottom:12px}
+#pc{display:none}
+#pc.on{display:block}
 </style>
 </head>
 <body>
+<div id="pc">
 <div class="header">
 <span class="moon" onclick="tm()">🌙</span>
 <h1>信管2307班晚点名系统</h1>
 <div class="sub">SVIP专属定制版</div>
 <div class="deco"></div>
 </div>
-
 <div class="container">
 <div id="msg" class="msg"></div>
 
-<!-- 绑定页 -->
-<div id="bindPage" class="card">
+<div id="bp" class="card">
 <div class="hello"><div class="icon">👋</div><h2>欢迎使用晚点名</h2><p>首次使用请先绑定身份</p></div>
 <div class="field"><div class="field-label">🏠 宿舍</div>
-<select id="bd">
-<option value="">全部宿舍</option>
+<select id="bd"><option value="">全部宿舍</option>
 <option value="26-521">26-521</option><option value="26-522">26-522</option><option value="26-523">26-523</option>
 <option value="26-524">26-524</option><option value="26-525">26-525</option>
 <option value="28-535">28-535</option><option value="28-536">28-536</option><option value="28-537">28-537</option><option value="28-538">28-538</option>
 </select></div>
 <div class="field"><div class="field-label">👤 姓名</div>
-<div class="nw">
-<div class="nr"><input type="text" id="bn" placeholder="输入或点▼选择" autocomplete="off"><div class="db" id="ndb">▼</div></div>
-<div class="np" id="np"></div>
-</div></div>
+<div class="nw"><div class="nr"><input type="text" id="bn" placeholder="输入或点▼选择" autocomplete="off"><div class="db" id="ndb">▼</div></div><div class="np" id="np"></div></div></div>
 <div class="field"><div class="field-label">🔢 学号</div>
 <input type="text" id="bs" inputmode="numeric" placeholder="输入10位学号" maxlength="10"></div>
 <button class="btn btn-pri" id="bb">绑定并进入</button>
 </div>
 
-<!-- 已提交 -->
-<div id="doneBox" class="card" style="display:none;">
-<div class="done">
-<div class="bi">✅</div>
-<h2 id="dt">今日已填写</h2>
-<div class="st" id="di"></div>
-<button class="btn btn-out" onclick="startMod()">✏️ 修改</button>
-</div></div>
+<div id="dbx" class="card" style="display:none;">
+<div class="done"><div class="bi">✅</div><h2 id="dt">今日已填写</h2><div class="st" id="di"></div><button class="btn btn-out" onclick="sm()">✏️ 修改</button></div></div>
 
-<!-- 填表页 -->
-<div id="fillPage" class="card" style="display:none;">
-<div class="ub">
-<div class="av" id="uav"></div>
-<div class="info"><div class="nm" id="unm"></div><div class="rm" id="urm"></div></div>
-<div class="ubtn" onclick="unbind()">解绑</div>
-</div>
+<div id="fp" class="card" style="display:none;">
+<div class="ub"><div class="av" id="uav"></div><div class="info"><div class="nm" id="unm"></div><div class="rm" id="urm"></div></div><div class="ubtn" onclick="ub()">解绑</div></div>
 <div class="field"><div class="field-label">🏡 今晚状态</div>
-<div class="srow">
-<div class="sbtn hm" onclick="setSt('zaisushe')"><span class="ic">🏠</span><span class="lb">住校</span></div>
-<div class="sbtn" onclick="setSt('buzhusu')"><span class="ic">🚶</span><span class="lb">不住校</span></div>
-</div></div>
-<div id="rw"><div class="field"><div class="field-label" style="color:#dc2626;">📝 不住校事由 <span style="color:#ef4444;">*必填</span></div><textarea id="ri" rows="2" placeholder="请填写理由…" oninput="ck()"></textarea></div></div>
-<button class="btn btn-pri" id="sb" onclick="sub()" disabled>请先绑定身份</button>
+<div class="srow"><div class="sbtn hm" onclick="ss('zaisushe')"><span class="ic">🏠</span><span class="lb">住校</span></div><div class="sbtn" onclick="ss('buzhusu')"><span class="ic">🚶</span><span class="lb">不住校</span></div></div></div>
+<div id="rw"><div class="field"><div class="field-label" style="color:#dc2626;">📝 不住校事由 <span style="color:#ef4444;">*必填</span></div><textarea id="ri" rows="2" placeholder="请填写理由…" oninput="cf()"></textarea></div></div>
+<button class="btn btn-pri" id="sb" onclick="sb()" disabled>请先绑定身份</button>
 </div>
 
 <div id="ae"><a href="admin.html">📊 管理看板</a></div>
 <div class="ft">信管2307班晚点名系统 · SVIP专属定制版</div>
+</div>
 </div>
 
 <script>
@@ -145,164 +129,134 @@ var STUDENTS=[
 ['姚蒙娜蝶舞','2330130317','28-538'],['尹润甜','2330130318','28-538'],['喻忠香','2330130319','28-538'],['张文静','2330130320','28-538'],['周凯旋','2330130321','28-538'],['朱思怡','2330130322','28-538']
 ];
 
-// ===== 管理员入口 =====
-var mc=0,mt=null;
-function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>=7){mc=0;var e=document.getElementById('ae');e.className=e.className.indexOf('on')>=0?'':'on';}}
-
-// ===== 维护模式检查 =====
-(function(){
-  if(localStorage.getItem('debug_mode')==='1')return;
-  var x=new XMLHttpRequest();
-  x.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.maintenance');
-  x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
-  x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
-  x.onload=function(){if(x.status===200){try{var d=JSON.parse(x.responseText);if(d.length>0&&d[0].value==='1'){document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;padding:40px;text-align:center"><div style="font-size:64px;margin-bottom:16px;cursor:pointer;user-select:none" onclick="dm()">🔧</div><h2 style="font-size:22px;color:#1e293b;margin-bottom:8px">系统维护中</h2><p style="color:#94a3b8;max-width:300px">系统正在升级维护，请稍后再来～</p></div>';}}catch(e){}}};
-  x.send();
-})();
-
-// ===== 维护模式下的管理员入口
-function dm(){
-  var pwd=prompt('输入管理员密码进入调试模式');
-  if(!pwd)return;
-  var x2=new XMLHttpRequest();
-  x2.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
-  x2.setRequestHeader('apikey',SUPABASE_ANON_KEY);
-  x2.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
-  x2.onload=function(){
-    if(x2.status===200){
+// ===== 维护模式检查（先于一切）=====
+if(localStorage.getItem('debug_mode')==='1'){
+  document.getElementById('pc').className='on';
+  var db=document.createElement('div');
+  db.textContent='🔧 调试模式 · 点击退出';
+  db.style.cssText='position:fixed;top:10px;right:10px;background:#22c55e;color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;z-index:99999;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)';
+  db.onclick=function(){if(confirm('退出调试模式？')){localStorage.removeItem('debug_mode');location.reload();}};
+  document.body.appendChild(db);
+} else {
+  var mx=new XMLHttpRequest();
+  mx.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.maintenance');
+  mx.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+  mx.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+  mx.onload=function(){
+    if(mx.status===200){
       try{
-        var d=JSON.parse(x2.responseText);
-        var realPwd=d.length>0?d[0].value:'wan123456';
-        if(pwd===realPwd){localStorage.setItem('debug_mode','1');location.reload();}
-        else alert('密码错误');
-      }catch(e){alert('验证失败');}
-    }else{alert('网络错误');}
+        var d=JSON.parse(mx.responseText);
+        if(d.length>0&&d[0].value==='1'){
+          document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;padding:40px;text-align:center"><div style="font-size:64px;margin-bottom:16px;cursor:pointer;user-select:none" id="wc">🔧</div><h2 style="font-size:22px;color:#1e293b;margin-bottom:8px">系统维护中</h2><p style="color:#94a3b8;max-width:300px">系统正在升级维护，请稍后再来～</p></div>';
+          // 维护模式入口：点🔧7次
+          var wc=0,wt=null;
+          document.getElementById('wc').onclick=function(){
+            wc++;clearTimeout(wt);
+            wt=setTimeout(function(){wc=0;},1500);
+            if(wc>=7){wc=0;
+              var pwd=prompt('输入管理员密码');
+              if(!pwd)return;
+              var x2=new XMLHttpRequest();
+              x2.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
+              x2.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+              x2.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+              x2.onload=function(){
+                if(x2.status===200){
+                  try{var dd=JSON.parse(x2.responseText);var rp=dd.length>0?dd[0].value:'wan123456';
+                  if(pwd===rp){localStorage.setItem('debug_mode','1');location.reload();}else alert('密码错误');
+                  }catch(e){alert('验证失败');}
+                }else alert('网络错误');
+              };x2.send();
+            }
+          };
+          return;
+        }
+      }catch(e){}
+    }
+    document.getElementById('pc').className='on';
   };
-  x2.send();
+  mx.send();
 }
 
-// ===== 调试模式标签 =====
-(function(){
-  if(localStorage.getItem('debug_mode')==='1'){
-    var b=document.createElement('div');
-    b.id='dbg';
-    b.textContent='🔧 调试模式 · 点击退出';
-    b.style.cssText='position:fixed;top:10px;right:10px;background:#22c55e;color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;z-index:99999;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15)';
-    b.onclick=function(){
-      if(confirm('退出调试模式？退出后刷新页面将恢复维护模式')){
-        localStorage.removeItem('debug_mode');
-        location.reload();
-      }
-    };
-    document.body.appendChild(b);
-  }
-})();
-
-// ===== 绑定页逻辑 =====
-function rp(arr){var p=document.getElementById('np');if(!arr||arr.length===0){p.innerHTML='<div class="empty">无匹配</div>';return;}var h='';for(var i=0;i<arr.length;i++){h+='<div class="it" onclick="pn(\''+arr[i][0]+'\',\''+arr[i][1]+'\')">'+arr[i][0]+'<span class="rt">'+arr[i][2]+'</span></div>';}p.innerHTML=h;}
+// ===== 绑定页 =====
+function rp(a){var p=document.getElementById('np');if(!a||a.length===0){p.innerHTML='<div class="empty">无匹配</div>';return;}var h='';for(var i=0;i<a.length;i++){h+='<div class="it" onclick="pn(\''+a[i][0]+'\',\''+a[i][1]+'\')">'+a[i][0]+'<span class="rt">'+a[i][2]+'</span></div>';}p.innerHTML=h;}
 function fl(){var d=document.getElementById('bd').value;var l=STUDENTS;if(d){l=[];for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][2]===d)l.push(STUDENTS[i]);}}rp(l);}
 function op(){var t=document.getElementById('bn').value.trim();var d=document.getElementById('bd').value;var l=STUDENTS;if(d){l=[];for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][2]===d)l.push(STUDENTS[i]);}}if(t){var f=[];for(var i=0;i<l.length;i++){if(l[i][0].indexOf(t)>=0)f.push(l[i]);}l=f;}rp(l);document.getElementById('np').className='np on';}
 function cp(){document.getElementById('np').className='np';}
-function pn(n,s){document.getElementById('bn').value=n;document.getElementById('bs').value=s;cp();ck();}
-
-document.getElementById('bd').onchange=function(){fl();ck();};
-document.getElementById('bn').oninput=function(){if(document.getElementById('np').className.indexOf('on')>=0)op();var v=this.value.trim();for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===v){document.getElementById('bs').value=STUDENTS[i][1];break;}}ck();};
+function pn(n,s){document.getElementById('bn').value=n;document.getElementById('bs').value=s;cp();}
+document.getElementById('bd').onchange=function(){fl();};
+document.getElementById('bn').oninput=function(){if(document.getElementById('np').className.indexOf('on')>=0)op();var v=this.value.trim();for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===v){document.getElementById('bs').value=STUDENTS[i][1];break;}}};
 document.getElementById('bn').onfocus=function(){op();};
 document.getElementById('bn').onblur=function(){var t=this;setTimeout(function(){cp();},200);};
 document.getElementById('ndb').onclick=function(){if(document.getElementById('np').className.indexOf('on')>=0)cp();else op();};
-document.getElementById('bs').oninput=function(){var s=this.value.trim();if(s.length===10){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][1]===s){document.getElementById('bn').value=STUDENTS[i][0];break;}}}ck();};
-
-function ck(){var n=document.getElementById('bn').value.trim();var s=document.getElementById('bs').value.trim();var ok=false;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}document.getElementById('bb').disabled=!ok;}
+document.getElementById('bs').oninput=function(){var s=this.value.trim();if(s.length===10){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][1]===s){document.getElementById('bn').value=STUDENTS[i][0];break;}}}};
 
 function sm(t,type){var m=document.getElementById('msg');m.textContent=t;m.className='msg on '+type;setTimeout(function(){m.className='msg';},3000);}
 
-function onBind(){
+document.getElementById('bb').onclick=function(){
   var n=document.getElementById('bn').value.trim();
   var s=document.getElementById('bs').value.trim();
   if(!n){sm('⚠️ 请填写姓名','err');return;}
   if(s.length!==10){sm('⚠️ 请输入完整的10位学号','err');return;}
   var si=null;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){si=i;break;}}
   if(si===null){
-    for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][1]===s){sm('⚠️ 姓名「'+n+'」与学号不匹配，你是否是「'+STUDENTS[i][0]+'」？','err');return;}}
-    sm('⚠️ 未找到该学生，请核对姓名和学号','err');return;
+    for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][1]===s){sm('⚠️ 姓名与学号不匹配，你是否是「'+STUDENTS[i][0]+'」？','err');return;}}
+    sm('⚠️ 未找到该学生','err');return;
   }
   localStorage.setItem('wdm_name',n);
   localStorage.setItem('wdm_sid',s);
-  showFill(STUDENTS[si]);
-}
-document.getElementById('bb').onclick=onBind;
-
-// ===== 填表页逻辑 =====
-var st='zaisushe',rec=null,boundStudent=null,modMode=false;
-var td=new Date().toISOString().slice(0,10);
-var API=SUPABASE_URL+'/rest/v1/checkins';
-var H={'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json'};
-
-function showFill(s){
-  boundStudent=s;
-  document.getElementById('bindPage').style.display='none';
-  document.getElementById('fillPage').style.display='block';
-  document.getElementById('uav').textContent=s[0][0];
-  document.getElementById('unm').textContent=s[0];
-  document.getElementById('urm').textContent='学号: '+s[1]+' · '+s[2];
-  document.getElementById('sb').textContent='提交';
+  // 显示填表页
+  var stu=STUDENTS[si];window.bs=stu;
+  document.getElementById('bp').style.display='none';
+  document.getElementById('fp').style.display='block';
+  document.getElementById('uav').textContent=stu[0][0];
+  document.getElementById('unm').textContent=stu[0];
+  document.getElementById('urm').textContent='学号: '+stu[1]+' · '+stu[2];
   document.getElementById('sb').disabled=true;
-  fetchRec(s[0]);
-}
-
-function showBind(){
-  boundStudent=null;modMode=false;
-  document.getElementById('fillPage').style.display='none';
-  document.getElementById('doneBox').style.display='none';
-  document.getElementById('bindPage').style.display='block';
-}
-
-function unbind(){
-  if(!confirm('解除绑定后需要重新绑定才能填写，确定吗？')) return;
-  localStorage.removeItem('wdm_name');
-  localStorage.removeItem('wdm_sid');
-  showBind();
-}
-
-function setSt(v){
-  st=v;
-  var btns=document.querySelectorAll('.sbtn');
-  btns[0].className='sbtn'+(v==='zaisushe'?' hm':'');
-  btns[1].className='sbtn'+(v==='buzhusu'?' aw':'');
-  document.getElementById('rw').className=v==='buzhusu'?'on':'';
-  ck();
-}
-
-function ck(){var btn=document.getElementById('sb');var r=document.getElementById('ri').value.trim();btn.disabled=!(st==='zaisushe'||r);}
-
-function fetchRec(name){
+  // 查记录
   var x=new XMLHttpRequest();
-  x.open('GET',API+'?date=eq.'+td+'&name=eq.'+encodeURIComponent(name)+'&select=*');
+  x.open('GET',SUPABASE_URL+'/rest/v1/checkins?date=eq.'+new Date().toISOString().slice(0,10)+'&name=eq.'+encodeURIComponent(stu[0])+'&select=*');
   x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
   x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
-  x.onload=function(){if(x.status===200){try{var d=JSON.parse(x.responseText);if(d&&d.length>0){rec=d[0];document.getElementById('doneBox').style.display='block';document.getElementById('fillPage').style.display='none';document.getElementById('dt').textContent='今日已填写 - '+d[0].name;document.getElementById('di').textContent=(d[0].status==='zaisushe'?'🏠 住校':'🚶 不住校')+(d[0].note?' · '+d[0].note:'');}}catch(e){}}};
+  x.onload=function(){if(x.status===200){try{var d=JSON.parse(x.responseText);if(d&&d.length>0){window.rec=d[0];document.getElementById('dbx').style.display='block';document.getElementById('fp').style.display='none';document.getElementById('dt').textContent='今日已填写 - '+d[0].name;document.getElementById('di').textContent=(d[0].status==='zaisushe'?'🏠 住校':'🚶 不住校')+(d[0].note?' · '+d[0].note:'');}}catch(e){}}};
   x.send();
+};
+
+// ===== 解绑 =====
+function ub(){
+  if(!confirm('解除绑定后需要重新绑定才能填写，确定吗？'))return;
+  localStorage.removeItem('wdm_name');
+  localStorage.removeItem('wdm_sid');
+  window.bs=null;window.rec=null;
+  document.getElementById('fp').style.display='none';
+  document.getElementById('dbx').style.display='none';
+  document.getElementById('bp').style.display='block';
 }
 
-function startMod(){
-  if(!boundStudent)return;
-  modMode=true;
-  document.getElementById('doneBox').style.display='none';
-  document.getElementById('fillPage').style.display='block';
-  if(rec){setSt(rec.status);if(rec.status==='buzhusu'&&rec.note)document.getElementById('ri').value=rec.note;}
-  document.getElementById('sb').textContent='✏️ 修改提交';ck();
+// ===== 填表页 =====
+var cst='zaisushe';
+function ss(v){cst=v;document.querySelectorAll('.sbtn')[0].className='sbtn'+(v==='zaisushe'?' hm':'');document.querySelectorAll('.sbtn')[1].className='sbtn'+(v==='buzhusu'?' aw':'');document.getElementById('rw').className=v==='buzhusu'?'on':'';cf();}
+function cf(){var r=document.getElementById('ri').value.trim();document.getElementById('sb').disabled=!(cst==='zaisushe'||r);}
+
+function sm2(){
+  if(!window.bs)return;
+  window.mod=true;
+  document.getElementById('dbx').style.display='none';
+  document.getElementById('fp').style.display='block';
+  if(window.rec){ss(window.rec.status);if(window.rec.status==='buzhusu'&&window.rec.note)document.getElementById('ri').value=window.rec.note;}
+  document.getElementById('sb').textContent='✏️ 修改提交';cf();
 }
 
-function sub(){
-  if(!boundStudent)return;
-  var name=boundStudent[0],room=boundStudent[2],sid=boundStudent[1];
-  var reason=st==='buzhusu'?document.getElementById('ri').value.trim():'';
-  if(st==='buzhusu'&&!reason)return;
+function sb(){
+  if(!window.bs)return;
+  var name=window.bs[0],room=window.bs[2],sid=window.bs[1];
+  var reason=cst==='buzhusu'?document.getElementById('ri').value.trim():'';
+  if(cst==='buzhusu'&&!reason)return;
   var btn=document.getElementById('sb');btn.disabled=true;btn.textContent='提交中…';
-  
+  var td=new Date().toISOString().slice(0,10);
   var x=new XMLHttpRequest();
-  var method=modMode||rec?'PATCH':'POST';
-  var url=method==='PATCH'?API+'?date=eq.'+td+'&name=eq.'+encodeURIComponent(name):API;
+  var method=(window.mod||window.rec)?'PATCH':'POST';
+  var url=method==='PATCH'?SUPABASE_URL+'/rest/v1/checkins?date=eq.'+td+'&name=eq.'+encodeURIComponent(name):SUPABASE_URL+'/rest/v1/checkins';
   x.open(method,url);
   x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
   x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
@@ -310,30 +264,31 @@ function sub(){
   x.onload=function(){
     if(x.status>=200&&x.status<300){
       btn.textContent='✅ 已提交';
-      document.getElementById('doneBox').style.display='block';
-      document.getElementById('fillPage').style.display='none';
+      document.getElementById('dbx').style.display='block';document.getElementById('fp').style.display='none';
       document.getElementById('dt').textContent='今日已填写 - '+name;
-      document.getElementById('di').textContent=(st==='zaisushe'?'🏠 住校':'🚶 不住校')+(reason?' · '+reason:'');
-      modMode=false;btn.textContent='提交';
-    }else{document.getElementById('msg').textContent='提交失败，请重试';document.getElementById('msg').className='msg on err';btn.disabled=false;btn.textContent='提交';}
+      document.getElementById('di').textContent=(cst==='zaisushe'?'🏠 住校':'🚶 不住校')+(reason?' · '+reason:'');
+      window.mod=false;btn.textContent='提交';
+    }else{sm('提交失败','err');btn.disabled=false;btn.textContent='提交';}
   };
-  x.onerror=function(){document.getElementById('msg').textContent='网络异常，请重试';document.getElementById('msg').className='msg on err';btn.disabled=false;btn.textContent='提交';};
-  x.send(JSON.stringify({date:td,name:name,room:room,status:st,note:reason,student_id:sid}));
+  x.onerror=function(){sm('网络异常','err');btn.disabled=false;btn.textContent='提交';};
+  x.send(JSON.stringify({date:td,name:name,room:room,status:cst,note:reason,student_id:sid}));
 }
 
-// ===== 初始化 =====
+// ===== 管理员入口 =====
+var mc=0,mt=null;
+function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>=7){mc=0;var e=document.getElementById('ae');e.className=e.className.indexOf('on')>=0?'':'on';}}
+
+// ===== 初始化绑定状态 =====
 fl();
 var sn=localStorage.getItem('wdm_name'),ss=localStorage.getItem('wdm_sid');
-if(sn&&ss){
-  for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn&&STUDENTS[i][1]===ss){showFill(STUDENTS[i]);break;}}
-}
+if(sn&&ss){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn&&STUDENTS[i][1]===ss){document.getElementById('bn').value=sn;document.getElementById('bs').value=ss;document.getElementById('bb').click();break;}}}
 
-// 返回按钮重新检查绑定
+// ===== 返回按钮检查 =====
 window.addEventListener('pageshow',function(){
   var n=localStorage.getItem('wdm_name'),s=localStorage.getItem('wdm_sid');
-  if(!n||!s){showBind();return;}
+  if(!n||!s){ub();return;}
   var ok=false;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
-  if(!ok)showBind();
+  if(!ok)ub();
 });
 </script>
 </body>
