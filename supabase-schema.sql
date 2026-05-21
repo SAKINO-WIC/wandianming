@@ -55,6 +55,11 @@ CREATE POLICY "允许修改自己当天记录" ON checkins
   USING (date = CURRENT_DATE)
   WITH CHECK (date = CURRENT_DATE);
 
+-- 唯一约束（用于前端 upsert）
+-- 先删旧的唯一索引，再建正式约束
+DROP INDEX IF EXISTS idx_checkins_date_name;
+ALTER TABLE checkins ADD CONSTRAINT checkins_uniq_date_name UNIQUE (date, name);
+
 -- settings：匿名用户可查询所有设置
 CREATE POLICY "允许匿名查询设置" ON settings
   FOR SELECT
