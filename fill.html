@@ -133,14 +133,26 @@
       <select id="ds" onchange="filterNames()"><option value="">全部宿舍</option></select>
     </div>
 
-    <!-- 姓名 + 学号验证（一行） -->
+    <!-- 姓名 + 学号验证 -->
     <div class="field">
-      <div class="field-label">👤 姓名 <span style="font-size:11px;color:#94a3b8;font-weight:400;">选名字后输入学号验证</span></div>
-      <div class="name-row">
-        <select id="ns" onchange="onNameSelect()"><option value="">请选择</option></select>
-        <input type="text" class="sid-input" id="sidInput" inputmode="numeric" pattern="[0-9]*"
-               placeholder="学号" maxlength="10" oninput="onSidType()" onkeydown="if(event.key==='Enter')verify()">
-        <div class="verify-btn" id="vbtn" onclick="verify()">验证</div>
+      <div class="field-label">👤 身份确认</div>
+      <!-- 已绑定状态（默认） -->
+      <div id="boundStatus" class="card" style="display:none;padding:12px;margin-bottom:0;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;border-radius:50%;background:#22c55e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;" id="ba">?</div>
+          <div><div style="font-size:15px;font-weight:500;color:#16a34a;" id="bn"></div><div style="font-size:12px;color:#94a3b8;" id="br"></div></div>
+          <div style="margin-left:auto;font-size:12px;color:#22c55e;">✅ 已绑定</div>
+        </div>
+      </div>
+      <!-- 首次绑定界面 -->
+      <div id="bindForm">
+        <div class="name-row">
+          <select id="ns" onchange="onNameSelect()"><option value="">请选姓名</option></select>
+          <input type="text" class="sid-input" id="sidInput" inputmode="numeric" pattern="[0-9]*"
+                 placeholder="学号" maxlength="10" oninput="onSidType()" onkeydown="if(event.key==='Enter')verify()">
+          <div class="verify-btn" id="vbtn" onclick="verify()">绑定</div>
+        </div>
+        <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:6px;">首次使用：选名字 + 输入学号绑定，下次自动识别</p>
       </div>
     </div>
 
@@ -242,15 +254,16 @@
     if(s.sid!==sid) return showMsg('⚠️ 姓名与学号不匹配，请核对','err');
 
     verified=true; verifiedStudent=s;
-    document.getElementById('vbtn').classList.add('ok'); document.getElementById('vbtn').textContent='✓';
     localStorage.setItem('wdm_name',s.name); localStorage.setItem('wdm_sid',s.sid);
-    // 显示用户信息栏
-    document.getElementById('userBar').classList.add('on');
-    document.getElementById('userAvatar').textContent=s.name[0];
-    document.getElementById('userName').textContent=s.name;
-    document.getElementById('userSid').textContent='学号: '+s.sid+' · '+s.room;
+
+    // 隐藏绑定界面，显示已绑定状态
+    document.getElementById('bindForm').style.display='none';
+    document.getElementById('boundStatus').style.display='block';
+    document.getElementById('ba').textContent=s.name[0];
+    document.getElementById('bn').textContent=s.name;
+    document.getElementById('br').textContent='学号: '+s.sid+' · '+s.room;
+
     document.getElementById('sb').textContent='提交';
-    // 检查是否已提交
     fetchMyRecord(s.name).then(d=>{if(d){rec=d;showDone(d);}});
     ck();
   }
