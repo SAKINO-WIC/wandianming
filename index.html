@@ -58,14 +58,14 @@
     .debug-btn:active{background:rgba(255,255,255,.2)}
     .debug-status{
       position:fixed;top:10px;right:10px;background:#22c55e;color:#fff;
-      padding:4px 12px;border-radius:12px;font-size:11px;z-index:10000;display:none
+      padding:4px 12px;border-radius:12px;font-size:11px;z-index:10000;display:none;cursor:pointer
     }
     .debug-status.on{display:block}
   </style>
 </head>
 <body>
-  <!-- 调试状态标签 -->
-  <div class="debug-status" id="debugBadge">🔧 调试模式</div>
+  <!-- 调试状态标签（点击退出） -->
+  <div class="debug-status" id="debugBadge" onclick="exitDebug()">🔧 调试模式 · 点击退出</div>
 
   <!-- 维护模式遮罩 -->
   <div id="maintOverlay">
@@ -116,14 +116,13 @@
 
     function enterDebug(){
       const pwd = document.getElementById('debugPwd').value;
-      // 从 Supabase 获取密码
       fetch(SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password', {
         headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}
       }).then(r=>r.json()).then(data=>{
         const realPwd = (data.length>0 ? data[0].value : ADMIN_PASSWORD);
         if(pwd === realPwd){
           localStorage.setItem('debug_mode', '1');
-          document.getElementById('debugBadge').classList.add('on');
+          showDebugBadge();
           document.getElementById('maintOverlay').classList.remove('on');
           document.getElementById('mainContent').style.display='block';
           document.getElementById('debugPanel').classList.remove('on');
@@ -133,7 +132,7 @@
       }).catch(()=>{
         if(pwd === ADMIN_PASSWORD){
           localStorage.setItem('debug_mode', '1');
-          document.getElementById('debugBadge').classList.add('on');
+          showDebugBadge();
           document.getElementById('maintOverlay').classList.remove('on');
           document.getElementById('mainContent').style.display='block';
           document.getElementById('debugPanel').classList.remove('on');
@@ -141,10 +140,20 @@
       });
     }
 
-    // ===== 检查维护模式 =====
+    function showDebugBadge(){
+      document.getElementById('debugBadge').classList.add('on');
+      document.getElementById('debugBadge').textContent='🔧 调试模式 · 点击退出';
+    }
+
+    function exitDebug(){
+      localStorage.removeItem('debug_mode');
+      document.getElementById('debugBadge').classList.remove('on');
+      location.reload();
+    }
+
     function checkMaint(){
       if(localStorage.getItem('debug_mode') === '1'){
-        document.getElementById('debugBadge').classList.add('on');
+        showDebugBadge();
         return;
       }
       fetch(SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.maintenance', {
