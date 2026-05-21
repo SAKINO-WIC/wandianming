@@ -74,8 +74,8 @@
 <body>
 <div class="header">
   <span class="moon" id="moonIcon" ontouchstart="tapMoon()" onclick="tapMoon()">🌙</span>
-  <h1>晚点名</h1>
-  <div class="date" id="td"></div>
+      <h1>信管2307班晚点名系统</h1>
+      <p style="font-size:11px;color:rgba(255,255,255,.5);margin-top:-4px;margin-bottom:10px;">SVIP专属定制版</p>
   <div class="deco"></div>
 </div>
 
@@ -113,10 +113,17 @@
   </div>
 
   <!-- 跳转中（已绑定用户看到） -->
-  <div id="redirectCard" class="card" style="display:none;">
-    <div class="redirecting">
-      <div class="spinner">🌙</div>
-      <p>正在进入晚点名…</p>
+  <div id="boundCard" class="card" style="display:none;">
+    <div class="hello">
+      <div class="icon">🌙</div>
+      <h2>欢迎回来</h2>
+      <p id="boundWelcome"></p>
+      <div style="margin-top:16px;">
+        <button class="btn btn-pri" onclick="location.href='fill.html'">✍️ 进入晚点名</button>
+      </div>
+      <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:12px;">
+        👤 <span id="boundName"></span> · <span id="boundRoom"></span>
+      </p>
     </div>
   </div>
 
@@ -235,12 +242,17 @@
   // ===== 初始化 =====
   filterNames();
 
-  // 已绑定用户直接跳转
+  // 已绑定用户显示欢迎页
   const sn_=localStorage.getItem('wdm_name'),ss_=localStorage.getItem('wdm_sid');
-  if(sn_&&ss_&&STUDENTS.find(x=>x.name===sn_&&x.sid===ss_)){
-    document.getElementById('bindCard').style.display='none';
-    document.getElementById('redirectCard').style.display='block';
-    setTimeout(()=>{location.href='fill.html';},500);
+  if(sn_&&ss_){
+    const s=STUDENTS.find(x=>x.name===sn_&&x.sid===ss_);
+    if(s){
+      document.getElementById('bindCard').style.display='none';
+      document.getElementById('boundCard').style.display='block';
+      document.getElementById('boundWelcome').textContent='已绑定 '+s.name+'，点击进入晚点名';
+      document.getElementById('boundName').textContent=s.name;
+      document.getElementById('boundRoom').textContent=s.room;
+    }
   }
 </script>
 </body>
