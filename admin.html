@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <title>晚点名 · 看板</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh;padding:0 0 20px}
+    .header{background:linear-gradient(135deg,#1e293b,#334155);color:#fff;padding:24px 20px 16px;text-align:center}
+    .header h1{font-size:20px;font-weight:600;letter-spacing:1px}
+    .header .date{font-size:13px;opacity:.6;margin-top:4px}
+    .container{max-width:480px;margin:0 auto;padding:0 12px}
+    .hidden{display:none!important}
+    .card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.04);padding:16px;margin-bottom:12px}
+
+    /* Login */
+    #loginScreen{display:flex;align-items:center;justify-content:center;min-height:80vh;padding:20px}
+    .login-card{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);padding:24px;width:100%;max-width:360px;text-align:center}
+    .login-card input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;margin-bottom:12px}
+    .login-card input:focus{outline:none;border-color:#3b82f6}
+    .login-card button{width:100%;padding:12px;background:#1e293b;color:#fff;border:none;border-radius:10px;font-size:16px;cursor:pointer}
+
+    /* Tab nav */
+    .tab-nav{display:flex;gap:0;margin:12px 0;background:#e2e8f0;border-radius:10px;overflow:hidden}
+    .tab-nav button{flex:1;padding:10px;border:none;font-size:14px;font-weight:500;cursor:pointer;background:transparent;color:#64748b;transition:all .15s}
+    .tab-nav button.active{background:#1e293b;color:#fff;border-radius:10px}
+
+    /* Stats */
+    .stats{display:flex;gap:8px;margin-bottom:12px}
+    .stat-box{flex:1;background:#fff;border-radius:12px;padding:14px 8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+    .stat-box .num{font-size:26px;font-weight:700}
+    .stat-box .lbl{font-size:12px;color:#94a3b8;margin-top:2px}
+    .stat-box.done .num{color:#22c55e}
+    .stat-box.pending .num{color:#ef4444}
+    .stat-box.total .num{color:#3b82f6}
+
+    /* Dorm tabs */
+    .dorm-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .dorm-tab{padding:6px 14px;border:1.5px solid #e2e8f0;border-radius:16px;font-size:13px;cursor:pointer;background:#fff;color:#475569;transition:all .15s}
+    .dorm-tab:active{transform:scale(.96)}
+    .dorm-tab.active{background:#1e293b;color:#fff;border-color:#1e293b}
+    .dorm-tab .count{font-size:11px;opacity:.6;margin-left:4px}
+
+    /* Student row */
+    .student-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#fff;border-radius:10px;margin-bottom:6px;box-shadow:0 1px 3px rgba(0,0,0,.03)}
+    .student-row .info{display:flex;align-items:center;gap:10px}
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .dot.done{background:#22c55e}
+    .dot.pending{background:#e2e8f0}
+    .student-row .name{font-size:15px;font-weight:500;color:#1e293b}
+    .student-row .room{font-size:12px;color:#94a3b8}
+    .tag{font-size:12px;padding:2px 10px;border-radius:10px}
+    .tag-ok{background:#f0fdf4;color:#16a34a}
+    .tag-away{background:#fef2f2;color:#dc2626}
+    .tag-miss{background:#f1f5f9;color:#94a3b8}
+
+    /* Actions */
+    .actions{display:flex;gap:8px;margin-bottom:12px}
+    .actions button{flex:1;padding:10px;border:none;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s}
+    .actions button:active{transform:scale(.97)}
+    .btn-copy{background:#1e293b;color:#fff}
+    .btn-copy-dorm{background:#475569;color:#fff}
+
+    /* Settings */
+    .setting-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f1f5f9}
+    .setting-row:last-child{border-bottom:none}
+    .setting-label{font-size:14px;color:#475569}
+    .setting-desc{font-size:12px;color:#94a3b8;margin-top:2px}
+    .setting-row input{width:120px;padding:8px 10px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;text-align:center}
+    .setting-row input:focus{outline:none;border-color:#3b82f6}
+    .btn-save{width:100%;padding:12px;background:#1e293b;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px}
+    .btn-save:active{background:#334155}
+
+    .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 24px;border-radius:24px;font-size:14px;opacity:0;transition:opacity .3s;z-index:100}
+    .toast.show{opacity:1}
+    .bl{text-align:center;margin:12px 0 0}
+    .bl a{color:#94a3b8;font-size:12px;text-decoration:none}
+    .ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:16px}
+    .refresh-note{text-align:center;color:#cbd5e1;font-size:11px;margin-top:6px}
+  </style>
+</head>
+<body>
+  <!-- Login -->
+  <div id="loginScreen">
+    <div class="login-card">
+      <div style="font-size:36px;margin-bottom:12px;">🔐</div>
+      <h2 style="font-size:18px;margin-bottom:4px;">管理看板</h2>
+      <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;">管理员密码</p>
+      <input type="password" id="pwdInput" placeholder="密码" onkeydown="if(event.key==='Enter')login()">
+      <button onclick="login()">进入看板</button>
+      <p style="margin-top:12px;"><a href="fill.html" style="color:#3b82f6;font-size:13px;text-decoration:none;">← 返回填写页</a></p>
+    </div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard" class="hidden">
+    <div class="header">
+      <h1>📊 管理看板</h1>
+      <div class="date" id="dashDate"></div>
+    </div>
+
+    <div class="container">
+      <!-- Tab Nav -->
+      <div class="tab-nav">
+        <button class="active" onclick="switchTab('checkin',this)">📋 晚点名</button>
+        <button onclick="switchTab('settings',this)">⚙️ 系统设置</button>
+      </div>
+
+      <!-- 晚点名 Tab -->
+      <div id="tabCheckin">
+        <div class="stats">
+          <div class="stat-box done"><div class="num" id="sDone">0</div><div class="lbl">✅ 已填</div></div>
+          <div class="stat-box pending"><div class="num" id="sPending">0</div><div class="lbl">⏳ 未填</div></div>
+          <div class="stat-box total"><div class="num" id="sTotal">0</div><div class="lbl">👥 总人数</div></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-copy" onclick="copyAll()">📋 复制全部汇总</button>
+          <button class="btn-copy-dorm" onclick="copyDorm()" id="copyDormBtn">🏠 复制本宿舍</button>
+        </div>
+
+        <div class="dorm-tabs" id="dormTabs"></div>
+        <div id="studentList"></div>
+        <div class="refresh-note">⏱ 每30秒自动刷新 · <a href="javascript:loadData()" style="color:#3b82f6;">手动刷新</a></div>
+      </div>
+
+      <!-- 设置 Tab -->
+      <div id="tabSettings" class="hidden">
+        <div class="card">
+          <div class="setting-row">
+            <div><div class="setting-label">⏰ 填写开始时间</div><div class="setting-desc">到这个时间才能填写</div></div>
+            <input type="time" id="sFillStart" value="19:00">
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">⏰ 填写截止时间</div><div class="setting-desc">到这个时间停止填写</div></div>
+            <input type="time" id="sFillEnd" value="21:00">
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">🔑 管理员密码</div><div class="setting-desc">看板登录密码</div></div>
+            <input type="text" id="sPassword" value="" style="width:140px;">
+          </div>
+          <div class="setting-row">
+            <div><div class="setting-label">🔧 维护模式</div><div class="setting-desc">开启后同学看到"系统维护中"</div></div>
+            <label style="position:relative;display:inline-block;width:48px;height:26px;cursor:pointer;">
+              <input type="checkbox" id="sMaintenance" style="opacity:0;width:0;height:0;" onchange="updateToggle(this)">
+              <span id="toggleTrack" style="position:absolute;top:0;left:0;right:0;bottom:0;background:#cbd5e1;border-radius:13px;transition:.3s;"></span>
+              <span id="toggleKnob" style="position:absolute;top:2px;left:2px;width:22px;height:22px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.2);"></span>
+            </label>
+          </div>
+          <button class="btn-save" onclick="saveSettings()">💾 保存设置</button>
+          <p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:6px;">保存后立即生效，所有同学将看到更新后的时间</p>
+        </div>
+      </div>
+
+      <div class="bl"><a href="fill.html">← 返回填写页</a></div>
+      <div class="ft">信管2307 · 晚点名系统</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    // ===== 内联配置（原 config.js）=====
+    const SUPABASE_URL = 'https://jgiyahtmpvfqtgdfxxgi.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbG...IqZE';
+    const ADMIN_PASSWORD = 'admin666';
+    var STUDENTS = [
+      { name: '蔡名杰', sid: '2330130273', room: '26-521' },
+      { name: '曹家乐', sid: '2330130274', room: '26-521' },
+      { name: '曹智宣', sid: '2330130275', room: '26-521' },
+      { name: '狄梦豪', sid: '2330130276', room: '26-521' },
+      { name: '高瑞鹏', sid: '2330130277', room: '26-521' },
+      { name: '郭宇峰', sid: '2330130278', room: '26-521' },
+      { name: '缴少博', sid: '2330130279', room: '26-522' },
+      { name: '寇翼鹏', sid: '2330130280', room: '26-522' },
+      { name: '林宽',   sid: '2330130281', room: '26-522' },
+      { name: '刘倍源', sid: '2330130282', room: '26-522' },
+      { name: '刘春鹏', sid: '2330130283', room: '26-522' },
+      { name: '刘运来', sid: '2330130284', room: '26-522' },
+      { name: '吕英豪', sid: '2330130285', room: '26-523' },
+      { name: '皮杰',   sid: '2330130286', room: '26-523' },
+      { name: '万小转', sid: '2330130289', room: '26-523' },
+      { name: '王哲',   sid: '2330130291', room: '26-524' },
+      { name: '吴泓滨', sid: '2330130292', room: '26-524' },
+      { name: '徐昊涵', sid: '2330130293', room: '26-524' },
+      { name: '杨昌秀', sid: '2330130294', room: '26-524' },
+      { name: '杨雨非', sid: '2330130295', room: '26-524' },
+      { name: '张骏意', sid: '2330130296', room: '26-524' },
+      { name: '张天予', sid: '2330130297', room: '26-525' },
+      { name: '张志杰', sid: '2330130298', room: '26-525' },
+      { name: '赵文宇', sid: '2330130299', room: '26-525' },
+      { name: '蔡文清', sid: '2330130300', room: '28-535' },
+      { name: '陈蕾',   sid: '2330130301', room: '28-535' },
+      { name: '陈萌',   sid: '2330130302', room: '28-535' },
+      { name: '程研',   sid: '2330130303', room: '28-535' },
+      { name: '何欣怡', sid: '2330130304', room: '28-535' },
+      { name: '胡亮亮', sid: '2330130305', room: '28-536' },
+      { name: '李雅琪', sid: '2330130306', room: '28-536' },
+      { name: '梁博文', sid: '2330130307', room: '28-536' },
+      { name: '刘瑷烨', sid: '2330130308', room: '28-536' },
+      { name: '刘政琪', sid: '2330130309', room: '28-536' },
+      { name: '马莹莹', sid: '2330130310', room: '28-536' },
+      { name: '潘玥彤', sid: '2330130311', room: '28-537' },
+      { name: '王青青', sid: '2330130313', room: '28-537' },
+      { name: '王睿',   sid: '2330130314', room: '28-537' },
+      { name: '王雨欣', sid: '2330130315', room: '28-537' },
+      { name: '杨羽涵', sid: '2330130316', room: '28-537' },
+      { name: '姚蒙娜蝶舞', sid: '2330130317', room: '28-538' },
+      { name: '尹润甜', sid: '2330130318', room: '28-538' },
+      { name: '喻忠香', sid: '2330130319', room: '28-538' },
+      { name: '张文静', sid: '2330130320', room: '28-538' },
+      { name: '周凯旋', sid: '2330130321', room: '28-538' },
+      { name: '朱思怡', sid: '2330130322', room: '28-538' },
+    ];
+
+    const API = SUPABASE_URL + '/rest/v1/checkins';
+    const SET_API = SUPABASE_URL + '/rest/v1/settings';
+    const H = {'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY};
+
+    let records = [], activeDorm = 'all', settings = {};
+    const todayStr = new Date().toISOString().slice(0,10);
+
+    // ===== Tab switch =====
+    function switchTab(tab, btn){
+      document.querySelectorAll('.tab-nav button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tabCheckin').classList.toggle('hidden', tab!=='checkin');
+      document.getElementById('tabSettings').classList.toggle('hidden', tab!=='settings');
+      if(tab==='settings') loadSettings();
+    }
+
+    // ===== Login =====
+    async function login() {
+      const pwd = document.getElementById('pwdInput').value;
+      try{
+        const r=await fetch(SET_API+'?select=*',{headers:H});
+        if(r.ok){
+          const data=await r.json();
+          data.forEach(s=>{settings[s.key]=s.value});
+        }
+      }catch(e){}
+      const adminPwd = settings['admin_password'] || ADMIN_PASSWORD;
+      if (pwd === adminPwd) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        const d = new Date();
+        const wd = ['日','一','二','三','四','五','六'];
+        document.getElementById('dashDate').textContent = d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+wd[d.getDay()];
+        loadData();
+        // 自动轮询每30秒
+        setInterval(loadData, 30000);
+      } else {
+        showToast('密码错误');
+      }
+    }
+
+    // ===== Load checkins =====
+    async function loadData() {
+      try {
+        const r = await fetch(API + '?date=eq.' + todayStr + '&select=*', { headers: H });
+        records = r.ok ? await r.json() : [];
+      } catch(e) { records = []; }
+      render();
+    }
+
+    // ===== Dorms =====
+    function getDorms() {
+      const map = {};
+      STUDENTS.forEach(s => { if (!map[s.room]) map[s.room] = []; map[s.room].push(s); });
+      return map;
+    }
+
+    // ===== Render =====
+    function render() {
+      const dorms = getDorms();
+      const completedNames = new Set(records.map(r => r.name));
+      const total = STUDENTS.length, done = records.length, pending = total - done;
+      document.getElementById('sDone').textContent = done;
+      document.getElementById('sPending').textContent = pending;
+      document.getElementById('sTotal').textContent = total;
+
+      // Tabs
+      const tc = document.getElementById('dormTabs');
+      let th = `<div class="dorm-tab ${activeDorm==='all'?'active':''}" onclick="setDorm('all')">全部 <span class="count">${total}</span></div>`;
+      Object.keys(dorms).sort().forEach(room => {
+        const rs = dorms[room], rd = rs.filter(s => completedNames.has(s.name)).length;
+        th += `<div class="dorm-tab ${activeDorm===room?'active':''}" onclick="setDorm('${room}')">${room} <span class="count">${rd}/${rs.length}</span></div>`;
+      });
+      tc.innerHTML = th;
+      document.getElementById('copyDormBtn').textContent = activeDorm==='all'?'📋 复制全部汇总':'🏠 复制 '+activeDorm+' 汇总';
+
+      // List
+      const list = document.getElementById('studentList');
+      let filtered = STUDENTS;
+      if(activeDorm!=='all') filtered = STUDENTS.filter(s => s.room === activeDorm);
+      let html = '';
+      filtered.forEach(s => {
+        const rec = records.find(r => r.name === s.name), isDone = !!rec;
+        let tag = '';
+        if(isDone){
+          const lbl = rec.status==='zaisushe'?'住校':'不住校';
+          const css = rec.status==='zaisushe'?'tag-ok':'tag-away';
+          tag = `<span class="tag ${css}">${lbl}</span>`;
+        } else { tag = `<span class="tag tag-miss">未填写</span>`; }
+        html += `<div class="student-row"><div class="info"><div class="dot ${isDone?'done':'pending'}"></div><div><div class="name">${s.name}</div><div class="room">${s.room}</div></div></div>${tag}</div>`;
+      });
+      list.innerHTML = html || '<p style="text-align:center;color:#94a3b8;padding:20px;">该宿舍暂无学生</p>';
+    }
+
+    function setDorm(dorm) { activeDorm = dorm; render(); }
+
+    // ===== Copy =====
+    function copyAll() {
+      const completedNames = new Set(records.map(r => r.name));
+      const d = new Date();
+      let text = `【晚点名 · ${d.getMonth()+1}月${d.getDate()}日】\n已填：${records.length}/${STUDENTS.length}人\n━━━━━━━━━━━━\n\n`;
+      const dorms = getDorms();
+      Object.keys(dorms).sort().forEach(room => {
+        const students = dorms[room];
+        text += `【${room}】\n`;
+        students.forEach(s => {
+          const rec = records.find(r => r.name === s.name);
+          if(rec){const lbl=rec.status==='zaisushe'?'住校':'不住校';text+=`  ✅ ${s.name} → ${lbl}${rec.note?'('+rec.note+')':''}\n`;}
+          else{text+=`  ⏳ ${s.name} → 未填写\n`;}
+        });
+        text+='\n';
+      });
+      text+='━━━━━━━━━━━━\n⚠️ 未填写人员：\n';
+      STUDENTS.forEach(s => {if(!completedNames.has(s.name)) text+=`  ${s.room} ${s.name}\n`});
+      copyText(text); showToast('✅ 已复制到剪贴板');
+    }
+
+    function copyDorm() {
+      const dorms = getDorms(), completedNames = new Set(records.map(r => r.name));
+      let text = ''; const d = new Date();
+      if(activeDorm==='all'){
+        text = `【晚点名 · ${d.getMonth()+1}月${d.getDate()}日】\n`;
+        Object.keys(dorms).sort().forEach(room => {
+          const rs = dorms[room], rp = rs.filter(s => !completedNames.has(s.name));
+          if(rp.length>0){text+=`\n⚠️ 【${room}】未填写：`;rp.forEach(s=>{text+=s.name+' '});text+='\n';}
+        });
+        text+='\n请以上同学尽快填写晚点名 🌙';
+      } else {
+        const students = dorms[activeDorm];
+        text = `【${activeDorm} · 晚点名提醒】\n`;
+        students.forEach(s => {
+          const rec = records.find(r => r.name === s.name);
+          text += rec ? `✅ ${s.name} 已填\n` : `⏳ ${s.name} 未填写\n`;
+        });
+        const pending = students.filter(s => !completedNames.has(s.name));
+        if(pending.length>0){text+='\n📢 以下同学请尽快填写：';pending.forEach(s=>{text+=s.name+' '});text+='\n';}
+        text+='\n👉 https://wandianming.pages.dev/fill';
+      }
+      copyText(text); showToast('✅ 已复制到剪贴板');
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).catch(() => {
+        const ta = document.createElement('textarea'); ta.value = text;
+        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      });
+    }
+
+    // ===== Settings =====
+    function updateToggle(cb){
+      const t=document.getElementById('toggleTrack');
+      const k=document.getElementById('toggleKnob');
+      if(cb.checked){t.style.background='#ef4444';k.style.transform='translateX(22px)';}
+      else{t.style.background='#cbd5e1';k.style.transform='translateX(0)';}
+    }
+    async function loadSettings() {
+      try {
+        const r = await fetch(SET_API+'?select=*',{headers:H});
+        if(r.ok){
+          const data = await r.json();
+          data.forEach(s=>{settings[s.key]=s.value});
+          document.getElementById('sFillStart').value = settings['fill_start'] || '19:00';
+          document.getElementById('sFillEnd').value = settings['fill_end'] || '21:00';
+          document.getElementById('sPassword').value = settings['admin_password'] || '';
+          const maint = settings['maintenance'] === '1';
+          document.getElementById('sMaintenance').checked = maint;
+          updateToggle(document.getElementById('sMaintenance'));
+        }
+      } catch(e) {}
+    }
+
+    async function saveSettings() {
+      const start = document.getElementById('sFillStart').value;
+      const end = document.getElementById('sFillEnd').value;
+      const pwd = document.getElementById('sPassword').value.trim();
+      const maint = document.getElementById('sMaintenance').checked ? '1' : '0';
+      if(!pwd) return showToast('密码不能为空');
+
+      const updates = [
+        {key:'fill_start', value:start},
+        {key:'fill_end', value:end},
+        {key:'admin_password', value:pwd},
+        {key:'maintenance', value:maint},
+      ];
+
+      try {
+        for(const u of updates){
+          await fetch(SET_API+'?on_conflict=key', {
+            method:'POST',
+            headers:{...H,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+            body:JSON.stringify(u)
+          }).catch(()=>{});
+        }
+        showToast('✅ 设置已保存，所有同学将看到更新');
+        settings = {};
+      } catch(e) { showToast('保存失败，请重试'); }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+  </script>
+</body>
+</html>
