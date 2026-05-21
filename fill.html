@@ -158,7 +158,7 @@ if(localStorage.getItem('debug_mode')==='1'){
             wc++;clearTimeout(wt);
             wt=setTimeout(function(){wc=0;},1500);
             if(wc>=7){wc=0;
-              var pwd=prompt('输入管理员密码');
+              safePrompt(function(pwd){
               if(!pwd)return;
               var x2=new XMLHttpRequest();
               x2.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
@@ -171,6 +171,7 @@ if(localStorage.getItem('debug_mode')==='1'){
                   }catch(e){alert('验证失败');}
                 }else alert('网络错误');
               };x2.send();
+              });
             }
           };
           return;
@@ -216,7 +217,7 @@ function timeCheck(){
       wc2++;clearTimeout(wt2);
       wt2=setTimeout(function(){wc2=0;},1500);
       if(wc2>=7){wc2=0;
-        var pwd=prompt('输入管理员密码');
+        safePrompt(function(pwd){
         if(!pwd)return;
         var x3=new XMLHttpRequest();
         x3.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
@@ -229,6 +230,7 @@ function timeCheck(){
             }catch(e){alert('验证失败');}
           }else alert('网络错误');
         };x3.send();
+        });
       }
     };
   }else{tc.style.display='none';tc.innerHTML='';}
@@ -342,7 +344,18 @@ function doSub(){
   x.send(JSON.stringify({date:td,name:name,room:room,status:cst,note:reason,student_id:sid}));
 }
 
-// ===== 管理员入口 =====
+// ===== 安全密码输入弹窗 =====
+function safePrompt(callback){
+  var div=document.createElement('div');
+  div.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:99999;display:flex;align-items:center;justify-content:center';
+  div.innerHTML='<div style="background:#fff;border-radius:16px;padding:24px;width:300px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15)"><p style="font-size:15px;color:#1e293b;margin-bottom:16px">🔑 输入管理员密码</p><input type="password" id="spi" style="width:100%;padding:12px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;text-align:center" placeholder="密码"><div style="display:flex;gap:8px;margin-top:14px"><button id="spc" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;font-size:15px;cursor:pointer">取消</button><button id="spo" style="flex:1;padding:10px;border:none;border-radius:10px;background:#1e293b;color:#fff;font-size:15px;cursor:pointer">确认</button></div></div>';
+  document.body.appendChild(div);
+  var inp=document.getElementById('spi');
+  document.getElementById('spc').onclick=function(){document.body.removeChild(div);};
+  document.getElementById('spo').onclick=function(){var v=inp.value.trim();document.body.removeChild(div);callback(v);};
+  inp.onkeydown=function(e){if(e.key==='Enter'){var v=this.value.trim();document.body.removeChild(div);callback(v);}};
+  setTimeout(function(){inp.focus();},100);
+}
 var mc=0,mt=null;
 function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>=7){mc=0;var e=document.getElementById('ae');e.className=e.className.indexOf('on')>=0?'':'on';}}
 
