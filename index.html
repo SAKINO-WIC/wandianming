@@ -213,10 +213,10 @@ var APP_NAME = '晚点名系统';
     }
   }
 
-  // ===== 宿舍列表 =====
+  // ===== 宿舍列表（用 innerHTML 更可靠）=====
   const dorms=[...new Set(STUDENTS.map(s=>s.room))].sort();
   const bd=document.getElementById('bindDorm');
-  dorms.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;bd.appendChild(o)});
+  bd.innerHTML='<option value="">全部宿舍</option>'+dorms.map(r=>'<option value="'+r+'">'+r+'</option>').join('');
 
   function filterNames(){
     const dorm=bd.value;
