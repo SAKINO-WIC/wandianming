@@ -3,170 +3,181 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>晚点名系统</title>
+  <title>晚点名</title>
   <script src="js/config.js"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{
-      font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
-      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-      min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px
-    }
-    .container{max-width:400px;width:100%}
-    .hero{text-align:center;margin-bottom:30px}
-    .hero-icon{font-size:60px;margin-bottom:10px}
-    .hero h1{color:#fff;font-size:32px;font-weight:700}
-    .hero p{color:rgba(255,255,255,.8);font-size:14px;margin-top:8px}
-    .card{background:#fff;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,.15);overflow:hidden}
-    .card-btn{
-      display:flex;align-items:center;gap:16px;padding:20px 24px;
-      border:none;background:#fff;width:100%;cursor:pointer;transition:all .15s;text-align:left
-    }
-    .card-btn:hover{background:#f7fafc}
-    .card-btn:active{background:#edf2f7}
-    .card-btn:first-child{border-bottom:1px solid #f0f4f8}
-    .card-btn .icon{font-size:32px;flex-shrink:0}
-    .card-btn .text h3{font-size:17px;color:#2d3748;margin-bottom:2px}
-    .card-btn .text p{font-size:13px;color:#718096}
-    .footer{text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin-top:30px}
+    body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
+    .header{background:linear-gradient(135deg,#1e293b,#334155);padding:28px 20px 20px;text-align:center;color:#fff;position:relative}
+    .header .moon{font-size:36px;display:block;margin-bottom:4px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+    .header h1{font-size:24px;font-weight:600;letter-spacing:2px}
+    .header .date{font-size:13px;opacity:.7;margin-top:4px;margin-bottom:10px}
+    .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
+    .container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
+    .card{background:#fff;border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.06);padding:24px;margin-bottom:12px}
 
-    /* 维护模式全屏遮罩 */
-    #maintOverlay{
-      display:none;position:fixed;top:0;left:0;right:0;bottom:0;
-      background:linear-gradient(135deg,#1e293b,#334155);z-index:9999;
-      flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px
-    }
-    #maintOverlay.on{display:flex}
-    #maintOverlay .icon{font-size:64px;margin-bottom:16px;cursor:pointer;user-select:none}
-    #maintOverlay .icon:active{transform:scale(.9)}
-    #maintOverlay h2{font-size:24px;color:#fff;margin-bottom:8px}
-    #maintOverlay p{color:rgba(255,255,255,.6);font-size:14px;max-width:300px;margin-bottom:20px}
+    .hello{text-align:center;margin-bottom:20px}
+    .hello .icon{font-size:48px;margin-bottom:8px}
+    .hello h2{font-size:20px;color:#1e293b;margin-bottom:4px}
+    .hello p{font-size:13px;color:#94a3b8}
 
-    /* 调试模式密码框 */
-    #debugPanel{display:none}
-    #debugPanel.on{display:block}
-    #debugPanel input{
-      padding:10px 14px;border:1px solid rgba(255,255,255,.3);border-radius:8px;
-      background:rgba(255,255,255,.1);color:#fff;font-size:15px;text-align:center;width:200px
-    }
-    #debugPanel input::placeholder{color:rgba(255,255,255,.4)}
-    #debugPanel input:focus{outline:none;border-color:rgba(255,255,255,.6)}
-    .debug-btn{
-      margin-top:8px;padding:8px 24px;border:1px solid rgba(255,255,255,.3);
-      border-radius:8px;background:rgba(255,255,255,.1);color:#fff;font-size:14px;cursor:pointer
-    }
-    .debug-btn:active{background:rgba(255,255,255,.2)}
-    .debug-status{
-      position:fixed;top:10px;right:10px;background:#22c55e;color:#fff;
-      padding:4px 12px;border-radius:12px;font-size:11px;z-index:10000;display:none;cursor:pointer
-    }
-    .debug-status.on{display:block}
+    .field{margin-bottom:14px}
+    .field-label{font-size:13px;font-weight:500;color:#64748b;margin-bottom:5px}
+    select,input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;color:#1e293b;background:#f8fafc;transition:all .15s}
+    select:focus,input:focus{outline:none;border-color:#3b82f6;background:#fff}
+
+    .nr{display:flex;gap:8px}
+    .nr select{flex:1}
+    .nr input{width:150px;flex-shrink:0;text-align:center;font-size:18px;letter-spacing:2px}
+
+    .btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;transition:all .15s}
+    .btn-pri{background:#1e293b;color:#fff}
+    .btn-pri:active{background:#334155}
+    .btn-pri:disabled{background:#cbd5e1;cursor:not-allowed}
+
+    .msg{padding:12px;border-radius:10px;font-size:14px;margin-bottom:12px;display:none;text-align:center}
+    .msg.on{display:block}
+    .msg.ok{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+    .msg.err{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+
+    .redirecting{text-align:center;padding:40px 0}
+    .redirecting .spinner{font-size:40px;margin-bottom:12px;animation:pulse 1s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+    .redirecting p{color:#94a3b8;font-size:14px}
+
+    /* 隐藏管理员入口 */
+    #adminEntry{display:none;text-align:center;margin-top:12px;animation:fadeIn .3s}
+    #adminEntry.on{display:block}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    #adminEntry a{color:#3b82f6;font-size:14px;text-decoration:none;font-weight:500}
+
+    .ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:20px}
   </style>
 </head>
 <body>
-  <!-- 调试状态标签（点击退出） -->
-  <div class="debug-status" id="debugBadge" onclick="exitDebug()">🔧 调试模式 · 点击退出</div>
+<div class="header">
+  <span class="moon" id="moonIcon" ontouchstart="tapMoon()" onclick="tapMoon()">🌙</span>
+  <h1>晚点名</h1>
+  <div class="date" id="td"></div>
+  <div class="deco"></div>
+</div>
 
-  <!-- 维护模式遮罩 -->
-  <div id="maintOverlay">
-    <div class="icon" id="wrenchIcon" ontouchstart="tapWrench()" onclick="tapWrench()">🔧</div>
-    <h2>系统维护中</h2>
-    <p>系统正在升级维护，暂不可用，请稍后再来～</p>
-    <div id="debugPanel">
-      <input type="password" id="debugPwd" placeholder="管理员密码" onkeydown="if(event.key==='Enter')enterDebug()">
-      <div><button class="debug-btn" onclick="enterDebug()">进入调试模式</button></div>
+<div class="container">
+  <div id="msg" class="msg"></div>
+
+  <!-- 绑定页（未绑定用户看到） -->
+  <div id="bindCard" class="card">
+    <div class="hello">
+      <div class="icon">👋</div>
+      <h2>欢迎使用晚点名</h2>
+      <p>首次使用请先绑定身份，后续自动识别</p>
+    </div>
+    <div class="field">
+      <div class="field-label">🏠 宿舍</div>
+      <select id="bindDorm" onchange="filterNames()"><option value="">全部宿舍</option></select>
+    </div>
+    <div class="field">
+      <div class="field-label">👤 身份验证（选姓名 + 输入学号）</div>
+      <div class="nr">
+        <select id="bindName"><option value="">请选择</option></select>
+        <input type="text" id="bindSid" inputmode="numeric" placeholder="学号" maxlength="10"
+               oninput="onSid()" onkeydown="if(event.key==='Enter')doBind()">
+      </div>
+    </div>
+    <button class="btn btn-pri" id="bindBtn" onclick="doBind()" disabled>绑定并进入</button>
+  </div>
+
+  <!-- 跳转中（已绑定用户看到） -->
+  <div id="redirectCard" class="card" style="display:none;">
+    <div class="redirecting">
+      <div class="spinner">🌙</div>
+      <p>正在进入晚点名…</p>
     </div>
   </div>
 
-  <div id="mainContent">
-    <div class="container">
-      <div class="hero">
-        <div class="hero-icon">🌙</div>
-        <h1>晚点名</h1>
-        <p>班级晚点名系统 · 一键填写</p>
-      </div>
-      <div class="card">
-        <button class="card-btn" onclick="location.href='fill.html'">
-          <div class="icon">✍️</div>
-          <div class="text"><h3>今晚填表</h3><p>填写今晚的晚点名情况</p></div>
-          <div style="margin-left:auto;color:#a0aec0;">→</div>
-        </button>
-        <button class="card-btn" onclick="location.href='admin.html'">
-          <div class="icon">📊</div>
-          <div class="text"><h3>管理看板</h3><p>查看填写情况，系统设置</p></div>
-          <div style="margin-left:auto;color:#a0aec0;">→</div>
-        </button>
-      </div>
-      <div class="footer">信管2307 · 晚点名系统</div>
-    </div>
-  </div>
+  <!-- 隐藏管理员入口 -->
+  <div id="adminEntry"><a href="admin.html">📊 管理看板</a></div>
 
-  <script>
-    // ===== 扳手连点 =====
-    let tapCount = 0, tapTimer = null;
-    function tapWrench(){
-      tapCount++;
-      clearTimeout(tapTimer);
-      tapTimer = setTimeout(()=>{tapCount=0;}, 1000);
-      if(tapCount >= 5){
-        tapCount = 0;
-        document.getElementById('debugPanel').classList.add('on');
-      }
+  <div class="ft">信管2307 · 晚点名系统</div>
+</div>
+
+<script>
+  const H = {'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY};
+
+  // ===== 日期 =====
+  const wd=['日','一','二','三','四','五','六'];const D=new Date();
+  document.getElementById('td').textContent=D.getFullYear()+'年'+(D.getMonth()+1)+'月'+D.getDate()+'日 星期'+wd[D.getDay()];
+
+  // ===== 隐藏管理员入口（点🌙7次）=====
+  let moonClicks=0,moonTimer=null;
+  function tapMoon(){
+    moonClicks++;
+    clearTimeout(moonTimer);
+    moonTimer=setTimeout(()=>{moonClicks=0;},1500);
+    if(moonClicks>=7){
+      moonClicks=0;
+      document.getElementById('adminEntry').classList.toggle('on');
     }
+  }
 
-    function enterDebug(){
-      const pwd = document.getElementById('debugPwd').value;
-      fetch(SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password', {
-        headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}
-      }).then(r=>r.json()).then(data=>{
-        const realPwd = (data.length>0 ? data[0].value : ADMIN_PASSWORD);
-        if(pwd === realPwd){
-          localStorage.setItem('debug_mode', '1');
-          showDebugBadge();
-          document.getElementById('maintOverlay').classList.remove('on');
-          document.getElementById('mainContent').style.display='block';
-          document.getElementById('debugPanel').classList.remove('on');
-        } else {
-          alert('密码错误');
-        }
-      }).catch(()=>{
-        if(pwd === ADMIN_PASSWORD){
-          localStorage.setItem('debug_mode', '1');
-          showDebugBadge();
-          document.getElementById('maintOverlay').classList.remove('on');
-          document.getElementById('mainContent').style.display='block';
-          document.getElementById('debugPanel').classList.remove('on');
-        } else { alert('密码错误'); }
-      });
+  // ===== 宿舍列表 =====
+  const dorms=[...new Set(STUDENTS.map(s=>s.room))].sort();
+  const bd=document.getElementById('bindDorm');
+  dorms.forEach(r=>{const o=document.createElement('option');o.value=r;o.textContent=r;bd.appendChild(o)});
+
+  function filterNames(){
+    const dorm=bd.value;
+    const sel=document.getElementById('bindName');
+    sel.innerHTML='<option value="">请选择</option>';
+    let list=STUDENTS;if(dorm)list=list.filter(s=>s.room===dorm);
+    list.forEach(s=>{const o=document.createElement('option');o.value=s.name;o.textContent=s.name;sel.appendChild(o)});
+    ck();
+  }
+
+  const sn=document.getElementById('bindName');
+  sn.addEventListener('change',function(){
+    const name=this.value;
+    if(name){const s=STUDENTS.find(x=>x.name===name);if(s)document.getElementById('bindSid').value=s.sid;}
+    ck();
+  });
+
+  function onSid(){
+    const sid=document.getElementById('bindSid').value.trim();
+    if(sid.length===10){
+      const s=STUDENTS.find(x=>x.sid===sid);
+      if(s&&!sn.value)sn.value=s.name;
     }
+    ck();
+  }
 
-    function showDebugBadge(){
-      document.getElementById('debugBadge').classList.add('on');
-      document.getElementById('debugBadge').textContent='🔧 调试模式 · 点击退出';
-    }
+  function ck(){
+    const name=sn.value;
+    const sid=document.getElementById('bindSid').value.trim();
+    document.getElementById('bindBtn').disabled=!STUDENTS.find(x=>x.name===name&&x.sid===sid);
+  }
 
-    function exitDebug(){
-      localStorage.removeItem('debug_mode');
-      document.getElementById('debugBadge').classList.remove('on');
-      location.reload();
-    }
+  function doBind(){
+    const name=sn.value;
+    const sid=document.getElementById('bindSid').value.trim();
+    if(!STUDENTS.find(x=>x.name===name&&x.sid===sid))return msg('⚠️ 姓名与学号不匹配','err');
+    localStorage.setItem('wdm_name',name);
+    localStorage.setItem('wdm_sid',sid);
+    msg('✅ 绑定成功，正在跳转…','ok');
+    setTimeout(()=>{location.href='fill.html';},600);
+  }
 
-    function checkMaint(){
-      if(localStorage.getItem('debug_mode') === '1'){
-        showDebugBadge();
-        return;
-      }
-      fetch(SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.maintenance', {
-        headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY}
-      }).then(r=>r.json()).then(data=>{
-        if(data.length>0 && data[0].value==='1'){
-          document.getElementById('maintOverlay').classList.add('on');
-          document.getElementById('mainContent').style.display='none';
-        }
-      }).catch(()=>{});
-    }
+  function msg(t,type){const m=document.getElementById('msg');m.textContent=t;m.className='msg on '+type;}
 
-    checkMaint();
-  </script>
+  // ===== 初始化 =====
+  filterNames();
+
+  // 已绑定用户直接跳转
+  const sn_=localStorage.getItem('wdm_name'),ss_=localStorage.getItem('wdm_sid');
+  if(sn_&&ss_&&STUDENTS.find(x=>x.name===sn_&&x.sid===ss_)){
+    document.getElementById('bindCard').style.display='none';
+    document.getElementById('redirectCard').style.display='block';
+    setTimeout(()=>{location.href='fill.html';},500);
+  }
+</script>
 </body>
 </html>
