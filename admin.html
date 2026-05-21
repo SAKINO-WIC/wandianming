@@ -393,27 +393,31 @@
       const end = document.getElementById('sFillEnd').value;
       const pwd = document.getElementById('sPassword').value.trim();
       const maint = document.getElementById('sMaintenance').checked ? '1' : '0';
-      if(!pwd) return showToast('密码不能为空');
 
-      const updates = [
-        {key:'fill_start', value:start},
-        {key:'fill_end', value:end},
-        {key:'admin_password', value:pwd},
-        {key:'maintenance', value:maint},
-      ];
+      var updates = [];
+      updates.push({key:'fill_start', value:start});
+      updates.push({key:'fill_end', value:end});
+      updates.push({key:'maintenance', value:maint});
+      // 密码只有改了才更新
+      if(pwd) updates.push({key:'admin_password', value:pwd});
 
-      let allOk = true;
+      var okCount = 0;
       for(const u of updates){
-        const resp = await fetch(SET_API+'?on_conflict=key', {
-          method:'POST',
-          headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
-          body:JSON.stringify(u)
-        });
-        if(!resp.ok){ allOk=false; showToast(u.key+' 保存失败: '+resp.status); break; }
+        try {
+          const resp = await fetch(SET_API+'?on_conflict=key', {
+            method:'POST',
+            headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+            body:JSON.stringify(u)
+          });
+          if(resp.ok) okCount++;
+          else showToast(u.key+' 失败: '+resp.status);
+        } catch(e) { showToast(u.key+' 异常: '+e.message); }
       }
-      if(allOk){
-        showToast('✅ 设置已保存，所有同学将看到更新');
+      if(okCount === updates.length){
+        showToast('✅ 已保存 ('+okCount+'项)');
         settings = {};
+      } else {
+        showToast('⚠️ 部分保存失败 ('+okCount+'/'+updates.length+')');
       }
     }
 
