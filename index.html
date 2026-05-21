@@ -3,19 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>信管2307班晚点名系统-SVIP专属定制版</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
 .header{background:linear-gradient(135deg,#1e293b,#334155);padding:28px 20px 16px;text-align:center;color:#fff;position:relative}
-.header .moon{font-size:36px;display:block;margin-bottom:4px;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
-.header h1{font-size:20px;font-weight:600;letter-spacing:1px}
+.header .moon{font-size:36px;display:block;margin-bottom:4px;cursor:pointer;user-select:none}
+.header h1{font-size:20px;font-weight:600}
 .header .sub{font-size:11px;opacity:.5;margin-top:-2px;margin-bottom:6px}
 .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
-.container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
+.container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px}
 .card{background:#fff;border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.06);padding:24px;margin-bottom:12px}
 .hello{text-align:center;margin-bottom:20px}
 .hello .icon{font-size:48px;margin-bottom:8px}
@@ -24,101 +21,154 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .field{margin-bottom:14px}
 .field-label{font-size:13px;font-weight:500;color:#64748b;margin-bottom:5px}
 select,input{width:100%;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;color:#1e293b;background:#f8fafc}
-select:focus,input:focus{outline:none;border-color:#3b82f6;background:#fff}
-.nr{display:flex;gap:8px;align-items:stretch}
-.nr input{flex:1}
-.nr .db{width:48px;flex-shrink:0;border:1.5px solid #e2e8f0;border-radius:10px;background:#f1f5f9;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;user-select:none;color:#475569}
-.nr .db:active{background:#e2e8f0;transform:scale(.95)}
-.nw{position:relative}
-.np{display:none;position:absolute;top:calc(100%+4px);left:0;right:56px;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;max-height:200px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:50}
-.np.on{display:block}
-.np .it{padding:11px 14px;font-size:15px;color:#1e293b;cursor:pointer;border-bottom:1px solid #f1f5f9}
-.np .it:last-child{border-bottom:none}
-.np .it:active{background:#eff6ff}
-.np .it .rt{font-size:12px;color:#94a3b8;margin-left:6px}
-.np .empty{padding:20px;text-align:center;color:#94a3b8;font-size:14px}
-.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer;transition:all .15s}
+:focus{outline:none;border-color:#3b82f6!important;background:#fff}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:17px;font-weight:600;cursor:pointer}
 .btn-pri{background:#1e293b;color:#fff}
-.btn-pri:active{background:#334155}
 .btn-pri:disabled{background:#cbd5e1;cursor:not-allowed}
 .msg{padding:12px;border-radius:10px;font-size:14px;margin-bottom:12px;display:none;text-align:center}
 .msg.on{display:block}
 .msg.ok{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
 .msg.err{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:20px}
 #ae{display:none;text-align:center;margin-top:12px}
 #ae.on{display:block}
-#ae a{color:#3b82f6;font-size:14px;text-decoration:none;font-weight:500}
-.ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:20px}
+#ae a{color:#3b82f6;font-size:14px;text-decoration:none}
 </style>
 </head>
 <body>
 <div class="header">
-<span class="moon" id="mi" ontouchstart="tm()" onclick="tm()">🌙</span>
+<span class="moon" onclick="tm()">🌙</span>
 <h1>信管2307班晚点名系统</h1>
 <div class="sub">SVIP专属定制版</div>
 <div class="deco"></div>
 </div>
+
 <div class="container">
 <div id="msg" class="msg"></div>
+
+<!-- 绑定页 -->
 <div id="bc" class="card">
-<div class="hello"><div class="icon">👋</div><h2>信管2307班晚点名系统</h2><p style="font-size:11px;color:#94a3b8;margin-bottom:4px;">SVIP专属定制版</p><p>首次使用请先绑定身份，后续自动识别</p></div>
-<div class="field"><div class="field-label">🏠 宿舍</div><select id="bd" onchange="fn()"><option value="">全部宿舍</option></select></div>
+<div class="hello"><div class="icon">👋</div><h2>信管2307班晚点名系统</h2><p style="font-size:11px;color:#94a3b8;margin-bottom:4px;">SVIP专属定制版</p><p>首次使用请先绑定身份</p></div>
+
+<div class="field"><div class="field-label">🏠 宿舍</div>
+<select id="bd">
+<option value="">全部宿舍</option>
+<option value="26-521">26-521</option><option value="26-522">26-522</option><option value="26-523">26-523</option>
+<option value="26-524">26-524</option><option value="26-525">26-525</option>
+<option value="28-535">28-535</option><option value="28-536">28-536</option><option value="28-537">28-537</option><option value="28-538">28-538</option>
+</select></div>
+
 <div class="field"><div class="field-label">👤 姓名</div>
-<div class="nw"><div class="nr"><input type="text" id="bn" placeholder="输入姓名或点▼选择" autocomplete="off" oninput="oi()"><div class="db" id="ndb" onclick="tp()">▼</div></div><div class="np" id="np"></div></div></div>
-<div class="field"><div class="field-label">🔢 学号</div><input type="text" id="bs" inputmode="numeric" placeholder="输入10位学号" maxlength="10" oninput="os()" onkeydown="if(event.key==='Enter')db()"></div>
+<select id="bn">
+<option value="">请选择姓名</option>
+<option value="蔡名杰">蔡名杰</option><option value="曹家乐">曹家乐</option><option value="曹智宣">曹智宣</option><option value="狄梦豪">狄梦豪</option>
+<option value="高瑞鹏">高瑞鹏</option><option value="郭宇峰">郭宇峰</option><option value="缴少博">缴少博</option><option value="寇翼鹏">寇翼鹏</option>
+<option value="林宽">林宽</option><option value="刘倍源">刘倍源</option><option value="刘春鹏">刘春鹏</option><option value="刘运来">刘运来</option>
+<option value="吕英豪">吕英豪</option><option value="皮杰">皮杰</option><option value="万小转">万小转</option>
+<option value="王哲">王哲</option><option value="吴泓滨">吴泓滨</option><option value="徐昊涵">徐昊涵</option>
+<option value="杨昌秀">杨昌秀</option><option value="杨雨非">杨雨非</option><option value="张骏意">张骏意</option>
+<option value="张天予">张天予</option><option value="张志杰">张志杰</option><option value="赵文宇">赵文宇</option>
+<option value="蔡文清">蔡文清</option><option value="陈蕾">陈蕾</option><option value="陈萌">陈萌</option><option value="程研">程研</option>
+<option value="何欣怡">何欣怡</option><option value="胡亮亮">胡亮亮</option><option value="李雅琪">李雅琪</option>
+<option value="梁博文">梁博文</option><option value="刘瑷烨">刘瑷烨</option><option value="刘政琪">刘政琪</option><option value="马莹莹">马莹莹</option>
+<option value="潘玥彤">潘玥彤</option><option value="王青青">王青青</option><option value="王睿">王睿</option>
+<option value="王雨欣">王雨欣</option><option value="杨羽涵">杨羽涵</option>
+<option value="姚蒙娜蝶舞">姚蒙娜蝶舞</option><option value="尹润甜">尹润甜</option><option value="喻忠香">喻忠香</option>
+<option value="张文静">张文静</option><option value="周凯旋">周凯旋</option><option value="朱思怡">朱思怡</option>
+</select></div>
+
+<div class="field"><div class="field-label">🔢 学号</div>
+<input type="text" id="bs" inputmode="numeric" placeholder="输入10位学号" maxlength="10">
+</div>
+
 <button class="btn btn-pri" id="bb" onclick="db()" disabled>绑定并进入</button>
 </div>
+
+<!-- 欢迎页 -->
 <div id="wc" class="card" style="display:none;">
-<div class="hello"><div class="icon">🌙</div><h2>欢迎回来</h2><p id="ww"></p><div style="margin-top:16px;"><button class="btn btn-pri" onclick="location.href='fill.html'">✍️ 进入晚点名</button></div><p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:12px;">👤 <span id="wn"></span> · <span id="wr"></span></p></div>
+<div class="hello"><div class="icon">🌙</div><h2>欢迎回来</h2><p id="ww"></p>
+<div style="margin-top:16px;"><button class="btn btn-pri" onclick="location.href='fill.html'">✍️ 进入晚点名</button></div>
+<p style="text-align:center;color:#94a3b8;font-size:12px;margin-top:12px;" id="wi"></p></div>
 </div>
+
 <div id="ae"><a href="admin.html">📊 管理看板</a></div>
 <div class="ft">信管2307班晚点名系统 · SVIP专属定制版</div>
 </div>
+
 <script>
-// ===== 全部代码在一个 script 块里 =====
 var SUPABASE_URL='https://jgiyahtmpvfqtgdfxxgi.supabase.co';
 var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnaXlhaHRtcHZmcXRnZGZ4eGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTEwNTIsImV4cCI6MjA5NDg2NzA1Mn0.K2XGYGccLv6rfPyuAYVYufhIy1mEpABMHf77Sz1IqZE';
+
 var STUDENTS=[
-{name:'蔡名杰',sid:'2330130273',room:'26-521'},{name:'曹家乐',sid:'2330130274',room:'26-521'},{name:'曹智宣',sid:'2330130275',room:'26-521'},{name:'狄梦豪',sid:'2330130276',room:'26-521'},{name:'高瑞鹏',sid:'2330130277',room:'26-521'},{name:'郭宇峰',sid:'2330130278',room:'26-521'},
-{name:'缴少博',sid:'2330130279',room:'26-522'},{name:'寇翼鹏',sid:'2330130280',room:'26-522'},{name:'林宽',sid:'2330130281',room:'26-522'},{name:'刘倍源',sid:'2330130282',room:'26-522'},{name:'刘春鹏',sid:'2330130283',room:'26-522'},{name:'刘运来',sid:'2330130284',room:'26-522'},
-{name:'吕英豪',sid:'2330130285',room:'26-523'},{name:'皮杰',sid:'2330130286',room:'26-523'},{name:'万小转',sid:'2330130289',room:'26-523'},
-{name:'王哲',sid:'2330130291',room:'26-524'},{name:'吴泓滨',sid:'2330130292',room:'26-524'},{name:'徐昊涵',sid:'2330130293',room:'26-524'},{name:'杨昌秀',sid:'2330130294',room:'26-524'},{name:'杨雨非',sid:'2330130295',room:'26-524'},{name:'张骏意',sid:'2330130296',room:'26-524'},
-{name:'张天予',sid:'2330130297',room:'26-525'},{name:'张志杰',sid:'2330130298',room:'26-525'},{name:'赵文宇',sid:'2330130299',room:'26-525'},
-{name:'蔡文清',sid:'2330130300',room:'28-535'},{name:'陈蕾',sid:'2330130301',room:'28-535'},{name:'陈萌',sid:'2330130302',room:'28-535'},{name:'程研',sid:'2330130303',room:'28-535'},{name:'何欣怡',sid:'2330130304',room:'28-535'},
-{name:'胡亮亮',sid:'2330130305',room:'28-536'},{name:'李雅琪',sid:'2330130306',room:'28-536'},{name:'梁博文',sid:'2330130307',room:'28-536'},{name:'刘瑷烨',sid:'2330130308',room:'28-536'},{name:'刘政琪',sid:'2330130309',room:'28-536'},{name:'马莹莹',sid:'2330130310',room:'28-536'},
-{name:'潘玥彤',sid:'2330130311',room:'28-537'},{name:'王青青',sid:'2330130313',room:'28-537'},{name:'王睿',sid:'2330130314',room:'28-537'},{name:'王雨欣',sid:'2330130315',room:'28-537'},{name:'杨羽涵',sid:'2330130316',room:'28-537'},
-{name:'姚蒙娜蝶舞',sid:'2330130317',room:'28-538'},{name:'尹润甜',sid:'2330130318',room:'28-538'},{name:'喻忠香',sid:'2330130319',room:'28-538'},{name:'张文静',sid:'2330130320',room:'28-538'},{name:'周凯旋',sid:'2330130321',room:'28-538'},{name:'朱思怡',sid:'2330130322',room:'28-538'},
+['蔡名杰','2330130273','26-521'],['曹家乐','2330130274','26-521'],['曹智宣','2330130275','26-521'],['狄梦豪','2330130276','26-521'],['高瑞鹏','2330130277','26-521'],['郭宇峰','2330130278','26-521'],
+['缴少博','2330130279','26-522'],['寇翼鹏','2330130280','26-522'],['林宽','2330130281','26-522'],['刘倍源','2330130282','26-522'],['刘春鹏','2330130283','26-522'],['刘运来','2330130284','26-522'],
+['吕英豪','2330130285','26-523'],['皮杰','2330130286','26-523'],['万小转','2330130289','26-523'],
+['王哲','2330130291','26-524'],['吴泓滨','2330130292','26-524'],['徐昊涵','2330130293','26-524'],['杨昌秀','2330130294','26-524'],['杨雨非','2330130295','26-524'],['张骏意','2330130296','26-524'],
+['张天予','2330130297','26-525'],['张志杰','2330130298','26-525'],['赵文宇','2330130299','26-525'],
+['蔡文清','2330130300','28-535'],['陈蕾','2330130301','28-535'],['陈萌','2330130302','28-535'],['程研','2330130303','28-535'],['何欣怡','2330130304','28-535'],
+['胡亮亮','2330130305','28-536'],['李雅琪','2330130306','28-536'],['梁博文','2330130307','28-536'],['刘瑷烨','2330130308','28-536'],['刘政琪','2330130309','28-536'],['马莹莹','2330130310','28-536'],
+['潘玥彤','2330130311','28-537'],['王青青','2330130313','28-537'],['王睿','2330130314','28-537'],['王雨欣','2330130315','28-537'],['杨羽涵','2330130316','28-537'],
+['姚蒙娜蝶舞','2330130317','28-538'],['尹润甜','2330130318','28-538'],['喻忠香','2330130319','28-538'],['张文静','2330130320','28-538'],['周凯旋','2330130321','28-538'],['朱思怡','2330130322','28-538']
 ];
 
-// ===== 主逻辑 =====
-var dorms=[...new Set(STUDENTS.map(function(s){return s.room}))].sort();
-var bd=document.getElementById('bd');
-bd.innerHTML='<option value="">全部宿舍</option>';
-for(var i=0;i<dorms.length;i++){var o=document.createElement('option');o.value=dorms[i];o.textContent=dorms[i];bd.appendChild(o);}
-
-function fn(){var v=bd.value;var list=STUDENTS;if(v)list=list.filter(function(s){return s.room===v});rp(list);var val=document.getElementById('bn').value.trim();if(val&&!STUDENTS.find(function(x){return x.name===val}))document.getElementById('bs').value='';ck();}
-
-function rp(list){var p=document.getElementById('np');if(!list||!list.length){p.innerHTML='<div class=\\"empty\\">无匹配</div>';return;}var h='';for(var i=0;i<list.length;i++){h+='<div class=\\"it\\" onclick=\\"pn(\\''+list[i].name+'\\')\\">'+list[i].name+'<span class=\\"rt\\">'+list[i].room+'</span></div>';}p.innerHTML=h;}
-
-function op(){var v=bd.value;var list=STUDENTS;if(v)list=list.filter(function(s){return s.room===v});rp(list);document.getElementById('np').classList.add('on');document.getElementById('ndb').classList.add('on');}
-function cp(){document.getElementById('np').classList.remove('on');document.getElementById('ndb').classList.remove('on');}
-function tp(){if(document.getElementById('np').classList.contains('on'))cp();else op();}
-function pn(n){document.getElementById('bn').value=n;var s=STUDENTS.find(function(x){return x.name===n});if(s)document.getElementById('bs').value=s.sid;cp();ck();}
-function oi(){if(document.getElementById('np').classList.contains('on'))op();var v=document.getElementById('bn').value.trim();var s=STUDENTS.find(function(x){return x.name===v});if(s)document.getElementById('bs').value=s.sid;ck();}
-function os(){if(document.getElementById('bs').value.length===10){var sid=document.getElementById('bs').value.trim();var s=STUDENTS.find(function(x){return x.sid===sid});if(s&&!document.getElementById('bn').value)document.getElementById('bn').value=s.name;}ck();}
-
-function ck(){var n=document.getElementById('bn').value.trim();var s=document.getElementById('bs').value.trim();document.getElementById('bb').disabled=!STUDENTS.find(function(x){return x.name===n&&x.sid===s});}
-
-function db(){var n=document.getElementById('bn').value.trim();var s=document.getElementById('bs').value.trim();if(!STUDENTS.find(function(x){return x.name===n&&x.sid===s})){document.getElementById('msg').textContent='⚠️ 姓名与学号不匹配';document.getElementById('msg').className='msg on err';return;}
-localStorage.setItem('wdm_name',n);localStorage.setItem('wdm_sid',s);document.getElementById('msg').textContent='✅ 绑定成功，正在跳转…';document.getElementById('msg').className='msg on ok';setTimeout(function(){location.href='fill.html';},600);}
-
-// 管理员入口（点🌙7次）
+// 管理员入口：点🌙7次
 var mc=0,mt=null;
-function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>=7){mc=0;document.getElementById('ae').classList.toggle('on');}}
+function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>=7){mc=0;var e=document.getElementById('ae');if(e.className.indexOf('on')>=0)e.className='';else e.className='on';}}
 
-// 已绑定用户
-var sn=localStorage.getItem('wdm_name'),ss=localStorage.getItem('wdm_sid');
-if(sn&&ss){var s=STUDENTS.find(function(x){return x.name===sn&&x.sid===ss});if(s){document.getElementById('bc').style.display='none';document.getElementById('wc').style.display='block';document.getElementById('ww').textContent='已绑定 '+s.name+'，点击进入晚点名';document.getElementById('wn').textContent=s.name;document.getElementById('wr').textContent=s.room;}}
+// 获取姓名和学号
+function gn(){return document.getElementById('bn').value;}
+function gs(){return document.getElementById('bs').value.trim();}
+
+// 检查绑定按钮
+function ck(){
+  var n=gn(),s=gs();
+  var ok=false;
+  for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
+  document.getElementById('bb').disabled=!ok;
+}
+
+// 选名字时自动填学号
+document.getElementById('bn').onchange=function(){
+  var n=this.value;
+  if(!n){document.getElementById('bs').value='';ck();return;}
+  for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n){document.getElementById('bs').value=STUDENTS[i][1];break;}}
+  ck();
+};
+
+// 输学号时自动选名字
+document.getElementById('bs').oninput=function(){
+  var s=this.value.trim();
+  if(s.length===10){
+    for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][1]===s){var sel=document.getElementById('bn');for(var j=0;j<sel.options.length;j++){if(sel.options[j].value===STUDENTS[i][0]){sel.selectedIndex=j;break;}}break;}}
+  }
+  ck();
+};
+
+// 绑定
+function db(){
+  var n=gn(),s=gs();
+  var ok=false;
+  for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
+  if(!ok){var m=document.getElementById('msg');m.textContent='⚠️ 姓名与学号不匹配';m.className='msg on err';return;}
+  localStorage.setItem('wdm_name',n);
+  localStorage.setItem('wdm_sid',s);
+  var m=document.getElementById('msg');m.textContent='✅ 绑定成功，正在跳转…';m.className='msg on ok';
+  setTimeout(function(){location.href='fill.html';},600);
+}
+
+// 已绑定用户显示欢迎页
+var sn=localStorage.getItem('wdm_name');
+var ss=localStorage.getItem('wdm_sid');
+if(sn&&ss){
+  var found=false;
+  for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn&&STUDENTS[i][1]===ss){found=true;var s=STUDENTS[i];break;}}
+  if(found){
+    document.getElementById('bc').style.display='none';
+    document.getElementById('wc').style.display='block';
+    document.getElementById('ww').textContent='欢迎回来，'+sn;
+    document.getElementById('wi').textContent='👤 '+sn+' · '+s[2];
+  }
+}
 </script>
 </body>
 </html>
