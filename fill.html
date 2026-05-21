@@ -76,6 +76,7 @@ textarea{resize:none}
 </style>
 </head>
 <body>
+<div id="tw" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f8fafc;z-index:1000;align-items:center;justify-content:center;"></div>
 <div id="pc">
 <div class="header">
 <span class="moon" onclick="tm()">🌙</span>
@@ -177,8 +178,39 @@ if(localStorage.getItem('debug_mode')==='1'){
       }catch(e){}
     }
     document.getElementById('pc').className='on';
+    // 加载设置后检查时间窗口
+    var sx=new XMLHttpRequest();
+    sx.open('GET',SUPABASE_URL+'/rest/v1/settings?select=*');
+    sx.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+    sx.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+    sx.onload=function(){
+      if(sx.status===200){try{var sd=JSON.parse(sx.responseText);
+        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});
+      }catch(e){}}
+      timeCheck();
+    };
+    sx.onerror=function(){timeCheck();};
+    sx.send();
   };
   mx.send();
+}
+
+// ===== 时间窗口检查 =====
+function timeCheck(){
+  var start=window.wdm_fill_start||'19:00',end=window.wdm_fill_end||'23:30';
+  if(start===end)return; // 不限制
+  var n=new Date(),h=n.getHours(),m=n.getMinutes(),now=h*60+m;
+  var sp=start.split(':'),ep=end.split(':');
+  var sMin=parseInt(sp[0])*60+parseInt(sp[1]||0);
+  var eMin=parseInt(ep[0])*60+parseInt(ep[1]||0);
+  var outer=false;
+  if(sMin<eMin){outer=now<sMin||now>eMin;}
+  else{outer=now<eMin||now>sMin;} // 跨天
+  var tc=document.getElementById('tw');
+  if(outer){
+    tc.style.display='flex';
+    tc.innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:12px">⏰</div><h2 style="font-size:18px;color:#1e293b;margin-bottom:8px">当前不在填写时间</h2><p style="color:#94a3b8;font-size:14px;max-width:300px;margin:0 auto">填写时间：'+start+' ~ '+end+'<br>请在这个时间段内填写</p></div>';
+  }else{tc.style.display='none';tc.innerHTML='';}
 }
 
 // ===== 绑定页 =====
