@@ -176,16 +176,17 @@ document.getElementById('bs').oninput=function(){var s=this.value.trim();if(s.le
 
 function ck(){var n=document.getElementById('bn').value.trim();var s=document.getElementById('bs').value.trim();var ok=false;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}document.getElementById('bb').disabled=!ok;}
 
+function sm(t,type){var m=document.getElementById('msg');m.textContent=t;m.className='msg on '+type;setTimeout(function(){m.className='msg';},3000);}
+
 function onBind(){
   var n=document.getElementById('bn').value.trim();
   var s=document.getElementById('bs').value.trim();
-  if(!n){document.getElementById('msg').textContent='⚠️ 请填写姓名';document.getElementById('msg').className='msg on err';return;}
-  if(s.length!==10){document.getElementById('msg').textContent='⚠️ 请输入完整的10位学号';document.getElementById('msg').className='msg on err';return;}
+  if(!n){sm('⚠️ 请填写姓名','err');return;}
+  if(s.length!==10){sm('⚠️ 请输入完整的10位学号','err');return;}
   var si=null;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){si=i;break;}}
   if(si===null){
-    // 试试只看学号
-    for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][1]===s){document.getElementById('msg').textContent='⚠️ 姓名「'+n+'」与学号不匹配，你是否是「'+STUDENTS[i][0]+'」？';document.getElementById('msg').className='msg on err';return;}}
-    document.getElementById('msg').textContent='⚠️ 未找到该学生，请核对姓名和学号';document.getElementById('msg').className='msg on err';return;
+    for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][1]===s){sm('⚠️ 姓名「'+n+'」与学号不匹配，你是否是「'+STUDENTS[i][0]+'」？','err');return;}}
+    sm('⚠️ 未找到该学生，请核对姓名和学号','err');return;
   }
   localStorage.setItem('wdm_name',n);
   localStorage.setItem('wdm_sid',s);
