@@ -167,6 +167,26 @@ var STUDENTS = [
   let st='zaisushe',rec=null,boundStudent=null,modMode=false;
   const td=new Date().toISOString().slice(0,10);
 
+  // ===== 维护模式检查 =====
+  (function(){
+    if(localStorage.getItem('debug_mode')==='1')return;
+    var x=new XMLHttpRequest();
+    x.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.maintenance');
+    x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+    x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+    x.onload=function(){
+      if(x.status===200){
+        try{
+          var d=JSON.parse(x.responseText);
+          if(d.length>0&&d[0].value==='1'){
+            document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;padding:40px;text-align:center"><div style="font-size:64px;margin-bottom:16px">🔧</div><h2 style="font-size:22px;color:#1e293b;margin-bottom:8px">系统维护中</h2><p style="color:#94a3b8;max-width:300px">系统正在升级维护，暂不可用，请稍后再来～</p></div>';
+          }
+        }catch(e){}
+      }
+    };
+    x.send();
+  })();
+
   // ===== 解绑 =====
   function unbind(){
     if(!confirm('解除绑定后需要重新绑定才能填写，确定吗？')) return;
