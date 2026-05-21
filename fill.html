@@ -99,6 +99,15 @@
     </div>
   </div>
 
+  <!-- 维护模式 -->
+  <div id="maintenanceMsg" class="card" style="display:none;">
+    <div class="done">
+      <div class="bi">🔧</div>
+      <h2>系统维护中</h2>
+      <div class="st">系统正在升级维护，请稍后再来～</div>
+    </div>
+  </div>
+
   <div id="doneBox" class="card" style="display:none;">
     <div class="done">
       <div class="bi">✅</div>
@@ -297,7 +306,7 @@
     document.getElementById('sb').disabled = !(sidOk && (st==='zaisushe'||reason));
   }
 
-  // ===== 时间窗口 =====
+  let fillStart = '19:00', fillEnd = '23:30', maintenanceMode = false;
   async function loadSettings(){
     try{
       const r=await fetch(SUPABASE_URL+'/rest/v1/settings?select=*',{headers:H});
@@ -306,9 +315,16 @@
         data.forEach(s=>{
           if(s.key==='fill_start') fillStart=s.value;
           if(s.key==='fill_end') fillEnd=s.value;
+          if(s.key==='maintenance') maintenanceMode = s.value === '1';
         });
       }
     }catch(e){}
+    if(maintenanceMode){
+      document.getElementById('maintenanceMsg').style.display='block';
+      document.getElementById('formCard').style.display='none';
+      document.getElementById('closedMsg').style.display='none';
+      return;
+    }
     checkTimeWindow();
   }
   function inTimeWindow(){
