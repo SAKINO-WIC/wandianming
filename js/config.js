@@ -3,10 +3,10 @@
 
 const SUPABASE_URL = 'https://jgiyahtmpvfqtgdfxxgi.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnaXlhaHRtcHZmcXRnZGZ4eGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTEwNTIsImV4cCI6MjA5NDg2NzA1Mn0.K2XGYGccLv6rfPyuAYVYufhIy1mEpABMHf77Sz1IqZE';
-const ADMIN_PASSWORD = 'wan123456';
+var ADMIN_PASSWORD = 'wan123456';
 
 // 学生名单（含学号 sid）
-const STUDENTS = [
+var STUDENTS = [
   { name: '蔡名杰', sid: '2330130273', room: '26-521' },
   { name: '曹家乐', sid: '2330130274', room: '26-521' },
   { name: '曹智宣', sid: '2330130275', room: '26-521' },
@@ -55,9 +55,9 @@ const STUDENTS = [
   { name: '朱思怡', sid: '2330130322', room: '28-538' },
 ];
 
-const STATUS_OPTIONS = [
+var STATUS_OPTIONS = [
   { value: 'zaisushe', label: '🏠 住校' },
   { value: 'buzhusu',  label: '🚶 不住校' },
 ];
 
-const APP_NAME = '晚点名系统';
+var APP_NAME = '晚点名系统';
