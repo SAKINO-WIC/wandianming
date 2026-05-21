@@ -244,17 +244,11 @@ function ss(v){cst=v;document.querySelectorAll('.sbtn')[0].className='sbtn'+(v==
 function cf(){var r=document.getElementById('ri').value.trim();document.getElementById('sb').disabled=!(cst==='zaisushe'||r);}
 
 function sm2(){
-  // 从 localStorage 重新获取绑定信息
-  var sn=localStorage.getItem('wdm_name'),ss=localStorage.getItem('wdm_sid');
-  if(!sn||!ss){goBind();return;}
-  var si=null;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn&&STUDENTS[i][1]===ss){si=i;break;}}
-  if(si===null){goBind();return;}
-  window.bs=STUDENTS[si];
-  window.mod=true;
   document.getElementById('dbx').style.display='none';
   document.getElementById('fp').style.display='block';
   if(window.rec){ss(window.rec.status);if(window.rec.status==='buzhusu'&&window.rec.note)document.getElementById('ri').value=window.rec.note;}
-  document.getElementById('sb').textContent='✏️ 修改提交';cf();
+  document.getElementById('sb').textContent='✏️ 修改提交';
+  window.mod=true;cf();
 }
 
 function sb(){
