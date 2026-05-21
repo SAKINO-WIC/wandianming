@@ -156,9 +156,30 @@ function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>
   x.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.maintenance');
   x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
   x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
-  x.onload=function(){if(x.status===200){try{var d=JSON.parse(x.responseText);if(d.length>0&&d[0].value==='1'){document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;padding:40px;text-align:center"><div style="font-size:64px;margin-bottom:16px">🔧</div><h2 style="font-size:22px;color:#1e293b;margin-bottom:8px">系统维护中</h2><p style="color:#94a3b8;max-width:300px">系统正在升级维护，请稍后再来～</p></div>';}}catch(e){}}};
+  x.onload=function(){if(x.status===200){try{var d=JSON.parse(x.responseText);if(d.length>0&&d[0].value==='1'){document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;padding:40px;text-align:center"><div style="font-size:64px;margin-bottom:16px;cursor:pointer;user-select:none" onclick="dm()">🔧</div><h2 style="font-size:22px;color:#1e293b;margin-bottom:8px">系统维护中</h2><p style="color:#94a3b8;max-width:300px">系统正在升级维护，请稍后再来～</p></div>';}}catch(e){}}};
   x.send();
 })();
+
+// 维护模式下的管理员入口
+function dm(){
+  var pwd=prompt('输入管理员密码进入调试模式');
+  if(!pwd)return;
+  var x2=new XMLHttpRequest();
+  x2.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
+  x2.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+  x2.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+  x2.onload=function(){
+    if(x2.status===200){
+      try{
+        var d=JSON.parse(x2.responseText);
+        var realPwd=d.length>0?d[0].value:'wan123456';
+        if(pwd===realPwd){localStorage.setItem('debug_mode','1');location.reload();}
+        else alert('密码错误');
+      }catch(e){alert('验证失败');}
+    }else{alert('网络错误');}
+  };
+  x2.send();
+}
 
 // ===== 绑定页逻辑 =====
 function rp(arr){var p=document.getElementById('np');if(!arr||arr.length===0){p.innerHTML='<div class="empty">无匹配</div>';return;}var h='';for(var i=0;i<arr.length;i++){h+='<div class="it" onclick="pn(\''+arr[i][0]+'\',\''+arr[i][1]+'\')">'+arr[i][0]+'<span class="rt">'+arr[i][2]+'</span></div>';}p.innerHTML=h;}
@@ -289,6 +310,14 @@ var sn=localStorage.getItem('wdm_name'),ss=localStorage.getItem('wdm_sid');
 if(sn&&ss){
   for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn&&STUDENTS[i][1]===ss){showFill(STUDENTS[i]);break;}}
 }
+
+// 返回按钮重新检查绑定
+window.addEventListener('pageshow',function(){
+  var n=localStorage.getItem('wdm_name'),s=localStorage.getItem('wdm_sid');
+  if(!n||!s){showBind();return;}
+  var ok=false;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
+  if(!ok)showBind();
+});
 </script>
 </body>
 </html>
