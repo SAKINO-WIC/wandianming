@@ -222,12 +222,17 @@ document.getElementById('bb').onclick=function(){
   x.send();
 };
 
-// ===== 解绑 =====
+// ===== 解绑（用户主动操作）=====
 function ub(){
   if(!confirm('解除绑定后需要重新绑定才能填写，确定吗？'))return;
   localStorage.removeItem('wdm_name');
   localStorage.removeItem('wdm_sid');
-  window.bs=null;window.rec=null;
+  goBind();
+}
+
+// ===== 切换到绑定页（无弹窗）=====
+function goBind(){
+  window.bs=null;window.rec=null;window.mod=false;
   document.getElementById('fp').style.display='none';
   document.getElementById('dbx').style.display='none';
   document.getElementById('bp').style.display='block';
@@ -286,9 +291,9 @@ if(sn&&ss){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn&&STUDENTS[i
 // ===== 返回按钮检查 =====
 window.addEventListener('pageshow',function(){
   var n=localStorage.getItem('wdm_name'),s=localStorage.getItem('wdm_sid');
-  if(!n||!s){ub();return;}
+  if(!n||!s){goBind();return;}
   var ok=false;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
-  if(!ok)ub();
+  if(!ok)goBind();
 });
 </script>
 </body>
