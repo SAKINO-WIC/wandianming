@@ -11,8 +11,10 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
 .header{background:linear-gradient(135deg,#1e293b,#334155);padding:24px 20px 16px;text-align:center;color:#fff;position:relative}
-.header .moon{font-size:32px;display:block;margin-bottom:2px;cursor:pointer;user-select:none}
+.header .moon{font-size:28px;display:block;margin-bottom:2px;cursor:pointer;user-select:none;line-height:1}
 .header h1{font-size:20px;font-weight:600;letter-spacing:1px}
+.header .hdate{font-size:15px;opacity:.7;margin:3px 0 2px;font-weight:500}
+.header .hcount{font-size:14px;opacity:.55;margin-bottom:2px;font-variant-numeric:tabular-nums}
 .header .sub{font-size:10px;opacity:.5}
 .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
 .container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
@@ -73,14 +75,61 @@ textarea{resize:none}
 .done .st{color:#64748b;font-size:14px;margin-bottom:12px}
 #pc{display:none}
 #pc.on{display:block}
+/* ===== 宿舍全景 ===== */
+.pv-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.35);z-index:200;opacity:0;transition:opacity .3s;pointer-events:none}
+.pv-overlay.on{opacity:1;pointer-events:auto}
+.pv-panel{position:fixed;bottom:0;left:0;right:0;max-height:80vh;background:#fff;border-radius:20px 20px 0 0;z-index:201;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);box-shadow:0 -4px 24px rgba(0,0,0,.12);display:flex;flex-direction:column}
+.pv-panel.on{transform:translateY(0)}
+.pv-handle{width:36px;height:4px;border-radius:2px;background:#d1d5db;margin:8px auto 4px}
+.pv-header{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 12px;border-bottom:1px solid #f1f5f9}
+.pv-title{font-size:17px;font-weight:600;color:#1e293b}
+.pv-close{font-size:18px;color:#94a3b8;cursor:pointer;padding:4px 8px;border-radius:8px}
+.pv-close:active{background:#f1f5f9}
+.pv-tabs{display:flex;gap:6px;padding:12px 16px 0;overflow-x:auto;white-space:nowrap;scrollbar-width:none;-ms-overflow-style:none;flex-shrink:0}
+.pv-tabs::-webkit-scrollbar{display:none}
+.pv-tab{padding:7px 14px;border-radius:20px;font-size:13px;font-weight:500;color:#64748b;background:#f1f5f9;cursor:pointer;flex-shrink:0;transition:all .15s;border:1px solid transparent;-webkit-tap-highlight-color:transparent}
+.pv-tab:active{transform:scale(.95)}
+.pv-tab.on{background:#1e293b;color:#fff;border-color:#1e293b}
+.pv-tab.cur{color:#3b82f6;background:#eff6ff;border-color:#bfdbfe}
+.pv-body{flex:1;overflow-y:auto;padding:12px 16px 24px;min-height:200px}
+.pv-group{margin-bottom:16px}
+.pv-group:last-child{margin-bottom:0}
+.pv-group-title{font-size:14px;font-weight:600;color:#1e293b;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.pv-group-title .pv-count{font-size:12px;font-weight:400;color:#94a3b8;margin-left:auto}
+.pv-student{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;margin-bottom:4px;background:#f8fafc}
+.pv-student .pv-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.pv-student .pv-dot.zaisushe{background:#22c55e}
+.pv-student .pv-dot.buzhusu{background:#ef4444}
+.pv-student .pv-dot.none{background:#d1d5db}
+.pv-student .pv-name{font-size:14px;color:#1e293b;font-weight:500}
+.pv-student .pv-detail{font-size:11px;color:#94a3b8;margin-left:auto;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-row{display:flex;justify-content:space-between;align-items:flex-start;padding:0 4px;margin-bottom:4px}
+.dorm-btn{display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;user-select:none;padding:2px 8px;border-radius:12px}
+.dorm-btn:active{background:rgba(255,255,255,.1)}
+.dorm-btn .dorm-btn-label{font-size:9px;opacity:.7;line-height:1}
+.pv-filter{display:flex;gap:6px;padding:8px 16px 4px;flex-shrink:0}
+.pv-filter-btn{padding:5px 12px;border-radius:16px;font-size:12px;font-weight:500;color:#64748b;background:#f1f5f9;cursor:pointer;flex-shrink:0;transition:all .15s;border:1px solid transparent;user-select:none}
+.pv-filter-btn:active{transform:scale(.95)}
+.pv-filter-btn.on{background:#e2e8f0;color:#1e293b;border-color:#cbd5e1}
+.pv-copy-bar{display:flex;align-items:center;gap:6px;padding:10px 16px 14px;border-top:1px solid #f1f5f9;flex-shrink:0}
+.pv-copy-opt{display:flex;align-items:center;gap:3px;font-size:12px;color:#64748b;cursor:pointer;padding:4px 8px;border-radius:8px;background:#f8fafc;user-select:none}
+.pv-copy-opt.on{background:#eff6ff;color:#3b82f6}
+.pv-copy-opt input{display:none}
+.pv-copy-btn{margin-left:auto;padding:6px 14px;border:none;border-radius:8px;background:#1e293b;color:#fff;font-size:12px;font-weight:600;cursor:pointer}
+.pv-copy-btn:active{opacity:.8}
 </style>
 </head>
 <body>
 <div id="tw" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f8fafc;z-index:1000;align-items:center;justify-content:center;"></div>
 <div id="pc">
 <div class="header">
-<span class="moon" onclick="tm()">🌙</span>
+<div class="hdr-row">
+  <span class="moon" onclick="tm()">🌙</span>
+  <span class="dorm-btn" onclick="showPanorama()">🏠<span class="dorm-btn-label">宿舍全景</span></span>
+</div>
 <h1>信管2307班晚点名系统</h1>
+<div class="hdate" id="hdate"></div>
+<div class="hcount" id="hcount"></div>
 <div class="sub">SVIP专属定制版</div>
 <div class="deco"></div>
 </div>
@@ -116,6 +165,30 @@ textarea{resize:none}
 <div id="ae"><a href="admin.html">📊 管理看板</a></div>
 <div class="ft">信管2307班晚点名系统 · SVIP专属定制版</div>
 </div>
+</div>
+
+<!-- 宿舍全景面板 -->
+<div id="pv-overlay" class="pv-overlay" onclick="hidePanorama()"></div>
+<div id="pv-panel" class="pv-panel">
+  <div class="pv-handle"></div>
+  <div class="pv-header">
+    <span class="pv-title">🏠 宿舍全景</span>
+    <span class="pv-close" onclick="hidePanorama()">✕</span>
+  </div>
+  <div class="pv-tabs" id="pv-tabs"></div>
+  <div class="pv-filter" id="pv-filter">
+    <span class="pv-filter-btn on" data-filter="all" onclick="setPvFilter('all')">全部</span>
+    <span class="pv-filter-btn" data-filter="zaisushe" onclick="setPvFilter('zaisushe')">🏠 住校</span>
+    <span class="pv-filter-btn" data-filter="buzhusu" onclick="setPvFilter('buzhusu')">🚶 不住校</span>
+    <span class="pv-filter-btn" data-filter="none" onclick="setPvFilter('none')">⚪ 未填</span>
+  </div>
+  <div class="pv-body" id="pv-body"></div>
+  <div class="pv-copy-bar" id="pv-copy-bar">
+    <label class="pv-copy-opt on" onclick="toggleCopyOpt(this)"><input type="checkbox" checked data-key="name"> 姓名</label>
+    <label class="pv-copy-opt" onclick="toggleCopyOpt(this)"><input type="checkbox" data-key="dorm"> 宿舍</label>
+    <label class="pv-copy-opt" onclick="toggleCopyOpt(this)"><input type="checkbox" data-key="status"> 状态</label>
+    <button class="pv-copy-btn" onclick="copyFilteredList()">📋 复制</button>
+  </div>
 </div>
 
 <script>
@@ -186,7 +259,7 @@ if(localStorage.getItem('debug_mode')==='1'){
     sx.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
     sx.onload=function(){
       if(sx.status===200){try{var sd=JSON.parse(sx.responseText);
-        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});
+        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});updateClock();
       }catch(e){}}
       timeCheck();
     };
@@ -364,6 +437,21 @@ fl();
 var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
 if(storedName&&storedSid){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===storedName&&STUDENTS[i][1]===storedSid){document.getElementById('bn').value=storedName;document.getElementById('bs').value=storedSid;document.getElementById('bb').click();break;}}}
 
+var ctInterval=null;
+function updateClock(){
+  var d=new Date();var wd=['日','一','二','三','四','五','六'];
+  document.getElementById('hdate').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+wd[d.getDay()];
+  var end=window.wdm_fill_end||'21:00';var ep=end.split(':');
+  var target=new Date();target.setHours(parseInt(ep[0]),parseInt(ep[1]),0,0);
+  if(target<=d)target.setDate(target.getDate()+1);
+  var diff=Math.floor((target-d)/1000);
+  if(diff<=0){document.getElementById('hcount').textContent='⏰ 今日晚点名已结束';}
+  else{var h=Math.floor(diff/3600);var m=Math.floor((diff%3600)/60);var s=diff%60;
+    document.getElementById('hcount').textContent='⏳ 距截止还有 '+h+'时'+m+'分'+s+'秒';}
+}
+function startClock(){updateClock();if(ctInterval)clearInterval(ctInterval);ctInterval=setInterval(function(){if(!document.hidden)updateClock();},1000);}
+setTimeout(startClock,500);
+
 // ===== 返回按钮检查 =====
 window.addEventListener('pageshow',function(){
   var n=localStorage.getItem('wdm_name'),s=localStorage.getItem('wdm_sid');
@@ -371,6 +459,134 @@ window.addEventListener('pageshow',function(){
   var ok=false;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
   if(!ok)goBind();
 });
+
+// ===== 宿舍全景 =====
+var pvData=null,pvTab='all',pvFilter='all';
+function getDormList(){
+  var map={};for(var i=0;i<STUDENTS.length;i++){
+    var r=STUDENTS[i][2];if(!map[r])map[r]=[];map[r].push(STUDENTS[i]);}
+  var keys=Object.keys(map).sort();var a=[],b=[];
+  for(var i=0;i<keys.length;i++){if(keys[i].startsWith('26-'))a.push(keys[i]);else b.push(keys[i]);}
+  return {list:['all'].concat(a).concat(b),map:map};}
+function getStudentStatus(name){
+  if(!pvData)return null;for(var i=0;i<pvData.length;i++){if(pvData[i].name===name)return pvData[i];}return null;}
+function getDormStudents(room){return getDormList().map[room]||[];}
+function getDormStats(room){
+  var ss=getDormStudents(room);var total=ss.length,filled=0,zaisushe=0,buzhusu=0;
+  for(var i=0;i<ss.length;i++){var st=getStudentStatus(ss[i][0]);if(st){filled++;if(st.status==='zaisushe')zaisushe++;else buzhusu++;}}
+  return {total:total,filled:filled,zaisushe:zaisushe,buzhusu:buzhusu};}
+function getUserDorm(){
+  var n=localStorage.getItem('wdm_name');
+  if(!n)return null;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n)return STUDENTS[i][2];}return null;}
+function loadPanorama(){
+  var d=new Date().toISOString().slice(0,10);
+  var x=new XMLHttpRequest();
+  x.open('GET',SUPABASE_URL+'/rest/v1/checkins?date=eq.'+d+'&select=name,room,status,note');
+  x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+  x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+  x.onload=function(){if(x.status===200){try{pvData=JSON.parse(x.responseText);}catch(e){pvData=[];}}else{pvData=[];}renderPanorama();};
+  x.onerror=function(){pvData=[];renderPanorama();};
+  x.send();}
+function getFilteredStudents(room){
+  var all=getDormStudents(room);var out=[];
+  for(var i=0;i<all.length;i++){
+    var st=getStudentStatus(all[i][0]);
+    if(pvFilter==='all'){out.push(all[i]);continue;}
+    if(pvFilter==='zaisushe'&&st&&st.status==='zaisushe'){out.push(all[i]);continue;}
+    if(pvFilter==='buzhusu'&&st&&st.status==='buzhusu'){out.push(all[i]);continue;}
+    if(pvFilter==='none'&&!st){out.push(all[i]);continue;}}
+  return out;}
+function buildStudentHTML(stu){
+  var st=getStudentStatus(stu[0]);
+  var dc=st?(st.status==='zaisushe'?'zaisushe':'buzhusu'):'none';
+  var dt=st?(st.status==='zaisushe'?'🏠 住校':'🚶 '+(st.note||'不住校')):'—';
+  return '<div class="pv-student"><div class="pv-dot '+dc+'"></div><span class="pv-name">'+stu[0]+'</span><span class="pv-detail">'+dt+'</span></div>';}
+function renderPanorama(){
+  var dm=getDormList();var tabsEl=document.getElementById('pv-tabs');var bodyEl=document.getElementById('pv-body');
+  var userDorm=getUserDorm();
+  var found=false;for(var i=0;i<dm.list.length;i++){if(dm.list[i]===pvTab){found=true;break;}}
+  if(!found){pvTab=userDorm||'all';}
+  // 筛选按钮状态
+  var btns=document.querySelectorAll('#pv-filter .pv-filter-btn');
+  for(var i=0;i<btns.length;i++){btns[i].className='pv-filter-btn'+(btns[i].getAttribute('data-filter')===pvFilter?' on':'');}
+  // 标签栏（带统计）
+  var th='';
+  for(var i=0;i<dm.list.length;i++){
+    var r=dm.list[i];
+    if(r==='all'){
+      var tot=0,fil=0;for(var j=1;j<dm.list.length;j++){var s=getDormStats(dm.list[j]);tot+=s.total;fil+=s.filled;}
+      th+='<div class="pv-tab'+(pvTab==='all'?' on':'')+'" onclick="switchPvTab(\'all\')">全部 '+fil+'/'+tot+'</div>';
+    }else{
+      var stats=getDormStats(r);var isUser=r===userDorm;
+      th+='<div class="pv-tab'+(pvTab===r?' on':'')+(isUser?' cur':'')+'" onclick="switchPvTab(\''+r+'\')">'+r+' '+stats.filled+'/'+stats.total+'</div>';}}
+  tabsEl.innerHTML=th;
+  // 滚动到当前标签
+  var tabs=tabsEl.querySelectorAll('.pv-tab');
+  for(var i=0;i<tabs.length;i++){if(tabs[i].classList.contains('on')){tabs[i].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});break;}}
+  // 内容区（筛选后）
+  var bh='';
+  if(pvTab==='all'){
+    for(var i=1;i<dm.list.length;i++){
+      var r=dm.list[i];var stats=getDormStats(r);var fs=getFilteredStudents(r);
+      if(fs.length===0)continue;
+      bh+='<div class="pv-group"><div class="pv-group-title">🏠 '+r+'<span class="pv-count">'+stats.filled+'/'+stats.total+'</span></div>';
+      for(var j=0;j<fs.length;j++)bh+=buildStudentHTML(fs[j]);
+      bh+='</div>';}
+  }else{
+    var stats=getDormStats(pvTab);var fs=getFilteredStudents(pvTab);
+    bh+='<div class="pv-group"><div class="pv-group-title">🏠 '+pvTab+'<span class="pv-count">'+stats.filled+'/'+stats.total+'</span></div>';
+    for(var j=0;j<fs.length;j++)bh+=buildStudentHTML(fs[j]);
+    bh+='</div>';}
+  bodyEl.innerHTML=bh;}
+function switchPvTab(tab){pvTab=tab;renderPanorama();}
+function setPvFilter(f){pvFilter=f;renderPanorama();}
+function toggleCopyOpt(el){
+  var cb=el.querySelector('input');cb.checked=!cb.checked;
+  el.className='pv-copy-opt'+(cb.checked?' on':'');}
+function copyFilteredList(){
+  var dm=getDormList();
+  var students=[];
+  if(pvTab==='all'){
+    for(var i=1;i<dm.list.length;i++){var fs=getFilteredStudents(dm.list[i]);for(var j=0;j<fs.length;j++)students.push(fs[j]);}
+  }else{var fs=getFilteredStudents(pvTab);for(var j=0;j<fs.length;j++)students.push(fs[j]);}
+  if(students.length===0){alert('没有符合条件的学生');return;}
+  var cbs=document.querySelectorAll('#pv-copy-bar input[type=checkbox]');
+  var showName=false,showDorm=false,showStatus=false;
+  for(var i=0;i<cbs.length;i++){
+    var k=cbs[i].getAttribute('data-key');
+    if(k==='name')showName=cbs[i].checked;
+    else if(k==='dorm')showDorm=cbs[i].checked;
+    else if(k==='status')showStatus=cbs[i].checked;}
+  var lines=[];
+  for(var i=0;i<students.length;i++){
+    var parts=[];
+    if(showName)parts.push(students[i][0]);
+    if(showDorm)parts.push(students[i][2]);
+    if(showStatus){var st=getStudentStatus(students[i][0]);parts.push(st?(st.status==='zaisushe'?'住校':'不住校'):'未填');}
+    lines.push(parts.join('\t'));}
+  var text=lines.join('\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){showCopyToast('已复制 '+students.length+' 人');}).catch(function(){fallbackCopy(text);});
+  }else{fallbackCopy(text);}}
+function fallbackCopy(text){
+  var ta=document.createElement('textarea');ta.value=text;
+  ta.style.cssText='position:fixed;left:-9999px;top:0';document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');showCopyToast('已复制');}catch(e){alert('复制失败，请手动复制');}
+  document.body.removeChild(ta);}
+function showCopyToast(msg){
+  var t=document.createElement('div');t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:opacity .3s';
+  document.body.appendChild(t);
+  setTimeout(function(){t.style.opacity='0';setTimeout(function(){document.body.removeChild(t);},300);},1500);}
+function showPanorama(){
+  document.getElementById('pv-overlay').className='pv-overlay on';
+  document.getElementById('pv-panel').className='pv-panel on';
+  document.body.style.overflow='hidden';
+  loadPanorama();}
+function hidePanorama(){
+  document.getElementById('pv-overlay').className='pv-overlay';
+  document.getElementById('pv-panel').className='pv-panel';
+  document.body.style.overflow='';}
 </script>
 </body>
 </html>
