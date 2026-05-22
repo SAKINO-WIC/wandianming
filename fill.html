@@ -75,6 +75,32 @@ textarea{resize:none}
 .done .st{color:#64748b;font-size:14px;margin-bottom:12px}
 #pc{display:none}
 #pc.on{display:block}
+/* ===== 宿舍全景 ===== */
+.dp-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.35);z-index:900;display:none;align-items:flex-end}
+.dp-overlay.on{display:flex}
+.dp-panel{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:75vh;display:flex;flex-direction:column;animation:dpUp .25s ease}
+@keyframes dpUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.dp-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 8px;border-bottom:1px solid #f1f5f9}
+.dp-head h3{font-size:17px;color:#1e293b}
+.dp-close{font-size:13px;color:#94a3b8;cursor:pointer;padding:4px 8px}
+.dp-tabs{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;white-space:nowrap;flex-shrink:0;scrollbar-width:none}
+.dp-tabs::-webkit-scrollbar{display:none}
+.dp-tab{padding:5px 14px;border:1.5px solid #e2e8f0;border-radius:14px;font-size:13px;cursor:pointer;flex-shrink:0;color:#475569;background:#fff}
+.dp-tab.on{border-color:#1e293b;background:#1e293b;color:#fff}
+.dp-tab .cnt{font-size:11px;opacity:.6;margin-left:3px}
+.dp-list{flex:1;overflow-y:auto;padding:4px 16px 16px}
+.dp-row{display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid #f8fafc;font-size:15px}
+.dp-row:last-child{border-bottom:none}
+.dp-row .nm{color:#1e293b;font-weight:500}
+.dp-row .nm .rm{font-size:12px;color:#94a3b8;font-weight:400;margin-left:6px}
+.dp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dp-dot.ok{background:#22c55e}
+.dp-dot.miss{background:#e2e8f0}
+.dp-dot.away{background:#ef4444}
+.dp-summary{padding:8px 4px 0;font-size:13px;color:#94a3b8;text-align:center}
+.dp-nobind{padding:30px 20px;text-align:center;color:#94a3b8;font-size:14px}
+.dp-grp{padding:8px 4px 4px;font-size:12px;color:#94a3b8;font-weight:500}
+.dp-grp:first-child{padding-top:0}
 </style>
 </head>
 <body>
@@ -82,6 +108,7 @@ textarea{resize:none}
 <div id="pc">
 <div class="header">
 <span class="moon" onclick="tm()">🌙</span>
+<div style="float:right;font-size:22px;cursor:pointer;user-select:none;margin-top:4px" onclick="dp()">🏠</div>
 <h1>信管2307班晚点名系统</h1>
 <div class="hdate" id="hdate"></div>
 <div class="hcount" id="hcount"></div>
@@ -119,6 +146,15 @@ textarea{resize:none}
 
 <div id="ae"><a href="admin.html">📊 管理看板</a></div>
 <div class="ft">信管2307班晚点名系统 · SVIP专属定制版</div>
+</div>
+</div>
+
+<div class="dp-overlay" id="dpo" onclick="if(event.target===this)dc()">
+<div class="dp-panel">
+<div class="dp-head"><h3>🏠 宿舍全景</h3><span class="dp-close" onclick="dc()">关闭 ✕</span></div>
+<div class="dp-tabs" id="dpt"></div>
+<div class="dp-list" id="dpl"><div class="dp-nobind">加载中…</div></div>
+<div class="dp-summary" id="dps"></div>
 </div>
 </div>
 
@@ -391,6 +427,41 @@ window.addEventListener('pageshow',function(){
   var ok=false;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
   if(!ok)goBind();
 });
+
+// ===== 宿舍全景 =====
+var dpData=null,dpDorm=null;
+function dp(){
+  document.getElementById('dpo').className='dp-overlay on';
+  var myDorm='';var sn=localStorage.getItem('wdm_name');
+  if(sn){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn){myDorm=STUDENTS[i][2];break;}}}
+  dpDorm=myDorm;
+  var td=new Date().toISOString().slice(0,10);
+  var x=new XMLHttpRequest();
+  x.open('GET',SUPABASE_URL+'/rest/v1/checkins?date=eq.'+td+'&select=*');
+  x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+  x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+  x.onload=function(){
+    if(x.status===200){try{dpData=JSON.parse(x.responseText);}catch(e){dpData=[];}
+    }else dpData=[];renderDP();
+  };
+  x.onerror=function(){dpData=[];renderDP();};
+  x.send();
+}
+function dc(){document.getElementById('dpo').className='dp-overlay';}
+function renderDP(){
+  var list=document.getElementById('dpl');var tabs=document.getElementById('dpt');var summary=document.getElementById('dps');
+  if(!dpData)dpData=[];var filled=new Set(dpData.map(function(r){return r.name;}));var filledMap={};dpData.forEach(function(r){filledMap[r.name]=r;});
+  var rooms={};for(var i=0;i<STUDENTS.length;i++){var r=STUDENTS[i][2];if(!rooms[r])rooms[r]=[];rooms[r].push(STUDENTS[i]);}
+  var roomKeys=Object.keys(rooms).sort();var totalAll=STUDENTS.length,doneAll=dpData.length;
+  var th='<div class="dp-tab'+(dpDorm===''||!dpDorm?' on':'')+'" onclick="ds(\'\')">全部 <span class="cnt">'+doneAll+'/'+totalAll+'</span></div>';
+  for(var i=0;i<roomKeys.length;i++){var r=roomKeys[i];var total=rooms[r].length;var done=rooms[r].filter(function(s){return filled.has(s[0]);}).length;th+='<div class="dp-tab'+(r===dpDorm?' on':'')+'" onclick="ds(\''+r+'\')">'+r+' <span class="cnt">'+done+'/'+total+'</span></div>';}
+  tabs.innerHTML=th;
+  setTimeout(function(){var el=tabs.querySelector('.on');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});},50);
+  if(dpDorm===''||!dpDorm){var h='';for(var i=0;i<roomKeys.length;i++){var r=roomKeys[i];var students=rooms[r];h+='<div class="dp-grp">── '+r+' ('+students.length+'人) ──</div>';for(var j=0;j<students.length;j++){var s=students[j];var isFilled=filled.has(s[0]);var dotCls='miss';var label='未填写';if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';}}list.innerHTML=h;summary.textContent='✅ '+doneAll+'/'+totalAll+' 已填'+(doneAll<totalAll?' · ⏳ '+(totalAll-doneAll)+' 未填':'');}
+  else{var students=rooms[dpDorm]||[];var done=students.filter(function(s){return filled.has(s[0]);}).length;var h='';for(var i=0;i<students.length;i++){var s=students[i];var isFilled=filled.has(s[0]);var dotCls='miss';var label='未填写';if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';}list.innerHTML=h||'<div class="dp-nobind">该宿舍暂无学生</div>';summary.textContent='✅ '+done+'/'+students.length+' 已填'+(done<students.length?' · ⏳ '+(students.length-done)+' 未填':'');}
+  list.scrollTop=0;
+}
+function ds(dorm){dpDorm=dorm;renderDP();}
 </script>
 </body>
 </html>
