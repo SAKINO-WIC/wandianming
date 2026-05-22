@@ -10,30 +10,25 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#080c24;min-height:100vh}
-
-/* ===== 星空背景 ===== */
 .star-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,#080c24 0%,#0f1b3d 35%,#1a1040 65%,#0d0a2a 100%);z-index:0}
 .star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d) ease-in-out infinite alternate;opacity:0}
 @keyframes twinkle{0%{opacity:var(--o)}100%{opacity:calc(var(--o) + 0.5)}}
 .meteor{position:fixed;width:3px;height:3px;border-radius:50%;z-index:1;opacity:0;pointer-events:none}
 .meteor::after{content:'';position:absolute;top:0;left:0;width:100px;height:1.5px;background:linear-gradient(to left,rgba(255,255,255,.5),transparent);transform:rotate(-35deg);transform-origin:right center}
-
-/* ===== 头部 ===== */
-.header{position:relative;z-index:2;padding:44px 20px 14px;text-align:center;color:#fff}
+.header{background:linear-gradient(135deg,rgba(30,41,59,.85),rgba(51,65,85,.85));padding:24px 20px 16px;text-align:center;color:#fff;position:relative;backdrop-filter:blur(6px)}
 .header .top-bar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
-.header .moon{font-size:28px;cursor:pointer;user-select:none;line-height:1;filter:drop-shadow(0 0 6px rgba(255,200,100,.3))}
+.header .moon{font-size:32px;cursor:pointer;user-select:none;line-height:1}
 .header .func-bar{display:flex;gap:4px}
 .header .func-btn{text-align:center;cursor:pointer;user-select:none;color:#fff;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.1)}
 .header .func-btn:active{background:rgba(255,255,255,.2)}
 .header .func-btn .ic{font-size:18px;display:block;line-height:1.3}
 .header .func-btn .lb{font-size:9px;opacity:.7;display:block}
-.header h1{font-size:20px;font-weight:600;letter-spacing:1px;text-shadow:0 2px 12px rgba(0,0,0,.5)}
-.header .hdate{font-size:15px;opacity:.8;margin:4px 0 3px;font-weight:500;text-shadow:0 1px 8px rgba(0,0,0,.3)}
-.header .hcount{font-size:14px;opacity:.65;margin-bottom:4px;font-variant-numeric:tabular-nums;text-shadow:0 1px 8px rgba(0,0,0,.3)}
-.header .sub{font-size:10px;opacity:.4}
-
-/* ===== 内容卡片 ===== */
-.content-wrap{position:relative;z-index:2;max-width:420px;margin:0 auto 20px;padding:0 12px}
+.header h1{font-size:20px;font-weight:600;letter-spacing:1px}
+.header .hdate{font-size:14px;opacity:.7;margin:4px 0 2px;font-weight:500}
+.header .hcount{font-size:13px;opacity:.55;margin-bottom:2px;font-variant-numeric:tabular-nums}
+.header .sub{font-size:10px;opacity:.5}
+.header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
+.container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
 .card{background:#fff;border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.06);padding:20px;margin-bottom:12px}
 .field{margin-bottom:14px}
 .field-label{font-size:13px;font-weight:500;color:#64748b;margin-bottom:5px}
@@ -84,14 +79,13 @@ textarea{resize:none}
 #ae{display:none;text-align:center;margin-top:12px}
 #ae.on{display:block}
 #ae a{color:#3b82f6;font-size:14px;text-decoration:none;font-weight:500}
-.ft{text-align:center;color:rgba(255,255,255,.3);font-size:11px;margin-top:16px}
+.ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:16px}
 .done{padding:20px;text-align:center}
 .done .bi{font-size:48px}
 .done h2{font-size:18px;margin:8px 0 4px;color:#1e293b}
 .done .st{color:#64748b;font-size:14px;margin-bottom:12px}
 #pc{display:none}
 #pc.on{display:block}
-
 /* ===== 宿舍全景面板 ===== */
 .dp-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.35);z-index:900;display:none;align-items:flex-end}
 .dp-overlay.on{display:flex}
@@ -122,9 +116,6 @@ textarea{resize:none}
 </head>
 <body>
 
-<div id="tw" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f8fafc;z-index:1000;align-items:center;justify-content:center;"></div>
-
-<!-- 星空背景 -->
 <div class="star-bg" id="starBg"></div>
 <div class="meteor" id="meteor"></div>
 
@@ -140,9 +131,9 @@ textarea{resize:none}
 <div class="hdate" id="hdate"></div>
 <div class="hcount" id="hcount"></div>
 <div class="sub">SVIP专属定制版</div>
+<div class="deco"></div>
 </div>
-
-<div class="content-wrap">
+<div class="container">
 <div id="msg" class="msg"></div>
 
 <div id="bp" class="card">
@@ -186,7 +177,6 @@ textarea{resize:none}
 </div>
 
 <script>
-// ===== 生成星星 =====
 try{(function(){
   var bg=document.getElementById('starBg');
   for(var i=0;i<200;i++){
@@ -197,8 +187,6 @@ try{(function(){
     bg.appendChild(s);
   }
 })();}catch(e){}
-
-// ===== 流星 =====
 try{(function(){
   var m=document.getElementById('meteor');
   function fire(){
@@ -250,7 +238,7 @@ if(localStorage.getItem('debug_mode')==='1'){
             wc++;clearTimeout(wt);
             wt=setTimeout(function(){wc=0;},1500);
             if(wc>=7){wc=0;
-              safePrompt(function(pwd){
+              var pwd=prompt('输入管理员密码');
               if(!pwd)return;
               var x2=new XMLHttpRequest();
               x2.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
@@ -263,7 +251,6 @@ if(localStorage.getItem('debug_mode')==='1'){
                   }catch(e){alert('验证失败');}
                 }else alert('网络错误');
               };x2.send();
-              });
             }
           };
           return;
@@ -277,11 +264,11 @@ if(localStorage.getItem('debug_mode')==='1'){
     sx.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
     sx.onload=function(){
       if(sx.status===200){try{var sd=JSON.parse(sx.responseText);
-        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});updateClock();
+        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});if(typeof updateClock==='function')updateClock();
       }catch(e){}}
-      timeCheck();
+      if(typeof timeCheck==='function')timeCheck();
     };
-    sx.onerror=function(){timeCheck();};
+    sx.onerror=function(){if(typeof timeCheck==='function')timeCheck();};
     sx.send();
   };
   mx.onerror=function(){document.getElementById('pc').className='on';};
@@ -307,7 +294,7 @@ function timeCheck(){
       wc2++;clearTimeout(wt2);
       wt2=setTimeout(function(){wc2=0;},1500);
       if(wc2>=7){wc2=0;
-        safePrompt(function(pwd){
+        var pwd=prompt('输入管理员密码');
         if(!pwd)return;
         var x3=new XMLHttpRequest();
         x3.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
@@ -320,13 +307,12 @@ function timeCheck(){
             }catch(e){alert('验证失败');}
           }else alert('网络错误');
         };x3.send();
-        });
       }
     };
   }else{tc.style.display='none';tc.innerHTML='';}
 }
 
-function rp(a){var p=document.getElementById('np');if(!a||a.length===0){p.innerHTML='<div class="empty">无匹配</div>';return;}var h='';for(var i=0;i<a.length;i++){h+='<div class="it" onclick="pn(\\''+a[i][0]+'\\',\\''+a[i][1]+'\\')\">'+a[i][0]+'<span class="rt">'+a[i][2]+'</span></div>';}p.innerHTML=h;}
+function rp(a){var p=document.getElementById('np');if(!a||a.length===0){p.innerHTML='<div class="empty">无匹配</div>';return;}var h='';for(var i=0;i<a.length;i++){h+='<div class="it" onclick=\"pn(\\''+a[i][0]+'\\',\\''+a[i][1]+'\\')\">'+a[i][0]+'<span class=\"rt\">'+a[i][2]+'</span></div>';}p.innerHTML=h;}
 function fl(){var d=document.getElementById('bd').value;var l=STUDENTS;if(d){l=[];for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][2]===d)l.push(STUDENTS[i]);}}rp(l);}
 function op(){var t=document.getElementById('bn').value.trim();var d=document.getElementById('bd').value;var l=STUDENTS;if(d){l=[];for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][2]===d)l.push(STUDENTS[i]);}}if(t){var f=[];for(var i=0;i<l.length;i++){if(l[i][0].indexOf(t)>=0)f.push(l[i]);}l=f;}rp(l);document.getElementById('np').className='np on';}
 function cp(){document.getElementById('np').className='np';}
@@ -385,6 +371,7 @@ function goBind(){
 var cst='zaisushe';
 function ss(v){cst=v;document.querySelectorAll('.sbtn')[0].className='sbtn'+(v==='zaisushe'?' hm':'');document.querySelectorAll('.sbtn')[1].className='sbtn'+(v==='buzhusu'?' aw':'');document.getElementById('rw').className=v==='buzhusu'?'on':'';cf();}
 function cf(){var r=document.getElementById('ri').value.trim();document.getElementById('sb').disabled=!(cst==='zaisushe'||r);}
+
 function sm2(){
   document.getElementById('dbx').style.display='none';
   document.getElementById('fp').style.display='block';
@@ -392,6 +379,7 @@ function sm2(){
   document.getElementById('sb').textContent='✏️ 修改提交';
   window.mod=true;cf();
 }
+
 function doSub(){
   var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
   if(!storedName||!storedSid){goBind();return;}
@@ -422,17 +410,6 @@ function doSub(){
   x.send(JSON.stringify({date:td,name:name,room:room,status:cst,note:reason,student_id:sid}));
 }
 
-function safePrompt(callback){
-  var div=document.createElement('div');
-  div.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:99999;display:flex;align-items:center;justify-content:center';
-  div.innerHTML='<div style="background:#fff;border-radius:16px;padding:24px;width:300px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15)"><p style="font-size:15px;color:#1e293b;margin-bottom:16px">🔑 输入管理员密码</p><input type="password" id="spi" style="width:100%;padding:12px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;text-align:center" placeholder="密码"><div style="display:flex;gap:8px;margin-top:14px"><button id="spc" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;font-size:15px;cursor:pointer">取消</button><button id="spo" style="flex:1;padding:10px;border:none;border-radius:10px;background:#1e293b;color:#fff;font-size:15px;cursor:pointer">确认</button></div></div>';
-  document.body.appendChild(div);
-  var inp=document.getElementById('spi');
-  document.getElementById('spc').onclick=function(){document.body.removeChild(div);};
-  document.getElementById('spo').onclick=function(){var v=inp.value.trim();document.body.removeChild(div);callback(v);};
-  inp.onkeydown=function(e){if(e.key==='Enter'){var v=this.value.trim();document.body.removeChild(div);callback(v);}};
-  setTimeout(function(){inp.focus();},100);
-}
 var mc=0,mt=null;
 function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>=7){mc=0;var e=document.getElementById('ae');e.className=e.className.indexOf('on')>=0?'':'on';}}
 
@@ -486,54 +463,18 @@ function dp(){
   x.onerror=function(){dpData=[];renderDP();};
   x.send();
 }
-function dc(){
-  document.getElementById('dpo').className='dp-overlay';
-}
+function dc(){document.getElementById('dpo').className='dp-overlay';}
 function renderDP(){
-  var list=document.getElementById('dpl');
-  var tabs=document.getElementById('dpt');
-  var summary=document.getElementById('dps');
-  if(!dpData)dpData=[];
-  var filled=new Set(dpData.map(function(r){return r.name;}));
-  var filledMap={};dpData.forEach(function(r){filledMap[r.name]=r;});
+  var list=document.getElementById('dpl');var tabs=document.getElementById('dpt');var summary=document.getElementById('dps');
+  if(!dpData)dpData=[];var filled=new Set(dpData.map(function(r){return r.name;}));var filledMap={};dpData.forEach(function(r){filledMap[r.name]=r;});
   var rooms={};for(var i=0;i<STUDENTS.length;i++){var r=STUDENTS[i][2];if(!rooms[r])rooms[r]=[];rooms[r].push(STUDENTS[i]);}
-  var roomKeys=Object.keys(rooms).sort();
-  var totalAll=STUDENTS.length,doneAll=dpData.length;
+  var roomKeys=Object.keys(rooms).sort();var totalAll=STUDENTS.length,doneAll=dpData.length;
   var th='<div class="dp-tab'+(dpDorm===''||!dpDorm?' on':'')+'" onclick="ds(\'\')">全部 <span class="cnt">'+doneAll+'/'+totalAll+'</span></div>';
-  for(var i=0;i<roomKeys.length;i++){
-    var r=roomKeys[i];var total=rooms[r].length;var done=rooms[r].filter(function(s){return filled.has(s[0]);}).length;
-    th+='<div class="dp-tab'+(r===dpDorm?' on':'')+'" onclick="ds(\''+r+'\')">'+r+' <span class="cnt">'+done+'/'+total+'</span></div>';
-  }
+  for(var i=0;i<roomKeys.length;i++){var r=roomKeys[i];var total=rooms[r].length;var done=rooms[r].filter(function(s){return filled.has(s[0]);}).length;th+='<div class="dp-tab'+(r===dpDorm?' on':'')+'" onclick="ds(\''+r+'\')">'+r+' <span class="cnt">'+done+'/'+total+'</span></div>';}
   tabs.innerHTML=th;
   setTimeout(function(){var el=tabs.querySelector('.on');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});},50);
-  if(dpDorm===''||!dpDorm){
-    var h='';
-    for(var i=0;i<roomKeys.length;i++){
-      var r=roomKeys[i];var students=rooms[r];
-      var rd=students.filter(function(s){return filled.has(s[0]);}).length;
-      h+='<div class="dp-grp">── '+r+' ('+students.length+'人) ──</div>';
-      for(var j=0;j<students.length;j++){
-        var s=students[j];var isFilled=filled.has(s[0]);
-        var dotCls='miss';var label='未填写';
-        if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}
-        h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';
-      }
-    }
-    list.innerHTML=h;
-    summary.textContent='✅ '+doneAll+'/'+totalAll+' 已填'+(doneAll<totalAll?' · ⏳ '+(totalAll-doneAll)+' 未填':'');
-  } else {
-    var students=rooms[dpDorm]||[];
-    var done=students.filter(function(s){return filled.has(s[0]);}).length;
-    var h='';
-    for(var i=0;i<students.length;i++){
-      var s=students[i];var isFilled=filled.has(s[0]);
-      var dotCls='miss';var label='未填写';
-      if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}
-      h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';
-    }
-    list.innerHTML=h||'<div class="dp-nobind">该宿舍暂无学生</div>';
-    summary.textContent='✅ '+done+'/'+students.length+' 已填'+(done<students.length?' · ⏳ '+(students.length-done)+' 未填':'');
-  }
+  if(dpDorm===''||!dpDorm){var h='';for(var i=0;i<roomKeys.length;i++){var r=roomKeys[i];var students=rooms[r];h+='<div class="dp-grp">── '+r+' ('+students.length+'人) ──</div>';for(var j=0;j<students.length;j++){var s=students[j];var isFilled=filled.has(s[0]);var dotCls='miss';var label='未填写';if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';}}list.innerHTML=h;summary.textContent='✅ '+doneAll+'/'+totalAll+' 已填'+(doneAll<totalAll?' · ⏳ '+(totalAll-doneAll)+' 未填':'');}
+  else{var students=rooms[dpDorm]||[];var done=students.filter(function(s){return filled.has(s[0]);}).length;var h='';for(var i=0;i<students.length;i++){var s=students[i];var isFilled=filled.has(s[0]);var dotCls='miss';var label='未填写';if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';}list.innerHTML=h||'<div class="dp-nobind">该宿舍暂无学生</div>';summary.textContent='✅ '+done+'/'+students.length+' 已填'+(done<students.length?' · ⏳ '+(students.length-done)+' 未填':'');}
   list.scrollTop=0;
 }
 function ds(dorm){dpDorm=dorm;renderDP();}
