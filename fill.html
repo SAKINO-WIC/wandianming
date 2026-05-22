@@ -36,8 +36,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .sky-header .sub{font-size:10px;opacity:.4;text-shadow:0 1px 6px rgba(0,0,0,.2)}
 
 /* ===== 可拖拽卡片 ===== */
-.card-sheet{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#f1f4f9;border-radius:24px 24px 0 0;box-shadow:0 -4px 30px rgba(0,0,0,.25);will-change:transform;transform:translateY(0);touch-action:none}
-.card-sheet .card-handle{display:flex;justify-content:center;padding:10px 0 4px;cursor:grab;touch-action:none;user-select:none}
+.card-sheet{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#f1f4f9;border-radius:24px 24px 0 0;box-shadow:0 -4px 30px rgba(0,0,0,.25);touch-action:none}
+.card-sheet .card-handle{display:flex;justify-content:center;padding:10px 0 4px;cursor:grab;touch-action:none;user-select:none;position:sticky;top:0;background:#f1f4f9;z-index:2;border-radius:24px 24px 0 0}
 .card-sheet .card-handle:active{cursor:grabbing}
 .card-sheet .handle-bar{width:40px;height:4px;border-radius:2px;background:rgba(0,0,0,.15)}
 .card-sheet .card-scroll{overflow-y:auto;padding:6px 16px 20px;-webkit-overflow-scrolling:touch}
@@ -239,31 +239,40 @@ textarea{resize:none}
 (function(){
   var sheet=document.getElementById('cardSheet');
   var handle=document.getElementById('cardHandle');
-  var startY=0,startTranslate=0,currentTranslate=0;
-  var maxH=window.innerHeight*0.62,minH=window.innerHeight*0.2;
-  // 初始位置：上边距在maxH（显示标题区域）
-  currentTranslate=maxH;
-  sheet.style.transform='translateY('+currentTranslate+'px)';
+  var startY=0,startBottom=0,currentBottom=0;
+  // 初始只露出顶部约 2/5，隐藏下 3/5
+  var hiddenPortion=0.6;
+
+  function initSheet(){
+    var totalH=window.innerHeight;
+    var sheetH=sheet.scrollHeight||totalH*0.85;
+    // 底部偏移 = 卡片高 × 隐藏比例（正数=往下推，卡片底部超出屏幕）
+    currentBottom=Math.min(sheetH*hiddenPortion,totalH*0.65);
+    sheet.style.bottom=-currentBottom+'px';
+    sheet.style.transition='bottom .4s cubic-bezier(.32,.72,0,1)';
+  }
+  
+  setTimeout(initSheet,100);
 
   function onStart(y){
-    startY=y;startTranslate=currentTranslate;
-  }
-  function onMove(y){
-    var dy=y-startY;var t=startTranslate-dy;
-    t=Math.max(minH,Math.min(maxH+80,t));
-    currentTranslate=t;
-    sheet.style.transform='translateY('+t+'px)';
+    startY=y;
+    startBottom=currentBottom;
     sheet.style.transition='none';
   }
-  function onEnd(){
-    sheet.style.transition='transform .3s cubic-bezier(.32,.72,0,1)';
-    var threshold=(maxH+minH)/2;
-    if(currentTranslate>threshold){
-      currentTranslate=maxH;sheet.style.transform='translateY('+maxH+'px)';
-    }else{
-      currentTranslate=minH;sheet.style.transform='translateY('+minH+'px)';
-    }
+  function onMove(y){
+    var dy=startY-y; // 上滑为正
+    var t=startBottom-dy;
+    t=Math.max(0,Math.min(t,window.innerHeight*0.7));
+    currentBottom=t;
+    sheet.style.bottom=-t+'px';
   }
+  function onEnd(){
+    sheet.style.transition='bottom .35s cubic-bezier(.32,.72,0,1)';
+    var snap=currentBottom<window.innerHeight*0.25?0:currentBottom;
+    currentBottom=snap;
+    sheet.style.bottom=-snap+'px';
+  }
+
   handle.addEventListener('touchstart',function(e){onStart(e.touches[0].clientY);},{passive:true});
   handle.addEventListener('touchmove',function(e){onMove(e.touches[0].clientY);},{passive:true});
   handle.addEventListener('touchend',onEnd,{passive:true});
@@ -272,13 +281,8 @@ textarea{resize:none}
   handle.addEventListener('mousedown',function(e){dragging=true;onStart(e.clientY);});
   document.addEventListener('mousemove',function(e){if(dragging)onMove(e.clientY);});
   document.addEventListener('mouseup',function(){if(dragging){dragging=false;onEnd();}});
-  // 窗口resize时调整
-  window.addEventListener('resize',function(){
-    maxH=window.innerHeight*0.62;minH=window.innerHeight*0.2;
-    currentTranslate=Math.max(minH,Math.min(currentTranslate,maxH));
-    sheet.style.transform='translateY('+currentTranslate+'px)';
-  });
 })();
+
 
 var SUPABASE_URL='https://jgiyahtmpvfqtgdfxxgi.supabase.co';
 var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnaXlhaHRtcHZmcXRnZGZ4eGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTEwNTIsImV4cCI6MjA5NDg2NzA1Mn0.K2XGYGccLv6rfPyuAYVYufhIy1mEpABMHf77Sz1IqZE';
