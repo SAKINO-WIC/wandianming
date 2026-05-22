@@ -107,6 +107,16 @@ textarea{resize:none}
 .dorm-btn{display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;user-select:none;padding:2px 8px;border-radius:12px}
 .dorm-btn:active{background:rgba(255,255,255,.1)}
 .dorm-btn .dorm-btn-label{font-size:9px;opacity:.7;line-height:1}
+.pv-filter{display:flex;gap:6px;padding:8px 16px 4px;flex-shrink:0}
+.pv-filter-btn{padding:5px 12px;border-radius:16px;font-size:12px;font-weight:500;color:#64748b;background:#f1f5f9;cursor:pointer;flex-shrink:0;transition:all .15s;border:1px solid transparent;user-select:none}
+.pv-filter-btn:active{transform:scale(.95)}
+.pv-filter-btn.on{background:#e2e8f0;color:#1e293b;border-color:#cbd5e1}
+.pv-copy-bar{display:flex;align-items:center;gap:6px;padding:10px 16px 14px;border-top:1px solid #f1f5f9;flex-shrink:0}
+.pv-copy-opt{display:flex;align-items:center;gap:3px;font-size:12px;color:#64748b;cursor:pointer;padding:4px 8px;border-radius:8px;background:#f8fafc;user-select:none}
+.pv-copy-opt.on{background:#eff6ff;color:#3b82f6}
+.pv-copy-opt input{display:none}
+.pv-copy-btn{margin-left:auto;padding:6px 14px;border:none;border-radius:8px;background:#1e293b;color:#fff;font-size:12px;font-weight:600;cursor:pointer}
+.pv-copy-btn:active{opacity:.8}
 </style>
 </head>
 <body>
@@ -166,7 +176,19 @@ textarea{resize:none}
     <span class="pv-close" onclick="hidePanorama()">✕</span>
   </div>
   <div class="pv-tabs" id="pv-tabs"></div>
+  <div class="pv-filter" id="pv-filter">
+    <span class="pv-filter-btn on" data-filter="all" onclick="setPvFilter('all')">全部</span>
+    <span class="pv-filter-btn" data-filter="zaisushe" onclick="setPvFilter('zaisushe')">🏠 住校</span>
+    <span class="pv-filter-btn" data-filter="buzhusu" onclick="setPvFilter('buzhusu')">🚶 不住校</span>
+    <span class="pv-filter-btn" data-filter="none" onclick="setPvFilter('none')">⚪ 未填</span>
+  </div>
   <div class="pv-body" id="pv-body"></div>
+  <div class="pv-copy-bar" id="pv-copy-bar">
+    <label class="pv-copy-opt on" onclick="toggleCopyOpt(this)"><input type="checkbox" checked data-key="name"> 姓名</label>
+    <label class="pv-copy-opt" onclick="toggleCopyOpt(this)"><input type="checkbox" data-key="dorm"> 宿舍</label>
+    <label class="pv-copy-opt" onclick="toggleCopyOpt(this)"><input type="checkbox" data-key="status"> 状态</label>
+    <button class="pv-copy-btn" onclick="copyFilteredList()">📋 复制</button>
+  </div>
 </div>
 
 <script>
@@ -439,7 +461,7 @@ window.addEventListener('pageshow',function(){
 });
 
 // ===== 宿舍全景 =====
-var pvData=null,pvTab='all';
+var pvData=null,pvTab='all',pvFilter='all';
 function getDormList(){
   var map={};for(var i=0;i<STUDENTS.length;i++){
     var r=STUDENTS[i][2];if(!map[r])map[r]=[];map[r].push(STUDENTS[i]);}
@@ -465,43 +487,102 @@ function loadPanorama(){
   x.onload=function(){if(x.status===200){try{pvData=JSON.parse(x.responseText);}catch(e){pvData=[];}}else{pvData=[];}renderPanorama();};
   x.onerror=function(){pvData=[];renderPanorama();};
   x.send();}
-function renderStudentRow(stu,el){
+function getFilteredStudents(room){
+  var all=getDormStudents(room);var out=[];
+  for(var i=0;i<all.length;i++){
+    var st=getStudentStatus(all[i][0]);
+    if(pvFilter==='all'){out.push(all[i]);continue;}
+    if(pvFilter==='zaisushe'&&st&&st.status==='zaisushe'){out.push(all[i]);continue;}
+    if(pvFilter==='buzhusu'&&st&&st.status==='buzhusu'){out.push(all[i]);continue;}
+    if(pvFilter==='none'&&!st){out.push(all[i]);continue;}}
+  return out;}
+function buildStudentHTML(stu){
   var st=getStudentStatus(stu[0]);
-  var dotCls=st?(st.status==='zaisushe'?'zaisushe':'buzhusu'):'none';
-  var detail=st?(st.status==='zaisushe'?'🏠 住校':'🚶 '+(st.note||'不住校')):'—';
-  el.innerHTML+='<div class="pv-student"><div class="pv-dot '+dotCls+'"></div><span class="pv-name">'+stu[0]+'</span><span class="pv-detail">'+detail+'</span></div>';}
+  var dc=st?(st.status==='zaisushe'?'zaisushe':'buzhusu'):'none';
+  var dt=st?(st.status==='zaisushe'?'🏠 住校':'🚶 '+(st.note||'不住校')):'—';
+  return '<div class="pv-student"><div class="pv-dot '+dc+'"></div><span class="pv-name">'+stu[0]+'</span><span class="pv-detail">'+dt+'</span></div>';}
 function renderPanorama(){
   var dm=getDormList();var tabsEl=document.getElementById('pv-tabs');var bodyEl=document.getElementById('pv-body');
   var userDorm=getUserDorm();
-  // 如果当前标签不在列表中或首次打开，定位到用户宿舍
+  // 验证pvTab
   var found=false;for(var i=0;i<dm.list.length;i++){if(dm.list[i]===pvTab){found=true;break;}}
   if(!found){pvTab=userDorm||'all';}
-  // 标签栏
-  var th='';for(var i=0;i<dm.list.length;i++){
-    var r=dm.list[i];if(r==='all'){
-      th+='<div class="pv-tab'+(pvTab==='all'?' on':'')+'" onclick="switchPvTab(\'all\')">全部</div>';
+  // 更新筛选按钮状态
+  var btns=document.querySelectorAll('#pv-filter .pv-filter-btn');
+  for(var i=0;i<btns.length;i++){btns[i].className='pv-filter-btn'+(btns[i].getAttribute('data-filter')===pvFilter?' on':'');}
+  // 标签栏（带统计）
+  var th='';
+  for(var i=0;i<dm.list.length;i++){
+    var r=dm.list[i];
+    if(r==='all'){
+      var tot=0,fil=0;for(var j=1;j<dm.list.length;j++){var s=getDormStats(dm.list[j]);tot+=s.total;fil+=s.filled;}
+      th+='<div class="pv-tab'+(pvTab==='all'?' on':'')+'" onclick="switchPvTab(\'all\')">全部 '+fil+'/'+tot+'</div>';
     }else{
-      var isUser=r===userDorm;
-      th+='<div class="pv-tab'+(pvTab===r?' on':'')+(isUser?' cur':'')+'" onclick="switchPvTab(\''+r+'\')">'+r+'</div>';}}
+      var stats=getDormStats(r);var isUser=r===userDorm;
+      th+='<div class="pv-tab'+(pvTab===r?' on':'')+(isUser?' cur':'')+'" onclick="switchPvTab(\''+r+'\')">'+r+' '+stats.filled+'/'+stats.total+'</div>';}}
   tabsEl.innerHTML=th;
-  // 将当前标签滚到视野内
+  // 滚动到当前标签
   var tabs=tabsEl.querySelectorAll('.pv-tab');
   for(var i=0;i<tabs.length;i++){if(tabs[i].classList.contains('on')){tabs[i].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});break;}}
-  // 内容区
+  // 内容区（筛选后）
+  var bh='';
   if(pvTab==='all'){
-    var bh='';for(var i=1;i<dm.list.length;i++){
-      var r=dm.list[i];var stats=getDormStats(r);var ss=getDormStudents(r);
+    for(var i=1;i<dm.list.length;i++){
+      var r=dm.list[i];var stats=getDormStats(r);var fs=getFilteredStudents(r);
+      if(fs.length===0)continue;
       bh+='<div class="pv-group"><div class="pv-group-title">🏠 '+r+'<span class="pv-count">'+stats.filled+'/'+stats.total+'</span></div>';
-      for(var j=0;j<ss.length;j++){var st=getStudentStatus(ss[j][0]);var dc=st?(st.status==='zaisushe'?'zaisushe':'buzhusu'):'none';var dt=st?(st.status==='zaisushe'?'🏠 住校':'🚶 '+(st.note||'不住校')):'—';bh+='<div class="pv-student"><div class="pv-dot '+dc+'"></div><span class="pv-name">'+ss[j][0]+'</span><span class="pv-detail">'+dt+'</span></div>';}
+      for(var j=0;j<fs.length;j++)bh+=buildStudentHTML(fs[j]);
       bh+='</div>';}
-    bodyEl.innerHTML=bh;
   }else{
-    var stats=getDormStats(pvTab);var ss=getDormStudents(pvTab);
-    var bh='<div class="pv-group"><div class="pv-group-title">🏠 '+pvTab+'<span class="pv-count">'+stats.filled+'/'+stats.total+'</span></div>';
-    for(var j=0;j<ss.length;j++){var st=getStudentStatus(ss[j][0]);var dc=st?(st.status==='zaisushe'?'zaisushe':'buzhusu'):'none';var dt=st?(st.status==='zaisushe'?'🏠 住校':'🚶 '+(st.note||'不住校')):'—';bh+='<div class="pv-student"><div class="pv-dot '+dc+'"></div><span class="pv-name">'+ss[j][0]+'</span><span class="pv-detail">'+dt+'</span></div>';}
-    bh+='</div>';
-    bodyEl.innerHTML=bh;}}
+    var stats=getDormStats(pvTab);var fs=getFilteredStudents(pvTab);
+    bh+='<div class="pv-group"><div class="pv-group-title">🏠 '+pvTab+'<span class="pv-count">'+stats.filled+'/'+stats.total+'</span></div>';
+    for(var j=0;j<fs.length;j++)bh+=buildStudentHTML(fs[j]);
+    bh+='</div>';}
+  bodyEl.innerHTML=bh;}
 function switchPvTab(tab){pvTab=tab;renderPanorama();}
+function setPvFilter(f){pvFilter=f;renderPanorama();}
+function toggleCopyOpt(el){
+  var cb=el.querySelector('input');cb.checked=!cb.checked;
+  el.className='pv-copy-opt'+(cb.checked?' on':'');}
+function copyFilteredList(){
+  var dm=getDormList();
+  // 收集符合筛选条件的学生
+  var students=[];
+  if(pvTab==='all'){
+    for(var i=1;i<dm.list.length;i++){var fs=getFilteredStudents(dm.list[i]);for(var j=0;j<fs.length;j++)students.push(fs[j]);}
+  }else{var fs=getFilteredStudents(pvTab);for(var j=0;j<fs.length;j++)students.push(fs[j]);}
+  if(students.length===0){alert('没有符合条件的学生');return;}
+  // 获取复制选项
+  var cbs=document.querySelectorAll('#pv-copy-bar input[type=checkbox]');
+  var showName=false,showDorm=false,showStatus=false;
+  for(var i=0;i<cbs.length;i++){
+    var k=cbs[i].getAttribute('data-key');
+    if(k==='name')showName=cbs[i].checked;
+    else if(k==='dorm')showDorm=cbs[i].checked;
+    else if(k==='status')showStatus=cbs[i].checked;}
+  // 建行
+  var lines=[];
+  for(var i=0;i<students.length;i++){
+    var parts=[];
+    if(showName)parts.push(students[i][0]);
+    if(showDorm)parts.push(students[i][2]);
+    if(showStatus){var st=getStudentStatus(students[i][0]);parts.push(st?(st.status==='zaisushe'?'住校':'不住校'):'未填');}
+    lines.push(parts.join('\t'));}
+  var text=lines.join('\n');
+  // 复制
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){showCopyToast('已复制 '+students.length+' 人');}).catch(function(){fallbackCopy(text);});
+  }else{fallbackCopy(text);}}
+function fallbackCopy(text){
+  var ta=document.createElement('textarea');ta.value=text;
+  ta.style.cssText='position:fixed;left:-9999px;top:0';document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');showCopyToast('已复制');}catch(e){alert('复制失败，请手动复制');}
+  document.body.removeChild(ta);}
+function showCopyToast(msg){
+  var t=document.createElement('div');t.textContent=msg;
+  t.style.cssText='position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;z-index:99999;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:opacity .3s';
+  document.body.appendChild(t);
+  setTimeout(function(){t.style.opacity='0';setTimeout(function(){document.body.removeChild(t);},300);},1500);}
 function showPanorama(){
   document.getElementById('pv-overlay').className='pv-overlay on';
   document.getElementById('pv-panel').className='pv-panel on';
