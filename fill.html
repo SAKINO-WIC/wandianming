@@ -107,6 +107,16 @@ textarea{resize:none}
 .dp-nobind{padding:30px 20px;text-align:center;color:#94a3b8;font-size:14px}
 .dp-grp{padding:8px 4px 4px;font-size:12px;color:#94a3b8;font-weight:500}
 .dp-grp:first-child{padding-top:0}
+.dp-filter{display:flex;gap:4px;padding:4px 16px 8px;flex-shrink:0}
+.dp-fbtn{padding:4px 12px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:12px;cursor:pointer;flex-shrink:0;color:#64748b;background:#fff}
+.dp-fbtn.on{border-color:#1e293b;background:#1e293b;color:#fff}
+.dp-fbtn .cnt{font-size:10px;opacity:.6;margin-left:2px}
+.dp-copy-row{display:flex;align-items:center;gap:6px;padding:4px 16px 4px;flex-shrink:0;flex-wrap:wrap}
+.dp-copy-row .lbl{font-size:11px;color:#94a3b8;white-space:nowrap}
+.dp-fmt{font-size:11px;padding:2px 8px;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;color:#64748b;background:#fff}
+.dp-fmt.on{border-color:#3b82f6;background:#eff6ff;color:#2563eb}
+.dp-copy-btn{padding:4px 14px;border:none;border-radius:8px;background:#1e293b;color:#fff;font-size:12px;cursor:pointer;white-space:nowrap}
+.dp-copy-btn:active{background:#334155}
 </style>
 </head>
 <body>
@@ -163,6 +173,14 @@ textarea{resize:none}
 <div class="dp-panel">
 <div class="dp-head"><h3>🏠 宿舍全景</h3><span class="dp-close" onclick="dc()">关闭 ✕</span></div>
 <div class="dp-tabs" id="dpt"></div>
+<div class="dp-filter" id="dpFilter"></div>
+<div class="dp-copy-row" id="dpCopyRow">
+<span class="lbl">复制：</span>
+<span class="dp-fmt on" onclick="setFmt('name')">仅名字</span>
+<span class="dp-fmt" onclick="setFmt('name_room')">+宿舍</span>
+<span class="dp-fmt" onclick="setFmt('name_status')">+状态</span>
+<button class="dp-copy-btn" onclick="copyFiltered()">📋 复制</button>
+</div>
 <div class="dp-list" id="dpl"><div class="dp-nobind">加载中…</div></div>
 <div class="dp-summary" id="dps"></div>
 </div>
@@ -439,7 +457,7 @@ window.addEventListener('pageshow',function(){
 });
 
 // ===== 宿舍全景 =====
-var dpData=null,dpDorm=null;
+var dpData=null,dpDorm=null,dpFilter='all',dpFmt='name';
 function dp(){
   document.getElementById('dpo').className='dp-overlay on';
   var myDorm='';var sn=localStorage.getItem('wdm_name');
@@ -460,16 +478,71 @@ function dp(){
 function dc(){document.getElementById('dpo').className='dp-overlay';}
 function renderDP(){
   var list=document.getElementById('dpl');var tabs=document.getElementById('dpt');var summary=document.getElementById('dps');
+  var filterEl=document.getElementById('dpFilter');
   if(!dpData)dpData=[];var filled=new Set(dpData.map(function(r){return r.name;}));var filledMap={};dpData.forEach(function(r){filledMap[r.name]=r;});
   var rooms={};for(var i=0;i<STUDENTS.length;i++){var r=STUDENTS[i][2];if(!rooms[r])rooms[r]=[];rooms[r].push(STUDENTS[i]);}
   var roomKeys=Object.keys(rooms).sort();var totalAll=STUDENTS.length,doneAll=dpData.length;
+  // 宿舍标签
   var th='<div class="dp-tab'+(dpDorm===''||!dpDorm?' on':'')+'" onclick="ds(\'\')">全部 <span class="cnt">'+doneAll+'/'+totalAll+'</span></div>';
   for(var i=0;i<roomKeys.length;i++){var r=roomKeys[i];var total=rooms[r].length;var done=rooms[r].filter(function(s){return filled.has(s[0]);}).length;th+='<div class="dp-tab'+(r===dpDorm?' on':'')+'" onclick="ds(\''+r+'\')">'+r+' <span class="cnt">'+done+'/'+total+'</span></div>';}
   tabs.innerHTML=th;
   setTimeout(function(){var el=tabs.querySelector('.on');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});},50);
-  if(dpDorm===''||!dpDorm){var h='';for(var i=0;i<roomKeys.length;i++){var r=roomKeys[i];var students=rooms[r];h+='<div class="dp-grp">── '+r+' ('+students.length+'人) ──</div>';for(var j=0;j<students.length;j++){var s=students[j];var isFilled=filled.has(s[0]);var dotCls='miss';var label='未填写';if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';}}list.innerHTML=h;summary.textContent='✅ '+doneAll+'/'+totalAll+' 已填'+(doneAll<totalAll?' · ⏳ '+(totalAll-doneAll)+' 未填':'');}
-  else{var students=rooms[dpDorm]||[];var done=students.filter(function(s){return filled.has(s[0]);}).length;var h='';for(var i=0;i<students.length;i++){var s=students[i];var isFilled=filled.has(s[0]);var dotCls='miss';var label='未填写';if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';}list.innerHTML=h||'<div class="dp-nobind">该宿舍暂无学生</div>';summary.textContent='✅ '+done+'/'+students.length+' 已填'+(done<students.length?' · ⏳ '+(students.length-done)+' 未填':'');}
+  // 状态筛选
+  var missAll=totalAll-doneAll;
+  var filters=[['all','所有',totalAll],['miss','未填',missAll],['zaisushe','住校',doneAll],['buzhusu','不住校',dpData.filter(function(r){return r.status==='buzhusu';}).length]];
+  var fh='';for(var i=0;i<filters.length;i++){var f=filters[i];fh+='<div class="dp-fbtn'+(dpFilter===f[0]?' on':'')+'" onclick="setFilter(\''+f[0]+'\')">'+f[1]+' <span class="cnt">'+f[2]+'</span></div>';}
+  filterEl.innerHTML=fh;
+  // 获取当前范围的学生
+  var students=(dpDorm===''||!dpDorm)?[].concat.apply([],roomKeys.map(function(r){return rooms[r];})):(rooms[dpDorm]||[]);
+  // 应用筛选
+  var filtered=students.filter(function(s){
+    if(dpFilter==='all')return true;
+    if(dpFilter==='miss')return !filled.has(s[0]);
+    var rec=filledMap[s[0]];if(!rec)return false;
+    return rec.status===dpFilter;
+  });
+  // 按宿舍分组渲染
+  var grpRooms={};for(var i=0;i<filtered.length;i++){var s=filtered[i];var r=s[2];if(!grpRooms[r])grpRooms[r]=[];grpRooms[r].push(s);}
+  var grpKeys=Object.keys(grpRooms).sort();
+  if(dpDorm!==''&&dpDorm){grpKeys=[dpDorm];grpRooms={};for(var i=0;i<filtered.length;i++){var s=filtered[i];if(!grpRooms[s[2]])grpRooms[s[2]]=[];grpRooms[s[2]].push(s);}}
+  var h='';for(var i=0;i<grpKeys.length;i++){
+    var rname=grpKeys[i];var sts=grpRooms[rname];
+    if(filtered.length!==sts.length||dpDorm===''||!dpDorm)h+='<div class="dp-grp">── '+rname+' ('+sts.length+'人) ──</div>';
+    for(var j=0;j<sts.length;j++){var s=sts[j];var isFilled=filled.has(s[0]);var dotCls='miss';var label='未填写';if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';}
+  }
+  list.innerHTML=h||'<div class="dp-nobind">暂无匹配</div>';
+  var fDone=filtered.filter(function(s){return filled.has(s[0]);}).length;
+  summary.textContent='✅ '+fDone+'/'+filtered.length+' 已筛选'+(filtered.length<totalAll?' · 共'+totalAll+'人':'');
   list.scrollTop=0;
+}
+function setFilter(f){dpFilter=f;renderDP();}
+function setFmt(f){dpFmt=f;document.querySelectorAll('.dp-fmt').forEach(function(e){e.className='dp-fmt'+(e.getAttribute('onclick').indexOf(f)>=0?' on':'');});}
+function copyFiltered(){
+  var rooms={};for(var i=0;i<STUDENTS.length;i++){var r=STUDENTS[i][2];if(!rooms[r])rooms[r]=[];rooms[r].push(STUDENTS[i]);}
+  var roomKeys=Object.keys(rooms).sort();
+  var filled=new Set((dpData||[]).map(function(r){return r.name;}));
+  var filledMap={};(dpData||[]).forEach(function(r){filledMap[r.name]=r;});
+  var students=(dpDorm===''||!dpDorm)?[].concat.apply([],roomKeys.map(function(r){return rooms[r];})):(rooms[dpDorm]||[]);
+  var filtered=students.filter(function(s){
+    if(dpFilter==='all')return true;
+    if(dpFilter==='miss')return !filled.has(s[0]);
+    var rec=filledMap[s[0]];if(!rec)return false;
+    return rec.status===dpFilter;
+  });
+  var lines=[];
+  for(var i=0;i<filtered.length;i++){
+    var s=filtered[i];var name=s[0];var info='';
+    if(dpFmt==='name_room')info=' ('+s[2]+')';
+    else if(dpFmt==='name_status'){var isF=filled.has(s[0]);var st=isF?(filledMap[s[0]].status==='buzhusu'?' 不住校':' 住校'):' 未填';info=st+' ('+s[2]+')';}
+    lines.push(name+info);
+  }
+  var text=lines.join('\n');
+  navigator.clipboard.writeText(text).catch(function(){
+    var ta=document.createElement('textarea');ta.value=text;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  });
+  var btn=event&&event.target?event.target:document.querySelector('.dp-copy-btn');
+  var ot=btn.textContent;btn.textContent='✅ 已复制 '+filtered.length+'人';setTimeout(function(){btn.textContent=ot;},1500);
 }
 function ds(dorm){dpDorm=dorm;renderDP();}
 </script>
