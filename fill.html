@@ -9,14 +9,9 @@
 <title>信管2307班晚点名系统-SVIP专属定制版</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#080c24;min-height:100vh}
-.star-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,#080c24 0%,#0f1b3d 35%,#1a1040 65%,#0d0a2a 100%);z-index:0}
-.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d) ease-in-out infinite alternate;opacity:0}
-@keyframes twinkle{0%{opacity:var(--o)}100%{opacity:calc(var(--o) + 0.5)}}
-.meteor{position:fixed;width:3px;height:3px;border-radius:50%;z-index:1;opacity:0;pointer-events:none}
-.meteor::after{content:'';position:absolute;top:0;left:0;width:100px;height:1.5px;background:linear-gradient(to left,rgba(255,255,255,.5),transparent);transform:rotate(-35deg);transform-origin:right center}
-.header{background:linear-gradient(135deg,rgba(30,41,59,.85),rgba(51,65,85,.85));padding:24px 20px 16px;text-align:center;color:#fff;position:relative;backdrop-filter:blur(6px)}
-.header .top-bar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
+.header{background:linear-gradient(135deg,#1e293b,#334155);padding:24px 20px 16px;text-align:center;color:#fff;position:relative}
+.header .top-bar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
 .header .moon{font-size:32px;cursor:pointer;user-select:none;line-height:1}
 .header .func-bar{display:flex;gap:4px}
 .header .func-btn{text-align:center;cursor:pointer;user-select:none;color:#fff;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.1)}
@@ -24,8 +19,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 .header .func-btn .ic{font-size:18px;display:block;line-height:1.3}
 .header .func-btn .lb{font-size:9px;opacity:.7;display:block}
 .header h1{font-size:20px;font-weight:600;letter-spacing:1px}
-.header .hdate{font-size:14px;opacity:.7;margin:4px 0 2px;font-weight:500}
-.header .hcount{font-size:13px;opacity:.55;margin-bottom:2px;font-variant-numeric:tabular-nums}
+.header .hdate{font-size:15px;opacity:.7;margin:3px 0 2px;font-weight:500}
+.header .hcount{font-size:14px;opacity:.55;margin-bottom:2px;font-variant-numeric:tabular-nums}
 .header .sub{font-size:10px;opacity:.5}
 .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
 .container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
@@ -86,7 +81,6 @@ textarea{resize:none}
 .done .st{color:#64748b;font-size:14px;margin-bottom:12px}
 #pc{display:none}
 #pc.on{display:block}
-/* ===== 宿舍全景面板 ===== */
 .dp-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.35);z-index:900;display:none;align-items:flex-end}
 .dp-overlay.on{display:flex}
 .dp-panel{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:75vh;display:flex;flex-direction:column;animation:dpUp .25s ease}
@@ -115,10 +109,6 @@ textarea{resize:none}
 </style>
 </head>
 <body>
-
-<div class="star-bg" id="starBg"></div>
-<div class="meteor" id="meteor"></div>
-
 <div id="pc">
 <div class="header">
 <div class="top-bar">
@@ -177,30 +167,6 @@ textarea{resize:none}
 </div>
 
 <script>
-try{(function(){
-  var bg=document.getElementById('starBg');
-  for(var i=0;i<200;i++){
-    var s=document.createElement('div');s.className='star';
-    var x=Math.random()*100,y=Math.random()*60,sz=Math.random()*2.5+1;
-    s.style.cssText='left:'+x+'%;top:'+y+'%;width:'+sz+'px;height:'+sz+'px;--o:'+(0.3+Math.random()*0.5)+';--d:'+(2+Math.random()*4)+'s';
-    if(Math.random()>0.7)s.style.animationDelay=Math.random()*3+'s';
-    bg.appendChild(s);
-  }
-})();}catch(e){}
-try{(function(){
-  var m=document.getElementById('meteor');
-  function fire(){
-    m.style.opacity='1';m.style.left=(10+Math.random()*60)+'%';m.style.top=(2+Math.random()*15)+'%';
-    var dur=0.6+Math.random()*0.8;
-    m.style.transition='all '+dur+'s linear';
-    m.style.transform='translate('+(150+Math.random()*200)+'px,'+(150+Math.random()*200)+'px)';
-    m.style.opacity='0';
-    setTimeout(function(){m.style.transition='none';m.style.transform='translate(0,0)';},dur*1000);
-    setTimeout(fire,6000+Math.random()*12000);
-  }
-  setTimeout(fire,2000+Math.random()*3000);
-})();}catch(e){}
-
 var SUPABASE_URL='https://jgiyahtmpvfqtgdfxxgi.supabase.co';
 var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnaXlhaHRtcHZmcXRnZGZ4eGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTEwNTIsImV4cCI6MjA5NDg2NzA1Mn0.K2XGYGccLv6rfPyuAYVYufhIy1mEpABMHf77Sz1IqZE';
 var STUDENTS=[
@@ -232,7 +198,7 @@ if(localStorage.getItem('debug_mode')==='1'){
       try{
         var d=JSON.parse(mx.responseText);
         if(d.length>0&&d[0].value==='1'){
-          document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#080c24;padding:40px;text-align:center"><div style="font-size:64px;margin-bottom:16px;cursor:pointer;user-select:none" id="wc">🔧</div><h2 style="font-size:22px;color:#fff;margin-bottom:8px">系统维护中</h2><p style="color:rgba(255,255,255,.5);max-width:300px">系统正在升级维护，请稍后再来～</p></div>';
+          document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;padding:40px;text-align:center"><div style="font-size:64px;margin-bottom:16px;cursor:pointer;user-select:none" id="wc">🔧</div><h2 style="font-size:22px;color:#1e293b;margin-bottom:8px">系统维护中</h2><p style="color:#94a3b8;max-width:300px">系统正在升级维护，请稍后再来～</p></div>';
           var wc=0,wt=null;
           document.getElementById('wc').onclick=function(){
             wc++;clearTimeout(wt);
@@ -258,58 +224,9 @@ if(localStorage.getItem('debug_mode')==='1'){
       }catch(e){}
     }
     document.getElementById('pc').className='on';
-    var sx=new XMLHttpRequest();
-    sx.open('GET',SUPABASE_URL+'/rest/v1/settings?select=*');
-    sx.setRequestHeader('apikey',SUPABASE_ANON_KEY);
-    sx.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
-    sx.onload=function(){
-      if(sx.status===200){try{var sd=JSON.parse(sx.responseText);
-        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});if(typeof updateClock==='function')updateClock();
-      }catch(e){}}
-      if(typeof timeCheck==='function')timeCheck();
-    };
-    sx.onerror=function(){if(typeof timeCheck==='function')timeCheck();};
-    sx.send();
   };
   mx.onerror=function(){document.getElementById('pc').className='on';};
   mx.send();
-}
-
-function timeCheck(){
-  var start=window.wdm_fill_start||'19:00',end=window.wdm_fill_end||'23:30';
-  if(start===end)return;
-  var n=new Date(),h=n.getHours(),m=n.getMinutes(),now=h*60+m;
-  var sp=start.split(':'),ep=end.split(':');
-  var sMin=parseInt(sp[0])*60+parseInt(sp[1]||0);
-  var eMin=parseInt(ep[0])*60+parseInt(ep[1]||0);
-  var outer=false;
-  if(sMin<eMin){outer=now<sMin||now>eMin;}
-  else{outer=now<eMin||now>sMin;}
-  var tc=document.getElementById('tw');
-  if(outer){
-    tc.style.display='flex';
-    tc.innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:12px;cursor:pointer;user-select:none" id="twc">⏰</div><h2 style="font-size:18px;color:#1e293b;margin-bottom:8px">当前不在填写时间</h2><p style="color:#94a3b8;font-size:14px;max-width:300px;margin:0 auto">填写时间：'+start+' ~ '+end+'<br>请在这个时间段内填写</p><p style="margin-top:20px"><a href="admin.html" style="color:#3b82f6;font-size:13px;text-decoration:none">📊 管理看板</a></p></div>';
-    var wc2=0,wt2=null;
-    document.getElementById('twc').onclick=function(){
-      wc2++;clearTimeout(wt2);
-      wt2=setTimeout(function(){wc2=0;},1500);
-      if(wc2>=7){wc2=0;
-        var pwd=prompt('输入管理员密码');
-        if(!pwd)return;
-        var x3=new XMLHttpRequest();
-        x3.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
-        x3.setRequestHeader('apikey',SUPABASE_ANON_KEY);
-        x3.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
-        x3.onload=function(){
-          if(x3.status===200){
-            try{var dd=JSON.parse(x3.responseText);var rp=dd.length>0?dd[0].value:'admin666';
-            if(pwd===rp){localStorage.setItem('debug_mode','1');location.reload();}else alert('密码错误');
-            }catch(e){alert('验证失败');}
-          }else alert('网络错误');
-        };x3.send();
-      }
-    };
-  }else{tc.style.display='none';tc.innerHTML='';}
 }
 
 function rp(a){var p=document.getElementById('np');if(!a||a.length===0){p.innerHTML='<div class="empty">无匹配</div>';return;}var h='';for(var i=0;i<a.length;i++){h+='<div class="it" onclick=\"pn(\\''+a[i][0]+'\\',\\''+a[i][1]+'\\')\">'+a[i][0]+'<span class=\"rt\">'+a[i][2]+'</span></div>';}p.innerHTML=h;}
@@ -457,8 +374,7 @@ function dp(){
   x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
   x.onload=function(){
     if(x.status===200){try{dpData=JSON.parse(x.responseText);}catch(e){dpData=[];}
-    }else dpData=[];
-    renderDP();
+    }else dpData=[];renderDP();
   };
   x.onerror=function(){dpData=[];renderDP();};
   x.send();
