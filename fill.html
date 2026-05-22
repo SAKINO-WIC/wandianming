@@ -187,7 +187,7 @@ textarea{resize:none}
 
 <script>
 // ===== 生成星星 =====
-(function(){
+try{(function(){
   var bg=document.getElementById('starBg');
   for(var i=0;i<200;i++){
     var s=document.createElement('div');s.className='star';
@@ -196,10 +196,10 @@ textarea{resize:none}
     if(Math.random()>0.7)s.style.animationDelay=Math.random()*3+'s';
     bg.appendChild(s);
   }
-})();
+})();}catch(e){}
 
 // ===== 流星 =====
-(function(){
+try{(function(){
   var m=document.getElementById('meteor');
   function fire(){
     m.style.opacity='1';m.style.left=(10+Math.random()*60)+'%';m.style.top=(2+Math.random()*15)+'%';
@@ -211,7 +211,7 @@ textarea{resize:none}
     setTimeout(fire,6000+Math.random()*12000);
   }
   setTimeout(fire,2000+Math.random()*3000);
-})();
+})();}catch(e){}
 
 var SUPABASE_URL='https://jgiyahtmpvfqtgdfxxgi.supabase.co';
 var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnaXlhaHRtcHZmcXRnZGZ4eGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTEwNTIsImV4cCI6MjA5NDg2NzA1Mn0.K2XGYGccLv6rfPyuAYVYufhIy1mEpABMHf77Sz1IqZE';
@@ -284,6 +284,7 @@ if(localStorage.getItem('debug_mode')==='1'){
     sx.onerror=function(){timeCheck();};
     sx.send();
   };
+  mx.onerror=function(){document.getElementById('pc').className='on';};
   mx.send();
 }
 
