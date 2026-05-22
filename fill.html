@@ -258,6 +258,7 @@ if(localStorage.getItem('debug_mode')==='1'){
     sx.onerror=function(){timeCheck();};
     sx.send();
   };
+  mx.onerror=function(){document.getElementById('pc').className='on';};
   mx.send();
 }
 
