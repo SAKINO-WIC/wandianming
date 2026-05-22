@@ -9,41 +9,31 @@
 <title>信管2307班晚点名系统-SVIP专属定制版</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#080c24;color:#1e293b}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#080c24;min-height:100vh}
 
 /* ===== 星空背景 ===== */
 .star-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,#080c24 0%,#0f1b3d 35%,#1a1040 65%,#0d0a2a 100%);z-index:0}
 .star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d) ease-in-out infinite alternate;opacity:0}
 @keyframes twinkle{0%{opacity:var(--o)}100%{opacity:calc(var(--o) + 0.5)}}
+.meteor{position:fixed;width:3px;height:3px;border-radius:50%;z-index:1;opacity:0;pointer-events:none}
+.meteor::after{content:'';position:absolute;top:0;left:0;width:100px;height:1.5px;background:linear-gradient(to left,rgba(255,255,255,.5),transparent);transform:rotate(-35deg);transform-origin:right center}
 
-/* ===== 流星 ===== */
-.meteor{position:fixed;width:3px;height:3px;background:radial-gradient(circle,#fff 10%,transparent 100%);border-radius:50%;z-index:1;opacity:0;pointer-events:none}
-.meteor::after{content:'';position:absolute;top:0;left:0;width:120px;height:1.5px;background:linear-gradient(to left,rgba(255,255,255,.6),transparent);transform:rotate(-35deg);transform-origin:right center}
+/* ===== 头部 ===== */
+.header{position:relative;z-index:2;padding:44px 20px 14px;text-align:center;color:#fff}
+.header .top-bar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.header .moon{font-size:28px;cursor:pointer;user-select:none;line-height:1;filter:drop-shadow(0 0 6px rgba(255,200,100,.3))}
+.header .func-bar{display:flex;gap:4px}
+.header .func-btn{text-align:center;cursor:pointer;user-select:none;color:#fff;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.1)}
+.header .func-btn:active{background:rgba(255,255,255,.2)}
+.header .func-btn .ic{font-size:18px;display:block;line-height:1.3}
+.header .func-btn .lb{font-size:9px;opacity:.7;display:block}
+.header h1{font-size:20px;font-weight:600;letter-spacing:1px;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.header .hdate{font-size:15px;opacity:.8;margin:4px 0 3px;font-weight:500;text-shadow:0 1px 8px rgba(0,0,0,.3)}
+.header .hcount{font-size:14px;opacity:.65;margin-bottom:4px;font-variant-numeric:tabular-nums;text-shadow:0 1px 8px rgba(0,0,0,.3)}
+.header .sub{font-size:10px;opacity:.4}
 
-/* ===== 顶部文字（在背景上） ===== */
-.sky-header{position:fixed;top:0;left:0;right:0;z-index:5;padding:44px 20px 16px;text-align:center;color:#fff;pointer-events:none}
-.sky-header .top-bar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;pointer-events:auto}
-.sky-header .moon{font-size:28px;cursor:pointer;user-select:none;line-height:1;filter:drop-shadow(0 0 6px rgba(255,200,100,.3))}
-.sky-header .func-bar{display:flex;gap:4px}
-.sky-header .func-btn{text-align:center;cursor:pointer;user-select:none;color:#fff;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.08);backdrop-filter:blur(4px)}
-.sky-header .func-btn:active{background:rgba(255,255,255,.18)}
-.sky-header .func-btn .ic{font-size:18px;display:block;line-height:1.3}
-.sky-header .func-btn .lb{font-size:9px;opacity:.7;display:block;margin-top:-1px}
-.sky-header h1{font-size:20px;font-weight:600;letter-spacing:1px;text-shadow:0 2px 12px rgba(0,0,0,.4)}
-.sky-header .hdate{font-size:15px;opacity:.8;margin-bottom:5px;font-weight:500;text-shadow:0 1px 8px rgba(0,0,0,.3)}
-.sky-header .hcount{font-size:14px;opacity:.65;margin-bottom:2px;font-variant-numeric:tabular-nums;text-shadow:0 1px 8px rgba(0,0,0,.3)}
-.sky-header .sub{font-size:10px;opacity:.4;text-shadow:0 1px 6px rgba(0,0,0,.2)}
-
-/* ===== 可拖拽卡片 ===== */
-.card-sheet{position:fixed;left:0;right:0;bottom:0;z-index:10;background:#f1f4f9;border-radius:24px 24px 0 0;box-shadow:0 -4px 30px rgba(0,0,0,.25);touch-action:none}
-.card-sheet .card-handle{display:flex;justify-content:center;padding:10px 0 4px;cursor:grab;touch-action:none;user-select:none;position:sticky;top:0;background:#f1f4f9;z-index:2;border-radius:24px 24px 0 0}
-.card-sheet .card-handle:active{cursor:grabbing}
-.card-sheet .handle-bar{width:40px;height:4px;border-radius:2px;background:rgba(0,0,0,.15)}
-.card-sheet .card-scroll{overflow-y:auto;padding:6px 16px 20px;-webkit-overflow-scrolling:touch}
-.card-sheet .card-scroll .container{max-width:420px;margin:0 auto}
-
-/* ===== 内容样式（原样保留） ===== */
+/* ===== 内容卡片 ===== */
+.content-wrap{position:relative;z-index:2;max-width:420px;margin:0 auto 20px;padding:0 12px}
 .card{background:#fff;border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.06);padding:20px;margin-bottom:12px}
 .field{margin-bottom:14px}
 .field-label{font-size:13px;font-weight:500;color:#64748b;margin-bottom:5px}
@@ -94,7 +84,7 @@ textarea{resize:none}
 #ae{display:none;text-align:center;margin-top:12px}
 #ae.on{display:block}
 #ae a{color:#3b82f6;font-size:14px;text-decoration:none;font-weight:500}
-.ft{text-align:center;color:#cbd5e1;font-size:11px;margin-top:16px}
+.ft{text-align:center;color:rgba(255,255,255,.3);font-size:11px;margin-top:16px}
 .done{padding:20px;text-align:center}
 .done .bi{font-size:48px}
 .done h2{font-size:18px;margin:8px 0 4px;color:#1e293b}
@@ -132,17 +122,14 @@ textarea{resize:none}
 </head>
 <body>
 
-<!-- ===== 时间窗口遮罩 ===== -->
 <div id="tw" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f8fafc;z-index:1000;align-items:center;justify-content:center;"></div>
 
-<!-- ===== 星空背景 ===== -->
+<!-- 星空背景 -->
 <div class="star-bg" id="starBg"></div>
-
-<!-- ===== 流星 ===== -->
 <div class="meteor" id="meteor"></div>
 
-<!-- ===== 顶部文字（在星空上） ===== -->
-<div class="sky-header">
+<div id="pc">
+<div class="header">
 <div class="top-bar">
 <span class="moon" onclick="tm()">🌙</span>
 <div class="func-bar">
@@ -155,12 +142,7 @@ textarea{resize:none}
 <div class="sub">SVIP专属定制版</div>
 </div>
 
-<!-- ===== 可拖拽卡片 ===== -->
-<div class="card-sheet" id="cardSheet">
-<div class="card-handle" id="cardHandle"><div class="handle-bar"></div></div>
-<div class="card-scroll" id="cardScroll">
-<div id="pc">
-<div class="container">
+<div class="content-wrap">
 <div id="msg" class="msg"></div>
 
 <div id="bp" class="card">
@@ -193,10 +175,7 @@ textarea{resize:none}
 <div class="ft">信管2307班晚点名系统 · SVIP专属定制版</div>
 </div>
 </div>
-</div>
-</div>
 
-<!-- ===== 宿舍全景面板 ===== -->
 <div class="dp-overlay" id="dpo" onclick="if(event.target===this)dc()">
 <div class="dp-panel">
 <div class="dp-head"><h3>🏠 宿舍全景</h3><span class="dp-close" onclick="dc()">关闭 ✕</span></div>
@@ -223,66 +202,16 @@ textarea{resize:none}
 (function(){
   var m=document.getElementById('meteor');
   function fire(){
-    m.style.opacity='1';
-    m.style.left=(10+Math.random()*60)+'%';m.style.top=(2+Math.random()*20)+'%';
+    m.style.opacity='1';m.style.left=(10+Math.random()*60)+'%';m.style.top=(2+Math.random()*15)+'%';
     var dur=0.6+Math.random()*0.8;
     m.style.transition='all '+dur+'s linear';
-    m.style.transform='translate('+(200+Math.random()*200)+'px,'+(200+Math.random()*200)+'px)';
+    m.style.transform='translate('+(150+Math.random()*200)+'px,'+(150+Math.random()*200)+'px)';
     m.style.opacity='0';
     setTimeout(function(){m.style.transition='none';m.style.transform='translate(0,0)';},dur*1000);
-    setTimeout(fire,5000+Math.random()*12000);
+    setTimeout(fire,6000+Math.random()*12000);
   }
-  setTimeout(fire,2000+Math.random()*5000);
+  setTimeout(fire,2000+Math.random()*3000);
 })();
-
-// ===== 可拖拽卡片 =====
-(function(){
-  var sheet=document.getElementById('cardSheet');
-  var handle=document.getElementById('cardHandle');
-  var startY=0,startBottom=0,currentBottom=0;
-  // 初始只露出顶部约 2/5，隐藏下 3/5
-  var hiddenPortion=0.6;
-
-  function initSheet(){
-    var totalH=window.innerHeight;
-    var sheetH=sheet.scrollHeight||totalH*0.85;
-    // 底部偏移 = 卡片高 × 隐藏比例（正数=往下推，卡片底部超出屏幕）
-    currentBottom=Math.min(sheetH*hiddenPortion,totalH*0.65);
-    sheet.style.bottom=-currentBottom+'px';
-    sheet.style.transition='bottom .4s cubic-bezier(.32,.72,0,1)';
-  }
-  
-  setTimeout(initSheet,100);
-
-  function onStart(y){
-    startY=y;
-    startBottom=currentBottom;
-    sheet.style.transition='none';
-  }
-  function onMove(y){
-    var dy=startY-y; // 上滑为正
-    var t=startBottom-dy;
-    t=Math.max(0,Math.min(t,window.innerHeight*0.7));
-    currentBottom=t;
-    sheet.style.bottom=-t+'px';
-  }
-  function onEnd(){
-    sheet.style.transition='bottom .35s cubic-bezier(.32,.72,0,1)';
-    var snap=currentBottom<window.innerHeight*0.25?0:currentBottom;
-    currentBottom=snap;
-    sheet.style.bottom=-snap+'px';
-  }
-
-  handle.addEventListener('touchstart',function(e){onStart(e.touches[0].clientY);},{passive:true});
-  handle.addEventListener('touchmove',function(e){onMove(e.touches[0].clientY);},{passive:true});
-  handle.addEventListener('touchend',onEnd,{passive:true});
-  // 鼠标支持（调试用）
-  var dragging=false;
-  handle.addEventListener('mousedown',function(e){dragging=true;onStart(e.clientY);});
-  document.addEventListener('mousemove',function(e){if(dragging)onMove(e.clientY);});
-  document.addEventListener('mouseup',function(){if(dragging){dragging=false;onEnd();}});
-})();
-
 
 var SUPABASE_URL='https://jgiyahtmpvfqtgdfxxgi.supabase.co';
 var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnaXlhaHRtcHZmcXRnZGZ4eGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTEwNTIsImV4cCI6MjA5NDg2NzA1Mn0.K2XGYGccLv6rfPyuAYVYufhIy1mEpABMHf77Sz1IqZE';
@@ -298,7 +227,6 @@ var STUDENTS=[
 ['姚蒙娜蝶舞','2330130317','28-538'],['尹润甜','2330130318','28-538'],['喻忠香','2330130319','28-538'],['张文静','2330130320','28-538'],['周凯旋','2330130321','28-538'],['朱思怡','2330130322','28-538']
 ];
 
-// ===== 维护模式检查（先于一切）=====
 if(localStorage.getItem('debug_mode')==='1'){
   document.getElementById('pc').className='on';
   var db=document.createElement('div');
@@ -397,7 +325,6 @@ function timeCheck(){
   }else{tc.style.display='none';tc.innerHTML='';}
 }
 
-// ===== 绑定页 =====
 function rp(a){var p=document.getElementById('np');if(!a||a.length===0){p.innerHTML='<div class="empty">无匹配</div>';return;}var h='';for(var i=0;i<a.length;i++){h+='<div class="it" onclick="pn(\\''+a[i][0]+'\\',\\''+a[i][1]+'\\')\">'+a[i][0]+'<span class="rt">'+a[i][2]+'</span></div>';}p.innerHTML=h;}
 function fl(){var d=document.getElementById('bd').value;var l=STUDENTS;if(d){l=[];for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][2]===d)l.push(STUDENTS[i]);}}rp(l);}
 function op(){var t=document.getElementById('bn').value.trim();var d=document.getElementById('bd').value;var l=STUDENTS;if(d){l=[];for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][2]===d)l.push(STUDENTS[i]);}}if(t){var f=[];for(var i=0;i<l.length;i++){if(l[i][0].indexOf(t)>=0)f.push(l[i]);}l=f;}rp(l);document.getElementById('np').className='np on';}
@@ -447,7 +374,6 @@ function ub(){
   localStorage.removeItem('wdm_sid');
   goBind();
 }
-
 function goBind(){
   window.bs=null;window.rec=null;window.mod=false;
   document.getElementById('fp').style.display='none';
@@ -458,7 +384,6 @@ function goBind(){
 var cst='zaisushe';
 function ss(v){cst=v;document.querySelectorAll('.sbtn')[0].className='sbtn'+(v==='zaisushe'?' hm':'');document.querySelectorAll('.sbtn')[1].className='sbtn'+(v==='buzhusu'?' aw':'');document.getElementById('rw').className=v==='buzhusu'?'on':'';cf();}
 function cf(){var r=document.getElementById('ri').value.trim();document.getElementById('sb').disabled=!(cst==='zaisushe'||r);}
-
 function sm2(){
   document.getElementById('dbx').style.display='none';
   document.getElementById('fp').style.display='block';
@@ -466,7 +391,6 @@ function sm2(){
   document.getElementById('sb').textContent='✏️ 修改提交';
   window.mod=true;cf();
 }
-
 function doSub(){
   var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
   if(!storedName||!storedSid){goBind();return;}
@@ -511,12 +435,10 @@ function safePrompt(callback){
 var mc=0,mt=null;
 function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>=7){mc=0;var e=document.getElementById('ae');e.className=e.className.indexOf('on')>=0?'':'on';}}
 
-// ===== 初始化绑定状态 =====
 fl();
 var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
 if(storedName&&storedSid){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===storedName&&STUDENTS[i][1]===storedSid){document.getElementById('bn').value=storedName;document.getElementById('bs').value=storedSid;document.getElementById('bb').click();break;}}}
 
-// ===== 日期与倒计时 =====
 var ctInterval=null;
 function updateClock(){
   var d=new Date();var wd=['日','一','二','三','四','五','六'];
@@ -536,7 +458,6 @@ function startClock(){
 }
 setTimeout(startClock,500);
 
-// ===== 返回按钮检查 =====
 window.addEventListener('pageshow',function(){
   var n=localStorage.getItem('wdm_name'),s=localStorage.getItem('wdm_sid');
   if(!n||!s){goBind();return;}
@@ -544,7 +465,6 @@ window.addEventListener('pageshow',function(){
   if(!ok)goBind();
 });
 
-// ===== 宿舍全景面板 =====
 var dpData=null,dpDorm=null;
 function dp(){
   document.getElementById('dpo').className='dp-overlay on';
@@ -586,21 +506,15 @@ function renderDP(){
   tabs.innerHTML=th;
   setTimeout(function(){var el=tabs.querySelector('.on');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});},50);
   if(dpDorm===''||!dpDorm){
-    var doneAll2=0;
     var h='';
     for(var i=0;i<roomKeys.length;i++){
       var r=roomKeys[i];var students=rooms[r];
       var rd=students.filter(function(s){return filled.has(s[0]);}).length;
-      doneAll2+=rd;
       h+='<div class="dp-grp">── '+r+' ('+students.length+'人) ──</div>';
       for(var j=0;j<students.length;j++){
         var s=students[j];var isFilled=filled.has(s[0]);
         var dotCls='miss';var label='未填写';
-        if(isFilled){
-          var rec=filledMap[s[0]];
-          dotCls=rec.status==='buzhusu'?'away':'ok';
-          label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';
-        }
+        if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}
         h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';
       }
     }
@@ -613,11 +527,7 @@ function renderDP(){
     for(var i=0;i<students.length;i++){
       var s=students[i];var isFilled=filled.has(s[0]);
       var dotCls='miss';var label='未填写';
-      if(isFilled){
-        var rec=filledMap[s[0]];
-        dotCls=rec.status==='buzhusu'?'away':'ok';
-        label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';
-      }
+      if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}
       h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';
     }
     list.innerHTML=h||'<div class="dp-nobind">该宿舍暂无学生</div>';
@@ -625,10 +535,7 @@ function renderDP(){
   }
   list.scrollTop=0;
 }
-function ds(dorm){
-  dpDorm=dorm;
-  renderDP();
-}
+function ds(dorm){dpDorm=dorm;renderDP();}
 </script>
 </body>
 </html>
