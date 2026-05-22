@@ -11,16 +11,8 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
 .header{background:linear-gradient(135deg,#1e293b,#334155);padding:24px 20px 16px;text-align:center;color:#fff;position:relative}
-.header .top-bar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
-.header .moon{font-size:32px;cursor:pointer;user-select:none;line-height:1}
-.header .func-bar{display:flex;gap:4px}
-.header .func-btn{text-align:center;cursor:pointer;user-select:none;color:#fff;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.1)}
-.header .func-btn:active{background:rgba(255,255,255,.2)}
-.header .func-btn .ic{font-size:18px;display:block;line-height:1.3}
-.header .func-btn .lb{font-size:9px;opacity:.7;display:block}
+.header .moon{font-size:32px;display:block;margin-bottom:2px;cursor:pointer;user-select:none}
 .header h1{font-size:20px;font-weight:600;letter-spacing:1px}
-.header .hdate{font-size:15px;opacity:.7;margin:3px 0 2px;font-weight:500}
-.header .hcount{font-size:14px;opacity:.55;margin-bottom:2px;font-variant-numeric:tabular-nums}
 .header .sub{font-size:10px;opacity:.5}
 .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
 .container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
@@ -81,45 +73,14 @@ textarea{resize:none}
 .done .st{color:#64748b;font-size:14px;margin-bottom:12px}
 #pc{display:none}
 #pc.on{display:block}
-.dp-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.35);z-index:900;display:none;align-items:flex-end}
-.dp-overlay.on{display:flex}
-.dp-panel{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:75vh;display:flex;flex-direction:column;animation:dpUp .25s ease}
-@keyframes dpUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.dp-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 8px;border-bottom:1px solid #f1f5f9}
-.dp-head h3{font-size:17px;color:#1e293b}
-.dp-close{font-size:13px;color:#94a3b8;cursor:pointer;padding:4px 8px}
-.dp-tabs{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;white-space:nowrap;flex-shrink:0;scrollbar-width:none}
-.dp-tabs::-webkit-scrollbar{display:none}
-.dp-tab{padding:5px 14px;border:1.5px solid #e2e8f0;border-radius:14px;font-size:13px;cursor:pointer;flex-shrink:0;color:#475569;background:#fff}
-.dp-tab.on{border-color:#1e293b;background:#1e293b;color:#fff}
-.dp-tab .cnt{font-size:11px;opacity:.6;margin-left:3px}
-.dp-list{flex:1;overflow-y:auto;padding:4px 16px 16px}
-.dp-row{display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid #f8fafc;font-size:15px}
-.dp-row:last-child{border-bottom:none}
-.dp-row .nm{color:#1e293b;font-weight:500}
-.dp-row .nm .rm{font-size:12px;color:#94a3b8;font-weight:400;margin-left:6px}
-.dp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.dp-dot.ok{background:#22c55e}
-.dp-dot.miss{background:#e2e8f0}
-.dp-dot.away{background:#ef4444}
-.dp-summary{padding:8px 4px 0;font-size:13px;color:#94a3b8;text-align:center}
-.dp-nobind{padding:30px 20px;text-align:center;color:#94a3b8;font-size:14px}
-.dp-grp{padding:8px 4px 4px;font-size:12px;color:#94a3b8;font-weight:500}
-.dp-grp:first-child{padding-top:0}
 </style>
 </head>
 <body>
+<div id="tw" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f8fafc;z-index:1000;align-items:center;justify-content:center;"></div>
 <div id="pc">
 <div class="header">
-<div class="top-bar">
 <span class="moon" onclick="tm()">🌙</span>
-<div class="func-bar">
-<div class="func-btn" onclick="dp()"><span class="ic">🏠</span><span class="lb">全景</span></div>
-</div>
-</div>
 <h1>信管2307班晚点名系统</h1>
-<div class="hdate" id="hdate"></div>
-<div class="hcount" id="hcount"></div>
 <div class="sub">SVIP专属定制版</div>
 <div class="deco"></div>
 </div>
@@ -157,15 +118,6 @@ textarea{resize:none}
 </div>
 </div>
 
-<div class="dp-overlay" id="dpo" onclick="if(event.target===this)dc()">
-<div class="dp-panel">
-<div class="dp-head"><h3>🏠 宿舍全景</h3><span class="dp-close" onclick="dc()">关闭 ✕</span></div>
-<div class="dp-tabs" id="dpt"></div>
-<div class="dp-list" id="dpl"><div class="dp-nobind">加载中…</div></div>
-<div class="dp-summary" id="dps"></div>
-</div>
-</div>
-
 <script>
 var SUPABASE_URL='https://jgiyahtmpvfqtgdfxxgi.supabase.co';
 var SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpnaXlhaHRtcHZmcXRnZGZ4eGdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkyOTEwNTIsImV4cCI6MjA5NDg2NzA1Mn0.K2XGYGccLv6rfPyuAYVYufhIy1mEpABMHf77Sz1IqZE';
@@ -181,6 +133,7 @@ var STUDENTS=[
 ['姚蒙娜蝶舞','2330130317','28-538'],['尹润甜','2330130318','28-538'],['喻忠香','2330130319','28-538'],['张文静','2330130320','28-538'],['周凯旋','2330130321','28-538'],['朱思怡','2330130322','28-538']
 ];
 
+// ===== 维护模式检查（先于一切）=====
 if(localStorage.getItem('debug_mode')==='1'){
   document.getElementById('pc').className='on';
   var db=document.createElement('div');
@@ -199,12 +152,13 @@ if(localStorage.getItem('debug_mode')==='1'){
         var d=JSON.parse(mx.responseText);
         if(d.length>0&&d[0].value==='1'){
           document.body.innerHTML='<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;padding:40px;text-align:center"><div style="font-size:64px;margin-bottom:16px;cursor:pointer;user-select:none" id="wc">🔧</div><h2 style="font-size:22px;color:#1e293b;margin-bottom:8px">系统维护中</h2><p style="color:#94a3b8;max-width:300px">系统正在升级维护，请稍后再来～</p></div>';
+          // 维护模式入口：点🔧7次
           var wc=0,wt=null;
           document.getElementById('wc').onclick=function(){
             wc++;clearTimeout(wt);
             wt=setTimeout(function(){wc=0;},1500);
             if(wc>=7){wc=0;
-              var pwd=prompt('输入管理员密码');
+              safePrompt(function(pwd){
               if(!pwd)return;
               var x2=new XMLHttpRequest();
               x2.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
@@ -217,6 +171,7 @@ if(localStorage.getItem('debug_mode')==='1'){
                   }catch(e){alert('验证失败');}
                 }else alert('网络错误');
               };x2.send();
+              });
             }
           };
           return;
@@ -224,12 +179,65 @@ if(localStorage.getItem('debug_mode')==='1'){
       }catch(e){}
     }
     document.getElementById('pc').className='on';
+    // 加载设置后检查时间窗口
+    var sx=new XMLHttpRequest();
+    sx.open('GET',SUPABASE_URL+'/rest/v1/settings?select=*');
+    sx.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+    sx.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+    sx.onload=function(){
+      if(sx.status===200){try{var sd=JSON.parse(sx.responseText);
+        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});
+      }catch(e){}}
+      timeCheck();
+    };
+    sx.onerror=function(){timeCheck();};
+    sx.send();
   };
-  mx.onerror=function(){document.getElementById('pc').className='on';};
   mx.send();
 }
 
-function rp(a){var p=document.getElementById('np');if(!a||a.length===0){p.innerHTML='<div class="empty">无匹配</div>';return;}var h='';for(var i=0;i<a.length;i++){h+='<div class="it" onclick=\"pn(\\''+a[i][0]+'\\',\\''+a[i][1]+'\\')\">'+a[i][0]+'<span class=\"rt\">'+a[i][2]+'</span></div>';}p.innerHTML=h;}
+// ===== 时间窗口检查 =====
+function timeCheck(){
+  var start=window.wdm_fill_start||'19:00',end=window.wdm_fill_end||'23:30';
+  if(start===end)return; // 不限制
+  var n=new Date(),h=n.getHours(),m=n.getMinutes(),now=h*60+m;
+  var sp=start.split(':'),ep=end.split(':');
+  var sMin=parseInt(sp[0])*60+parseInt(sp[1]||0);
+  var eMin=parseInt(ep[0])*60+parseInt(ep[1]||0);
+  var outer=false;
+  if(sMin<eMin){outer=now<sMin||now>eMin;}
+  else{outer=now<eMin||now>sMin;} // 跨天
+  var tc=document.getElementById('tw');
+  if(outer){
+    tc.style.display='flex';
+    tc.innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-size:48px;margin-bottom:12px;cursor:pointer;user-select:none" id="twc">⏰</div><h2 style="font-size:18px;color:#1e293b;margin-bottom:8px">当前不在填写时间</h2><p style="color:#94a3b8;font-size:14px;max-width:300px;margin:0 auto">填写时间：'+start+' ~ '+end+'<br>请在这个时间段内填写</p><p style="margin-top:20px"><a href="admin.html" style="color:#3b82f6;font-size:13px;text-decoration:none">📊 管理看板</a></p></div>';
+    // 隐藏入口：点⏰7次 → 调试模式
+    var wc2=0,wt2=null;
+    document.getElementById('twc').onclick=function(){
+      wc2++;clearTimeout(wt2);
+      wt2=setTimeout(function(){wc2=0;},1500);
+      if(wc2>=7){wc2=0;
+        safePrompt(function(pwd){
+        if(!pwd)return;
+        var x3=new XMLHttpRequest();
+        x3.open('GET',SUPABASE_URL+'/rest/v1/settings?select=value&key=eq.admin_password');
+        x3.setRequestHeader('apikey',SUPABASE_ANON_KEY);
+        x3.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
+        x3.onload=function(){
+          if(x3.status===200){
+            try{var dd=JSON.parse(x3.responseText);var rp=dd.length>0?dd[0].value:'admin666';
+            if(pwd===rp){localStorage.setItem('debug_mode','1');location.reload();}else alert('密码错误');
+            }catch(e){alert('验证失败');}
+          }else alert('网络错误');
+        };x3.send();
+        });
+      }
+    };
+  }else{tc.style.display='none';tc.innerHTML='';}
+}
+
+// ===== 绑定页 =====
+function rp(a){var p=document.getElementById('np');if(!a||a.length===0){p.innerHTML='<div class="empty">无匹配</div>';return;}var h='';for(var i=0;i<a.length;i++){h+='<div class="it" onclick="pn(\''+a[i][0]+'\',\''+a[i][1]+'\')">'+a[i][0]+'<span class="rt">'+a[i][2]+'</span></div>';}p.innerHTML=h;}
 function fl(){var d=document.getElementById('bd').value;var l=STUDENTS;if(d){l=[];for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][2]===d)l.push(STUDENTS[i]);}}rp(l);}
 function op(){var t=document.getElementById('bn').value.trim();var d=document.getElementById('bd').value;var l=STUDENTS;if(d){l=[];for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][2]===d)l.push(STUDENTS[i]);}}if(t){var f=[];for(var i=0;i<l.length;i++){if(l[i][0].indexOf(t)>=0)f.push(l[i]);}l=f;}rp(l);document.getElementById('np').className='np on';}
 function cp(){document.getElementById('np').className='np';}
@@ -255,6 +263,7 @@ document.getElementById('bb').onclick=function(){
   }
   localStorage.setItem('wdm_name',n);
   localStorage.setItem('wdm_sid',s);
+  // 显示填表页
   var stu=STUDENTS[si];window.bs=stu;
   document.getElementById('bp').style.display='none';
   document.getElementById('fp').style.display='block';
@@ -263,7 +272,8 @@ document.getElementById('bb').onclick=function(){
   document.getElementById('urm').textContent='学号: '+stu[1]+' · '+stu[2];
   document.getElementById('sb').disabled=true;
   document.getElementById('sb').textContent='提交';
-  cf();
+  cf(); // 根据默认"住校"状态启用提交按钮
+  // 查记录
   var x=new XMLHttpRequest();
   x.open('GET',SUPABASE_URL+'/rest/v1/checkins?date=eq.'+new Date().toISOString().slice(0,10)+'&name=eq.'+encodeURIComponent(stu[0])+'&select=*');
   x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
@@ -272,12 +282,15 @@ document.getElementById('bb').onclick=function(){
   x.send();
 };
 
+// ===== 解绑（用户主动操作）=====
 function ub(){
   if(!confirm('解除绑定后需要重新绑定才能填写，确定吗？'))return;
   localStorage.removeItem('wdm_name');
   localStorage.removeItem('wdm_sid');
   goBind();
 }
+
+// ===== 切换到绑定页（无弹窗）=====
 function goBind(){
   window.bs=null;window.rec=null;window.mod=false;
   document.getElementById('fp').style.display='none';
@@ -285,6 +298,7 @@ function goBind(){
   document.getElementById('bp').style.display='block';
 }
 
+// ===== 填表页 =====
 var cst='zaisushe';
 function ss(v){cst=v;document.querySelectorAll('.sbtn')[0].className='sbtn'+(v==='zaisushe'?' hm':'');document.querySelectorAll('.sbtn')[1].className='sbtn'+(v==='buzhusu'?' aw':'');document.getElementById('rw').className=v==='buzhusu'?'on':'';cf();}
 function cf(){var r=document.getElementById('ri').value.trim();document.getElementById('sb').disabled=!(cst==='zaisushe'||r);}
@@ -298,6 +312,7 @@ function sm2(){
 }
 
 function doSub(){
+  // 从 localStorage 获取绑定信息
   var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
   if(!storedName||!storedSid){goBind();return;}
   var si=null;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===storedName&&STUDENTS[i][1]===storedSid){si=i;break;}}
@@ -308,6 +323,8 @@ function doSub(){
   if(cst==='buzhusu'&&!reason)return;
   var btn=document.getElementById('sb');btn.disabled=true;btn.textContent='提交中…';
   var td=new Date().toISOString().slice(0,10);
+  // 统一用 POST + upsert（by date+name 唯一约束）
+  // 首次提交 → INSERT；修改 → 自动覆盖（upsert）
   var x=new XMLHttpRequest();
   x.open('POST',SUPABASE_URL+'/rest/v1/checkins?on_conflict=date,name');
   x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
@@ -327,73 +344,33 @@ function doSub(){
   x.send(JSON.stringify({date:td,name:name,room:room,status:cst,note:reason,student_id:sid}));
 }
 
+// ===== 安全密码输入弹窗 =====
+function safePrompt(callback){
+  var div=document.createElement('div');
+  div.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:99999;display:flex;align-items:center;justify-content:center';
+  div.innerHTML='<div style="background:#fff;border-radius:16px;padding:24px;width:300px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.15)"><p style="font-size:15px;color:#1e293b;margin-bottom:16px">🔑 输入管理员密码</p><input type="password" id="spi" style="width:100%;padding:12px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:16px;text-align:center" placeholder="密码"><div style="display:flex;gap:8px;margin-top:14px"><button id="spc" style="flex:1;padding:10px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;font-size:15px;cursor:pointer">取消</button><button id="spo" style="flex:1;padding:10px;border:none;border-radius:10px;background:#1e293b;color:#fff;font-size:15px;cursor:pointer">确认</button></div></div>';
+  document.body.appendChild(div);
+  var inp=document.getElementById('spi');
+  document.getElementById('spc').onclick=function(){document.body.removeChild(div);};
+  document.getElementById('spo').onclick=function(){var v=inp.value.trim();document.body.removeChild(div);callback(v);};
+  inp.onkeydown=function(e){if(e.key==='Enter'){var v=this.value.trim();document.body.removeChild(div);callback(v);}};
+  setTimeout(function(){inp.focus();},100);
+}
 var mc=0,mt=null;
 function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>=7){mc=0;var e=document.getElementById('ae');e.className=e.className.indexOf('on')>=0?'':'on';}}
 
+// ===== 初始化绑定状态 =====
 fl();
 var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
 if(storedName&&storedSid){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===storedName&&STUDENTS[i][1]===storedSid){document.getElementById('bn').value=storedName;document.getElementById('bs').value=storedSid;document.getElementById('bb').click();break;}}}
 
-var ctInterval=null;
-function updateClock(){
-  var d=new Date();var wd=['日','一','二','三','四','五','六'];
-  document.getElementById('hdate').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+wd[d.getDay()];
-  var end=window.wdm_fill_end||'21:00';var ep=end.split(':');
-  var target=new Date();target.setHours(parseInt(ep[0]),parseInt(ep[1]),0,0);
-  if(target<=d)target.setDate(target.getDate()+1);
-  var diff=Math.floor((target-d)/1000);
-  if(diff<=0){document.getElementById('hcount').textContent='⏰ 今日晚点名已结束';}
-  else{var h=Math.floor(diff/3600);var m=Math.floor((diff%3600)/60);var s=diff%60;
-    document.getElementById('hcount').textContent='⏳ 距截止还有 '+h+'时'+m+'分'+s+'秒';}
-}
-function startClock(){
-  updateClock();
-  if(ctInterval)clearInterval(ctInterval);
-  ctInterval=setInterval(function(){if(!document.hidden)updateClock();},1000);
-}
-setTimeout(startClock,500);
-
+// ===== 返回按钮检查 =====
 window.addEventListener('pageshow',function(){
   var n=localStorage.getItem('wdm_name'),s=localStorage.getItem('wdm_sid');
   if(!n||!s){goBind();return;}
   var ok=false;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
   if(!ok)goBind();
 });
-
-var dpData=null,dpDorm=null;
-function dp(){
-  document.getElementById('dpo').className='dp-overlay on';
-  var myDorm='';
-  var sn=localStorage.getItem('wdm_name');
-  if(sn){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn){myDorm=STUDENTS[i][2];break;}}}
-  dpDorm=myDorm;
-  var td=new Date().toISOString().slice(0,10);
-  var x=new XMLHttpRequest();
-  x.open('GET',SUPABASE_URL+'/rest/v1/checkins?date=eq.'+td+'&select=*');
-  x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
-  x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
-  x.onload=function(){
-    if(x.status===200){try{dpData=JSON.parse(x.responseText);}catch(e){dpData=[];}
-    }else dpData=[];renderDP();
-  };
-  x.onerror=function(){dpData=[];renderDP();};
-  x.send();
-}
-function dc(){document.getElementById('dpo').className='dp-overlay';}
-function renderDP(){
-  var list=document.getElementById('dpl');var tabs=document.getElementById('dpt');var summary=document.getElementById('dps');
-  if(!dpData)dpData=[];var filled=new Set(dpData.map(function(r){return r.name;}));var filledMap={};dpData.forEach(function(r){filledMap[r.name]=r;});
-  var rooms={};for(var i=0;i<STUDENTS.length;i++){var r=STUDENTS[i][2];if(!rooms[r])rooms[r]=[];rooms[r].push(STUDENTS[i]);}
-  var roomKeys=Object.keys(rooms).sort();var totalAll=STUDENTS.length,doneAll=dpData.length;
-  var th='<div class="dp-tab'+(dpDorm===''||!dpDorm?' on':'')+'" onclick="ds(\'\')">全部 <span class="cnt">'+doneAll+'/'+totalAll+'</span></div>';
-  for(var i=0;i<roomKeys.length;i++){var r=roomKeys[i];var total=rooms[r].length;var done=rooms[r].filter(function(s){return filled.has(s[0]);}).length;th+='<div class="dp-tab'+(r===dpDorm?' on':'')+'" onclick="ds(\''+r+'\')">'+r+' <span class="cnt">'+done+'/'+total+'</span></div>';}
-  tabs.innerHTML=th;
-  setTimeout(function(){var el=tabs.querySelector('.on');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});},50);
-  if(dpDorm===''||!dpDorm){var h='';for(var i=0;i<roomKeys.length;i++){var r=roomKeys[i];var students=rooms[r];h+='<div class="dp-grp">── '+r+' ('+students.length+'人) ──</div>';for(var j=0;j<students.length;j++){var s=students[j];var isFilled=filled.has(s[0]);var dotCls='miss';var label='未填写';if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';}}list.innerHTML=h;summary.textContent='✅ '+doneAll+'/'+totalAll+' 已填'+(doneAll<totalAll?' · ⏳ '+(totalAll-doneAll)+' 未填':'');}
-  else{var students=rooms[dpDorm]||[];var done=students.filter(function(s){return filled.has(s[0]);}).length;var h='';for(var i=0;i<students.length;i++){var s=students[i];var isFilled=filled.has(s[0]);var dotCls='miss';var label='未填写';if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';}list.innerHTML=h||'<div class="dp-nobind">该宿舍暂无学生</div>';summary.textContent='✅ '+done+'/'+students.length+' 已填'+(done<students.length?' · ⏳ '+(students.length-done)+' 未填':'');}
-  list.scrollTop=0;
-}
-function ds(dorm){dpDorm=dorm;renderDP();}
 </script>
 </body>
 </html>
