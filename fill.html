@@ -484,11 +484,6 @@ function renderDP(){
   for(var i=0;i<roomKeys.length;i++){var r=roomKeys[i];var total=rooms[r].length;var done=rooms[r].filter(function(s){return filled.has(s[0]);}).length;th+='<div class="dp-tab'+(r===dpDorm?' on':'')+'" onclick="ds(\''+r+'\')">'+r+' <span class="cnt">'+done+'/'+total+'</span></div>';}
   tabs.innerHTML=th;
   setTimeout(function(){var el=tabs.querySelector('.on');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});},50);
-  // 状态筛选
-  var missAll=totalAll-doneAll;
-  var filters=[['all','所有',totalAll],['miss','未填',missAll],['zaisushe','住校',doneAll],['buzhusu','不住校',dpData.filter(function(r){return r.status==='buzhusu';}).length]];
-  var fh='';for(var i=0;i<filters.length;i++){var f=filters[i];fh+='<div class="dp-fbtn'+(dpFilter===f[0]?' on':'')+'" onclick="setFilter(\''+f[0]+'\')">'+f[1]+' <span class="cnt">'+f[2]+'</span></div>';}
-  filterEl.innerHTML=fh;
   // 获取当前范围的学生
   var students=(dpDorm===''||!dpDorm)?[].concat.apply([],roomKeys.map(function(r){return rooms[r];})):(rooms[dpDorm]||[]);
   // 应用筛选
