@@ -486,6 +486,12 @@ function renderDP(){
   setTimeout(function(){var el=tabs.querySelector('.on');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});},50);
   // 获取当前范围的学生
   var students=(dpDorm===''||!dpDorm)?[].concat.apply([],roomKeys.map(function(r){return rooms[r];})):(rooms[dpDorm]||[]);
+  var sDone=students.filter(function(s){return filled.has(s[0]);}).length;
+  // 状态筛选（基于当前宿舍）
+  var missS=students.length-sDone;
+  var filters=[['all','所有',students.length],['miss','未填',missS],['zaisushe','住校',sDone],['buzhusu','不住校',students.filter(function(s){return filled.has(s[0])&&filledMap[s[0]].status==='buzhusu';}).length]];
+  var fh='';for(var i=0;i<filters.length;i++){var f=filters[i];fh+='<div class="dp-fbtn'+(dpFilter===f[0]?' on':'')+'" onclick="setFilter(\''+f[0]+'\')">'+f[1]+' <span class="cnt">'+f[2]+'</span></div>';}
+  filterEl.innerHTML=fh;
   // 应用筛选
   var filtered=students.filter(function(s){
     if(dpFilter==='all')return true;
