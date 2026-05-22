@@ -10,20 +10,12 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
-.header{background:linear-gradient(135deg,#1e293b,#334155);padding:20px 20px 14px;text-align:center;color:#fff;position:relative}
-.header .top-bar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
-.header .moon{font-size:28px;cursor:pointer;user-select:none;line-height:1}
-.header .func-bar{display:flex;gap:6px}
-.header .func-btn{text-align:center;cursor:pointer;user-select:none;color:#fff;padding:2px 8px;border-radius:8px}
-.header .func-btn:active{background:rgba(255,255,255,.12)}
-.header .func-btn .ic{font-size:20px;display:block;line-height:1.3}
-.header .func-btn .lb{font-size:9px;opacity:.7;display:block;margin-top:-1px}
+.header{background:linear-gradient(135deg,#1e293b,#334155);padding:24px 20px 16px;text-align:center;color:#fff;position:relative}
+.header .moon{font-size:32px;display:block;margin-bottom:2px;cursor:pointer;user-select:none}
 .header h1{font-size:20px;font-weight:600;letter-spacing:1px}
-.header .hdate{font-size:15px;opacity:.7;margin:3px 0 2px;font-weight:500}
-.header .hcount{font-size:14px;opacity:.55;margin-bottom:2px;font-variant-numeric:tabular-nums}
 .header .sub{font-size:10px;opacity:.5}
 .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
-.container{max-width:420px;margin:2px auto 0;padding:0 16px 20px;position:relative;z-index:1}
+.container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
 .card{background:#fff;border-radius:16px;box-shadow:0 1px 8px rgba(0,0,0,.06);padding:20px;margin-bottom:12px}
 .field{margin-bottom:14px}
 .field-label{font-size:13px;font-weight:500;color:#64748b;margin-bottom:5px}
@@ -81,57 +73,14 @@ textarea{resize:none}
 .done .st{color:#64748b;font-size:14px;margin-bottom:12px}
 #pc{display:none}
 #pc.on{display:block}
-/* ===== 宿舍全景 ===== */
-.dp-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.35);z-index:900;display:none;align-items:flex-end}
-.dp-overlay.on{display:flex}
-.dp-panel{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:75vh;display:flex;flex-direction:column;animation:dpUp .25s ease}
-@keyframes dpUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.dp-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px 8px;border-bottom:1px solid #f1f5f9}
-.dp-head h3{font-size:17px;color:#1e293b}
-.dp-close{font-size:13px;color:#94a3b8;cursor:pointer;padding:4px 8px}
-.dp-tabs{display:flex;gap:6px;padding:12px 16px;overflow-x:auto;white-space:nowrap;flex-shrink:0;scrollbar-width:none}
-.dp-tabs::-webkit-scrollbar{display:none}
-.dp-tab{padding:5px 14px;border:1.5px solid #e2e8f0;border-radius:14px;font-size:13px;cursor:pointer;flex-shrink:0;color:#475569;background:#fff}
-.dp-tab.on{border-color:#1e293b;background:#1e293b;color:#fff}
-.dp-tab .cnt{font-size:11px;opacity:.6;margin-left:3px}
-.dp-list{flex:1;overflow-y:auto;padding:4px 16px 16px}
-.dp-row{display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid #f8fafc;font-size:15px}
-.dp-row:last-child{border-bottom:none}
-.dp-row .nm{color:#1e293b;font-weight:500}
-.dp-row .nm .rm{font-size:12px;color:#94a3b8;font-weight:400;margin-left:6px}
-.dp-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.dp-dot.ok{background:#22c55e}
-.dp-dot.miss{background:#e2e8f0}
-.dp-dot.away{background:#ef4444}
-.dp-summary{padding:8px 4px 0;font-size:13px;color:#94a3b8;text-align:center}
-.dp-nobind{padding:30px 20px;text-align:center;color:#94a3b8;font-size:14px}
-.dp-grp{padding:8px 4px 4px;font-size:12px;color:#94a3b8;font-weight:500}
-.dp-grp:first-child{padding-top:0}
-.dp-filter{display:flex;gap:4px;padding:4px 16px 8px;flex-shrink:0}
-.dp-fbtn{padding:4px 12px;border:1.5px solid #e2e8f0;border-radius:12px;font-size:12px;cursor:pointer;flex-shrink:0;color:#64748b;background:#fff}
-.dp-fbtn.on{border-color:#1e293b;background:#1e293b;color:#fff}
-.dp-fbtn .cnt{font-size:10px;opacity:.6;margin-left:2px}
-.dp-copy-row{display:flex;align-items:center;gap:6px;padding:4px 16px 4px;flex-shrink:0;flex-wrap:wrap}
-.dp-copy-row .lbl{font-size:11px;color:#94a3b8;white-space:nowrap}
-.dp-fmt{font-size:11px;padding:2px 8px;border:1px solid #e2e8f0;border-radius:8px;cursor:pointer;color:#64748b;background:#fff}
-.dp-fmt.on{border-color:#3b82f6;background:#eff6ff;color:#2563eb}
-.dp-copy-btn{padding:4px 14px;border:none;border-radius:8px;background:#1e293b;color:#fff;font-size:12px;cursor:pointer;white-space:nowrap}
-.dp-copy-btn:active{background:#334155}
 </style>
 </head>
 <body>
 <div id="tw" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#f8fafc;z-index:1000;align-items:center;justify-content:center;"></div>
 <div id="pc">
 <div class="header">
-<div class="top-bar">
 <span class="moon" onclick="tm()">🌙</span>
-<div class="func-bar">
-<div class="func-btn" onclick="dp()"><span class="ic">🏠</span><span class="lb">全景</span></div>
-</div>
-</div>
 <h1>信管2307班晚点名系统</h1>
-<div class="hdate" id="hdate"></div>
-<div class="hcount" id="hcount"></div>
 <div class="sub">SVIP专属定制版</div>
 <div class="deco"></div>
 </div>
@@ -166,20 +115,6 @@ textarea{resize:none}
 
 <div id="ae"><a href="admin.html">📊 管理看板</a></div>
 <div class="ft">信管2307班晚点名系统 · SVIP专属定制版</div>
-</div>
-</div>
-
-<div class="dp-overlay" id="dpo" onclick="if(event.target===this)dc()">
-<div class="dp-panel">
-<div class="dp-head"><h3>🏠 宿舍全景</h3><span class="dp-close" onclick="dc()">关闭 ✕</span></div>
-<div class="dp-tabs" id="dpt"></div>
-<div class="dp-filter" id="dpFilter"></div>
-<div class="dp-copy-row" id="dpCopyRow">
-<span class="lbl">复制：</span>\n<span class="dp-fmt on" data-fmt="name" onclick="toggleFmt('name')">仅名字</span>\n<span class="dp-fmt" data-fmt="name_room" onclick="toggleFmt('name_room')">+宿舍</span>\n<span class="dp-fmt" data-fmt="name_status" onclick="toggleFmt('name_status')">+状态</span>
-<button class="dp-copy-btn" onclick="copyFiltered()">📋 复制</button>
-</div>
-<div class="dp-list" id="dpl"><div class="dp-nobind">加载中…</div></div>
-<div class="dp-summary" id="dps"></div>
 </div>
 </div>
 
@@ -258,7 +193,6 @@ if(localStorage.getItem('debug_mode')==='1'){
     sx.onerror=function(){timeCheck();};
     sx.send();
   };
-  mx.onerror=function(){document.getElementById('pc').className='on';};
   mx.send();
 }
 
@@ -430,22 +364,6 @@ fl();
 var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
 if(storedName&&storedSid){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===storedName&&STUDENTS[i][1]===storedSid){document.getElementById('bn').value=storedName;document.getElementById('bs').value=storedSid;document.getElementById('bb').click();break;}}}
 
-// ===== 日期与倒计时 =====
-var ctInterval=null;
-function updateClock(){
-  var d=new Date();var wd=['日','一','二','三','四','五','六'];
-  document.getElementById('hdate').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+wd[d.getDay()];
-  var end=window.wdm_fill_end||'21:00';var ep=end.split(':');
-  var target=new Date();target.setHours(parseInt(ep[0]),parseInt(ep[1]),0,0);
-  if(target<=d)target.setDate(target.getDate()+1);
-  var diff=Math.floor((target-d)/1000);
-  if(diff<=0){document.getElementById('hcount').textContent='⏰ 今日晚点名已结束';}
-  else{var h=Math.floor(diff/3600);var m=Math.floor((diff%3600)/60);var s=diff%60;
-    document.getElementById('hcount').textContent='⏳ 距截止还有 '+h+'时'+m+'分'+s+'秒';}
-}
-function startClock(){updateClock();if(ctInterval)clearInterval(ctInterval);ctInterval=setInterval(function(){if(!document.hidden)updateClock();},1000);}
-setTimeout(startClock,500);
-
 // ===== 返回按钮检查 =====
 window.addEventListener('pageshow',function(){
   var n=localStorage.getItem('wdm_name'),s=localStorage.getItem('wdm_sid');
@@ -453,115 +371,6 @@ window.addEventListener('pageshow',function(){
   var ok=false;for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===n&&STUDENTS[i][1]===s){ok=true;break;}}
   if(!ok)goBind();
 });
-
-// ===== 宿舍全景 =====
-var dpData=null,dpDorm=null,dpFilter='all',dpFmt='name';
-function dp(){
-  document.getElementById('dpo').className='dp-overlay on';
-  var myDorm='';var sn=localStorage.getItem('wdm_name');
-  if(sn){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===sn){myDorm=STUDENTS[i][2];break;}}}
-  dpDorm=myDorm;
-  var td=new Date().toISOString().slice(0,10);
-  var x=new XMLHttpRequest();
-  x.open('GET',SUPABASE_URL+'/rest/v1/checkins?date=eq.'+td+'&select=*');
-  x.setRequestHeader('apikey',SUPABASE_ANON_KEY);
-  x.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
-  x.onload=function(){
-    if(x.status===200){try{dpData=JSON.parse(x.responseText);}catch(e){dpData=[];}
-    }else dpData=[];renderDP();
-  };
-  x.onerror=function(){dpData=[];renderDP();};
-  x.send();
-}
-function dc(){document.getElementById('dpo').className='dp-overlay';}
-function renderDP(){
-  var list=document.getElementById('dpl');var tabs=document.getElementById('dpt');var summary=document.getElementById('dps');
-  var filterEl=document.getElementById('dpFilter');
-  if(!dpData)dpData=[];var filled=new Set(dpData.map(function(r){return r.name;}));var filledMap={};dpData.forEach(function(r){filledMap[r.name]=r;});
-  var rooms={};for(var i=0;i<STUDENTS.length;i++){var r=STUDENTS[i][2];if(!rooms[r])rooms[r]=[];rooms[r].push(STUDENTS[i]);}
-  var roomKeys=Object.keys(rooms).sort();var totalAll=STUDENTS.length,doneAll=dpData.length;
-  // 宿舍标签
-  var th='<div class="dp-tab'+(dpDorm===''||!dpDorm?' on':'')+'" onclick="ds(\'\')">全部 <span class="cnt">'+doneAll+'/'+totalAll+'</span></div>';
-  for(var i=0;i<roomKeys.length;i++){var r=roomKeys[i];var total=rooms[r].length;var done=rooms[r].filter(function(s){return filled.has(s[0]);}).length;th+='<div class="dp-tab'+(r===dpDorm?' on':'')+'" onclick="ds(\''+r+'\')">'+r+' <span class="cnt">'+done+'/'+total+'</span></div>';}
-  tabs.innerHTML=th;
-  setTimeout(function(){var el=tabs.querySelector('.on');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});},50);
-  // 获取当前范围的学生
-  var students=(dpDorm===''||!dpDorm)?[].concat.apply([],roomKeys.map(function(r){return rooms[r];})):(rooms[dpDorm]||[]);
-  var sDone=students.filter(function(s){return filled.has(s[0]);}).length;
-  // 状态筛选（基于当前宿舍）
-  var missS=students.length-sDone;
-  var filters=[['all','所有',students.length],['miss','未填',missS],['zaisushe','住校',sDone],['buzhusu','不住校',students.filter(function(s){return filled.has(s[0])&&filledMap[s[0]].status==='buzhusu';}).length]];
-  var fh='';for(var i=0;i<filters.length;i++){var f=filters[i];fh+='<div class="dp-fbtn'+(dpFilter===f[0]?' on':'')+'" onclick="setFilter(\''+f[0]+'\')">'+f[1]+' <span class="cnt">'+f[2]+'</span></div>';}
-  filterEl.innerHTML=fh;
-  // 应用筛选
-  var filtered=students.filter(function(s){
-    if(dpFilter==='all')return true;
-    if(dpFilter==='miss')return !filled.has(s[0]);
-    var rec=filledMap[s[0]];if(!rec)return false;
-    return rec.status===dpFilter;
-  });
-  // 按宿舍分组渲染
-  var grpRooms={};for(var i=0;i<filtered.length;i++){var s=filtered[i];var r=s[2];if(!grpRooms[r])grpRooms[r]=[];grpRooms[r].push(s);}
-  var grpKeys=Object.keys(grpRooms).sort();
-  if(dpDorm!==''&&dpDorm){grpKeys=[dpDorm];grpRooms={};for(var i=0;i<filtered.length;i++){var s=filtered[i];if(!grpRooms[s[2]])grpRooms[s[2]]=[];grpRooms[s[2]].push(s);}}
-  var h='';for(var i=0;i<grpKeys.length;i++){
-    var rname=grpKeys[i];var sts=grpRooms[rname];
-    if(filtered.length!==sts.length||dpDorm===''||!dpDorm)h+='<div class="dp-grp">── '+rname+' ('+sts.length+'人) ──</div>';
-    for(var j=0;j<sts.length;j++){var s=sts[j];var isFilled=filled.has(s[0]);var dotCls='miss';var label='未填写';if(isFilled){var rec=filledMap[s[0]];dotCls=rec.status==='buzhusu'?'away':'ok';label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';}h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';}
-  }
-  list.innerHTML=h||'<div class="dp-nobind">暂无匹配</div>';
-  var fDone=filtered.filter(function(s){return filled.has(s[0]);}).length;
-  summary.textContent='✅ '+fDone+'/'+filtered.length+' 已筛选'+(filtered.length<totalAll?' · 共'+totalAll+'人':'');
-  list.scrollTop=0;
-}
-function setFilter(f){dpFilter=f;renderDP();}
-function toggleFmt(f){
-  var btns=document.querySelectorAll('.dp-fmt');
-  for(var i=0;i<btns.length;i++){
-    if(btns[i].getAttribute('data-fmt')===f){
-      // 仅名字不能取消
-      if(f==='name'){btns[i].className='dp-fmt on';continue;}
-      btns[i].className='dp-fmt'+(btns[i].className.indexOf('on')<0?' on':'');
-    }
-  }
-}
-function copyFiltered(){
-  var rooms={};for(var i=0;i<STUDENTS.length;i++){var r=STUDENTS[i][2];if(!rooms[r])rooms[r]=[];rooms[r].push(STUDENTS[i]);}
-  var roomKeys=Object.keys(rooms).sort();
-  var filled=new Set((dpData||[]).map(function(r){return r.name;}));
-  var filledMap={};(dpData||[]).forEach(function(r){filledMap[r.name]=r;});
-  var students=(dpDorm===''||!dpDorm)?[].concat.apply([],roomKeys.map(function(r){return rooms[r];})):(rooms[dpDorm]||[]);
-  var filtered=students.filter(function(s){
-    if(dpFilter==='all')return true;
-    if(dpFilter==='miss')return !filled.has(s[0]);
-    var rec=filledMap[s[0]];if(!rec)return false;
-    return rec.status===dpFilter;
-  });
-  // 读取格式多选状态
-  var showRoom=false,showStatus=false;
-  var btns=document.querySelectorAll('.dp-fmt');
-  for(var i=0;i<btns.length;i++){
-    var fn=btns[i].getAttribute('data-fmt');
-    if(fn==='name_room'&&btns[i].className.indexOf('on')>=0)showRoom=true;
-    if(fn==='name_status'&&btns[i].className.indexOf('on')>=0)showStatus=true;
-  }
-  var lines=[];
-  for(var i=0;i<filtered.length;i++){
-    var s=filtered[i];var name=s[0];var parts=[name];
-    if(showRoom)parts.push('('+s[2]+')');
-    if(showStatus){var isF=filled.has(s[0]);parts.push(isF?(filledMap[s[0]].status==='buzhusu'?'不住校':'住校'):'未填');}
-    lines.push(parts.join(' '));
-  }
-  var text=lines.join('
-');
-  navigator.clipboard.writeText(text).catch(function(){
-    var ta=document.createElement('textarea');ta.value=text;
-    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-  });
-  var btn=event&&event.target?event.target:document.querySelector('.dp-copy-btn');
-  var ot=btn.textContent;btn.textContent='✅ 已复制 '+filtered.length+'人';setTimeout(function(){btn.textContent=ot;},1500);
-}
-function ds(dorm){dpDorm=dorm;renderDP();}
 </script>
 </body>
 </html>
