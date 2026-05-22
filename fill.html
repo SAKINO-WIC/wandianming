@@ -11,8 +11,10 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
 .header{background:linear-gradient(135deg,#1e293b,#334155);padding:24px 20px 16px;text-align:center;color:#fff;position:relative}
-.header .moon{font-size:32px;display:block;margin-bottom:2px;cursor:pointer;user-select:none}
+.header .moon{font-size:28px;display:block;margin-bottom:2px;cursor:pointer;user-select:none;line-height:1}
 .header h1{font-size:20px;font-weight:600;letter-spacing:1px}
+.header .hdate{font-size:15px;opacity:.7;margin:3px 0 2px;font-weight:500}
+.header .hcount{font-size:14px;opacity:.55;margin-bottom:2px;font-variant-numeric:tabular-nums}
 .header .sub{font-size:10px;opacity:.5}
 .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
 .container{max-width:420px;margin:-8px auto 0;padding:0 16px 20px;position:relative;z-index:1}
@@ -81,6 +83,8 @@ textarea{resize:none}
 <div class="header">
 <span class="moon" onclick="tm()">🌙</span>
 <h1>信管2307班晚点名系统</h1>
+<div class="hdate" id="hdate"></div>
+<div class="hcount" id="hcount"></div>
 <div class="sub">SVIP专属定制版</div>
 <div class="deco"></div>
 </div>
@@ -186,7 +190,7 @@ if(localStorage.getItem('debug_mode')==='1'){
     sx.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
     sx.onload=function(){
       if(sx.status===200){try{var sd=JSON.parse(sx.responseText);
-        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});
+        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});updateClock();
       }catch(e){}}
       timeCheck();
     };
@@ -363,6 +367,21 @@ function tm(){mc++;clearTimeout(mt);mt=setTimeout(function(){mc=0;},1500);if(mc>
 fl();
 var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
 if(storedName&&storedSid){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===storedName&&STUDENTS[i][1]===storedSid){document.getElementById('bn').value=storedName;document.getElementById('bs').value=storedSid;document.getElementById('bb').click();break;}}}
+
+var ctInterval=null;
+function updateClock(){
+  var d=new Date();var wd=['日','一','二','三','四','五','六'];
+  document.getElementById('hdate').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+wd[d.getDay()];
+  var end=window.wdm_fill_end||'21:00';var ep=end.split(':');
+  var target=new Date();target.setHours(parseInt(ep[0]),parseInt(ep[1]),0,0);
+  if(target<=d)target.setDate(target.getDate()+1);
+  var diff=Math.floor((target-d)/1000);
+  if(diff<=0){document.getElementById('hcount').textContent='⏰ 今日晚点名已结束';}
+  else{var h=Math.floor(diff/3600);var m=Math.floor((diff%3600)/60);var s=diff%60;
+    document.getElementById('hcount').textContent='⏳ 距截止还有 '+h+'时'+m+'分'+s+'秒';}
+}
+function startClock(){updateClock();if(ctInterval)clearInterval(ctInterval);ctInterval=setInterval(function(){if(!document.hidden)updateClock();},1000);}
+setTimeout(startClock,500);
 
 // ===== 返回按钮检查 =====
 window.addEventListener('pageshow',function(){
