@@ -175,7 +175,7 @@ textarea{resize:none}
 <div class="dp-tabs" id="dpt"></div>
 <div class="dp-filter" id="dpFilter"></div>
 <div class="dp-copy-row" id="dpCopyRow">
-<span class="lbl">复制：</span>\n<span class="dp-fmt on" data-fmt="name" onclick="setFmt('name')">仅名字</span>\n<span class="dp-fmt" data-fmt="name_room" onclick="setFmt('name_room')">+宿舍</span>\n<span class="dp-fmt" data-fmt="name_status" onclick="setFmt('name_status')">+状态</span>
+<span class="lbl">复制：</span>\n<span class="dp-fmt on" data-fmt="name" onclick="toggleFmt('name')">仅名字</span>\n<span class="dp-fmt" data-fmt="name_room" onclick="toggleFmt('name_room')">+宿舍</span>\n<span class="dp-fmt" data-fmt="name_status" onclick="toggleFmt('name_status')">+状态</span>
 <button class="dp-copy-btn" onclick="copyFiltered()">📋 复制</button>
 </div>
 <div class="dp-list" id="dpl"><div class="dp-nobind">加载中…</div></div>
@@ -514,7 +514,16 @@ function renderDP(){
   list.scrollTop=0;
 }
 function setFilter(f){dpFilter=f;renderDP();}
-function setFmt(f){dpFmt=f;var btns=document.querySelectorAll('.dp-fmt');for(var i=0;i<btns.length;i++){var fn=btns[i].getAttribute('data-fmt');btns[i].className='dp-fmt'+(fn===f?' on':'');}}
+function toggleFmt(f){
+  var btns=document.querySelectorAll('.dp-fmt');
+  for(var i=0;i<btns.length;i++){
+    if(btns[i].getAttribute('data-fmt')===f){
+      // 仅名字不能取消
+      if(f==='name'){btns[i].className='dp-fmt on';continue;}
+      btns[i].className='dp-fmt'+(btns[i].className.indexOf('on')<0?' on':'');
+    }
+  }
+}
 function copyFiltered(){
   var rooms={};for(var i=0;i<STUDENTS.length;i++){var r=STUDENTS[i][2];if(!rooms[r])rooms[r]=[];rooms[r].push(STUDENTS[i]);}
   var roomKeys=Object.keys(rooms).sort();
@@ -527,14 +536,23 @@ function copyFiltered(){
     var rec=filledMap[s[0]];if(!rec)return false;
     return rec.status===dpFilter;
   });
+  // 读取格式多选状态
+  var showRoom=false,showStatus=false;
+  var btns=document.querySelectorAll('.dp-fmt');
+  for(var i=0;i<btns.length;i++){
+    var fn=btns[i].getAttribute('data-fmt');
+    if(fn==='name_room'&&btns[i].className.indexOf('on')>=0)showRoom=true;
+    if(fn==='name_status'&&btns[i].className.indexOf('on')>=0)showStatus=true;
+  }
   var lines=[];
   for(var i=0;i<filtered.length;i++){
-    var s=filtered[i];var name=s[0];var info='';
-    if(dpFmt==='name_room')info=' ('+s[2]+')';
-    else if(dpFmt==='name_status'){var isF=filled.has(s[0]);var st=isF?(filledMap[s[0]].status==='buzhusu'?' 不住校':' 住校'):' 未填';info=st+' ('+s[2]+')';}
-    lines.push(name+info);
+    var s=filtered[i];var name=s[0];var parts=[name];
+    if(showRoom)parts.push('('+s[2]+')');
+    if(showStatus){var isF=filled.has(s[0]);parts.push(isF?(filledMap[s[0]].status==='buzhusu'?'不住校':'住校'):'未填');}
+    lines.push(parts.join(' '));
   }
-  var text=lines.join('\n');
+  var text=lines.join('
+');
   navigator.clipboard.writeText(text).catch(function(){
     var ta=document.createElement('textarea');ta.value=text;
     document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
