@@ -175,10 +175,7 @@ textarea{resize:none}
 <div class="dp-tabs" id="dpt"></div>
 <div class="dp-filter" id="dpFilter"></div>
 <div class="dp-copy-row" id="dpCopyRow">
-<span class="lbl">复制：</span>
-<span class="dp-fmt on" onclick="setFmt('name')">仅名字</span>
-<span class="dp-fmt" onclick="setFmt('name_room')">+宿舍</span>
-<span class="dp-fmt" onclick="setFmt('name_status')">+状态</span>
+<span class="lbl">复制：</span>\n<span class="dp-fmt on" data-fmt="name" onclick="setFmt('name')">仅名字</span>\n<span class="dp-fmt" data-fmt="name_room" onclick="setFmt('name_room')">+宿舍</span>\n<span class="dp-fmt" data-fmt="name_status" onclick="setFmt('name_status')">+状态</span>
 <button class="dp-copy-btn" onclick="copyFiltered()">📋 复制</button>
 </div>
 <div class="dp-list" id="dpl"><div class="dp-nobind">加载中…</div></div>
@@ -516,7 +513,7 @@ function renderDP(){
   list.scrollTop=0;
 }
 function setFilter(f){dpFilter=f;renderDP();}
-function setFmt(f){dpFmt=f;document.querySelectorAll('.dp-fmt').forEach(function(e){e.className='dp-fmt'+(e.getAttribute('onclick').indexOf(f)>=0?' on':'');});}
+function setFmt(f){dpFmt=f;var btns=document.querySelectorAll('.dp-fmt');for(var i=0;i<btns.length;i++){var fn=btns[i].getAttribute('data-fmt');btns[i].className='dp-fmt'+(fn===f?' on':'');}}
 function copyFiltered(){
   var rooms={};for(var i=0;i<STUDENTS.length;i++){var r=STUDENTS[i][2];if(!rooms[r])rooms[r]=[];rooms[r].push(STUDENTS[i]);}
   var roomKeys=Object.keys(rooms).sort();
