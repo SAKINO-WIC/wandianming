@@ -12,6 +12,11 @@
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f8fafc;min-height:100vh}
 .header{background:linear-gradient(135deg,#1e293b,#334155);padding:24px 20px 16px;text-align:center;color:#fff;position:relative}
 .header .moon{font-size:32px;display:block;margin-bottom:2px;cursor:pointer;user-select:none}
+.header .dorm-btn{position:absolute;right:16px;top:12px;text-align:center;cursor:pointer;user-select:none;color:#fff;z-index:10}
+.header .dorm-btn .ic{font-size:20px;display:block;line-height:1.2}
+.header .dorm-btn .lb{font-size:9px;opacity:.7;display:block;margin-top:-1px}
+.header .hdate{font-size:12px;opacity:.65;margin-top:-2px;margin-bottom:4px}
+.header .hcount{font-size:11px;opacity:.5;margin-bottom:2px}
 .header h1{font-size:20px;font-weight:600;letter-spacing:1px}
 .header .sub{font-size:10px;opacity:.5}
 .header .deco{position:absolute;bottom:0;left:0;right:0;height:16px;background:#f8fafc;border-radius:16px 16px 0 0}
@@ -97,6 +102,8 @@ textarea{resize:none}
 .dp-dot.away{background:#ef4444}
 .dp-summary{padding:8px 4px 0;font-size:13px;color:#94a3b8;text-align:center}
 .dp-nobind{padding:30px 20px;text-align:center;color:#94a3b8;font-size:14px}
+.dp-grp{padding:8px 4px 4px;font-size:12px;color:#94a3b8;font-weight:500}
+.dp-grp:first-child{padding-top:0}
 </style>
 </head>
 <body>
@@ -104,8 +111,10 @@ textarea{resize:none}
 <div id="pc">
 <div class="header">
 <span class="moon" onclick="tm()">🌙</span>
-<span style="float:right;font-size:22px;cursor:pointer;user-select:none;margin-top:-2px" onclick="dp()">🏠</span>
+<div class="dorm-btn" onclick="dp()"><span class="ic">🏠</span><span class="lb">全景</span></div>
 <h1>信管2307班晚点名系统</h1>
+<div class="hdate" id="hdate"></div>
+<div class="hcount" id="hcount"></div>
 <div class="sub">SVIP专属定制版</div>
 <div class="deco"></div>
 </div>
@@ -221,7 +230,7 @@ if(localStorage.getItem('debug_mode')==='1'){
     sx.setRequestHeader('Authorization','Bearer '+SUPABASE_ANON_KEY);
     sx.onload=function(){
       if(sx.status===200){try{var sd=JSON.parse(sx.responseText);
-        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});
+        sd.forEach(function(s){window['wdm_'+s.key]=s.value;});updateClock();
       }catch(e){}}
       timeCheck();
     };
@@ -399,6 +408,20 @@ fl();
 var storedName=localStorage.getItem('wdm_name'),storedSid=localStorage.getItem('wdm_sid');
 if(storedName&&storedSid){for(var i=0;i<STUDENTS.length;i++){if(STUDENTS[i][0]===storedName&&STUDENTS[i][1]===storedSid){document.getElementById('bn').value=storedName;document.getElementById('bs').value=storedSid;document.getElementById('bb').click();break;}}}
 
+// ===== 日期与倒计时 =====
+function updateClock(){
+  var d=new Date();var wd=['日','一','二','三','四','五','六'];
+  document.getElementById('hdate').textContent=d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日 星期'+wd[d.getDay()];
+  var end=window.wdm_fill_end||'21:00';var ep=end.split(':');
+  var target=new Date();target.setHours(parseInt(ep[0]),parseInt(ep[1]),0,0);
+  var diff=Math.floor((target-d)/1000);
+  if(diff<=0){document.getElementById('hcount').textContent='⏰ 今日晚点名已结束';}
+  else{var h=Math.floor(diff/3600);var m=Math.floor((diff%3600)/60);document.getElementById('hcount').textContent='⏳ 距截止还有 '+h+'小时'+m+'分';}
+}
+// 先执行一次，之后每分钟更新
+setTimeout(updateClock,500);
+setInterval(updateClock,60000);
+
 // ===== 返回按钮检查 =====
 window.addEventListener('pageshow',function(){
   var n=localStorage.getItem('wdm_name'),s=localStorage.getItem('wdm_sid');
@@ -443,8 +466,10 @@ function renderDP(){
   // 所有宿舍列表
   var rooms={};for(var i=0;i<STUDENTS.length;i++){var r=STUDENTS[i][2];if(!rooms[r])rooms[r]=[];rooms[r].push(STUDENTS[i]);}
   var roomKeys=Object.keys(rooms).sort();
-  // 渲染标签
-  var th='';for(var i=0;i<roomKeys.length;i++){
+  var totalAll=STUDENTS.length,doneAll=dpData.length;
+  // 渲染标签（第一个是"全部"）
+  var th='<div class="dp-tab'+(dpDorm===''||!dpDorm?' on':'')+'" onclick="ds(\'\')">全部 <span class="cnt">'+doneAll+'/'+totalAll+'</span></div>';
+  for(var i=0;i<roomKeys.length;i++){
     var r=roomKeys[i];var total=rooms[r].length;var done=rooms[r].filter(function(s){return filled.has(s[0]);}).length;
     th+='<div class="dp-tab'+(r===dpDorm?' on':'')+'" onclick="ds(\''+r+'\')">'+r+' <span class="cnt">'+done+'/'+total+'</span></div>';
   }
@@ -452,23 +477,46 @@ function renderDP(){
   // 滚动到当前宿舍
   setTimeout(function(){var el=tabs.querySelector('.on');if(el)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});},50);
   // 渲染列表
-  if(!dpDorm)dpDorm=roomKeys[0]||'';
-  var students=rooms[dpDorm]||[];
-  var done=students.filter(function(s){return filled.has(s[0]);}).length;
-  var h='';
-  for(var i=0;i<students.length;i++){
-    var s=students[i];var isFilled=filled.has(s[0]);
-    var dotCls='miss';var label='未填写';
-    if(isFilled){
-      var rec=filledMap[s[0]];
-      dotCls=rec.status==='buzhusu'?'away':'ok';
-      label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';
+  if(dpDorm===''||!dpDorm){
+    // 全部视图 - 按宿舍分组
+    var doneAll2=0;
+    var h='';
+    for(var i=0;i<roomKeys.length;i++){
+      var r=roomKeys[i];var students=rooms[r];
+      var rd=students.filter(function(s){return filled.has(s[0]);}).length;
+      doneAll2+=rd;
+      h+='<div class="dp-grp">── '+r+' ('+students.length+'人) ──</div>';
+      for(var j=0;j<students.length;j++){
+        var s=students[j];var isFilled=filled.has(s[0]);
+        var dotCls='miss';var label='未填写';
+        if(isFilled){
+          var rec=filledMap[s[0]];
+          dotCls=rec.status==='buzhusu'?'away':'ok';
+          label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';
+        }
+        h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';
+      }
     }
-    h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';
+    list.innerHTML=h;
+    summary.textContent='✅ '+doneAll+'/'+totalAll+' 已填'+(doneAll<totalAll?' · ⏳ '+(totalAll-doneAll)+' 未填':'');
+  } else {
+    // 单个宿舍视图
+    var students=rooms[dpDorm]||[];
+    var done=students.filter(function(s){return filled.has(s[0]);}).length;
+    var h='';
+    for(var i=0;i<students.length;i++){
+      var s=students[i];var isFilled=filled.has(s[0]);
+      var dotCls='miss';var label='未填写';
+      if(isFilled){
+        var rec=filledMap[s[0]];
+        dotCls=rec.status==='buzhusu'?'away':'ok';
+        label=rec.status==='buzhusu'?'不住校'+(rec.note?' · '+rec.note:''):'住校';
+      }
+      h+='<div class="dp-row"><div class="nm">'+s[0]+'<span class="rm">'+s[2]+'</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:12px;color:'+(isFilled?'#64748b':'#94a3b8')+'">'+label+'</span><div class="dp-dot '+dotCls+'"></div></div></div>';
+    }
+    list.innerHTML=h||'<div class="dp-nobind">该宿舍暂无学生</div>';
+    summary.textContent='✅ '+done+'/'+students.length+' 已填'+(done<students.length?' · ⏳ '+(students.length-done)+' 未填':'');
   }
-  list.innerHTML=h||'<div class="dp-nobind">该宿舍暂无学生</div>';
-  summary.textContent='✅ '+done+'/'+students.length+' 已填'+(done<students.length?' · ⏳ '+(students.length-done)+' 未填':'');
-  // 自动滚动到顶部
   list.scrollTop=0;
 }
 function ds(dorm){
